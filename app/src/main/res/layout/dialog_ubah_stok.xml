@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:paddingBottom="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/closeButton"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textUbahStok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/cool_blue"
+        android:text="Ubah Stok"
+        app:layout_constraintTop_toTopOf="@id/closeButton"
+        app:layout_constraintBottom_toBottomOf="@id/closeButton"
+        app:layout_constraintStart_toEndOf="@id/closeButton" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:textSize="14sp"
+        android:textAlignment="center"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/yankes_blue"
+        android:text="Jumlah Stok"
+        app:layout_constraintTop_toBottomOf="@id/closeButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etKategori"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lines="1"
+        android:hint="Jumlah stok"
+        android:textSize="16sp"
+        android:textColor="@color/yankes_blue"
+        android:fontFamily="@font/poppins_regular"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

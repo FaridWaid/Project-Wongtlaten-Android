@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation_pembeli"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.wongtlaten.application.modules.pembeli.home.HomePembeliFragment"
+        android:label="HOME"
+        tools:layout="@layout/fragment_home_pembeli" />
+
+    <fragment
+        android:id="@+id/nav_customize"
+        android:name="com.wongtlaten.application.modules.pembeli.customize.CustomizePembeliFragment"
+        android:label="CUSTOMIZE"
+        tools:layout="@layout/fragment_customize_pembeli" />
+
+    <fragment
+        android:id="@+id/nav_wishlist"
+        android:name="com.wongtlaten.application.modules.pembeli.wishlist.WishlistPembeliFragment"
+        android:label="WISHLIST"
+        tools:layout="@layout/fragment_wishlist_pembeli" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.wongtlaten.application.modules.pembeli.profile.ProfilePembeliFragment"
+        android:label="PROFILE"
+        tools:layout="@layout/fragment_profile_pembeli" />
+
+
+</navigation>

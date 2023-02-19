@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".modules.pembeli.home.HomePembeliFragment">
+
+    <LinearLayout
+        android:id="@+id/layoutSearch"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/background_search"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/search"
+            android:tint="@color/yankes_blue" />
+
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:background="@null"
+            android:hint="Cari Produk..."
+            android:focusable="false"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:textColor="@color/yankes_blue"
+            android:textColorHint="@color/yankes_blue"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemFiturPayment"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wallet" />
+
+    </androidx.cardview.widget.CardView >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemFiturCart"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:layout_constraintEnd_toStartOf="@id/itemFiturPayment"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/shop" />
+
+    </androidx.cardview.widget.CardView >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemFiturChat"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ep_message" />
+
+    </androidx.cardview.widget.CardView >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="30dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturGiftbox"
+                android:layout_width="70dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cardCornerRadius="35dp"
+                        app:cardElevation="8dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
+                        app:layout_constraintTop_toTopOf="parent" >
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/giftbox_image" />
+
+                    </androidx.cardview.widget.CardView >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="11dp"
+                        android:text="GIFTBOX"
+                        android:textColor="@color/cool_blue"
+                        android:fontFamily="@font/poppins_bold"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textSize="11sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturBouquet"
+                android:layout_width="70dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card"
+                app:layout_constraintStart_toEndOf="@id/itemFiturGiftbox"
+                app:layout_constraintEnd_toStartOf="@id/itemFiturAcrylic"
+                app:layout_constraintTop_toTopOf="parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cardCornerRadius="35dp"
+                        app:cardElevation="8dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
+                        app:layout_constraintTop_toTopOf="parent" >
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/bouquet" />
+
+                    </androidx.cardview.widget.CardView >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="11dp"
+                        android:text="BOUQUET"
+                        android:textColor="@color/cool_blue"
+                        android:fontFamily="@font/poppins_bold"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textSize="11sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturAcrylic"
+                android:layout_width="70dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card"
+                app:layout_constraintEnd_toStartOf="@id/itemFiturPigura"
+                app:layout_constraintStart_toEndOf="@id/itemFiturBouquet"
+                app:layout_constraintTop_toTopOf="parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cardCornerRadius="35dp"
+                        app:cardElevation="8dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
+                        app:layout_constraintTop_toTopOf="parent" >
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/acrylic" />
+
+                    </androidx.cardview.widget.CardView >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="11dp"
+                        android:text="ACRYLIC"
+                        android:textColor="@color/cool_blue"
+                        android:fontFamily="@font/poppins_bold"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textSize="11sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturPigura"
+                android:layout_width="70dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cardCornerRadius="35dp"
+                        app:cardElevation="8dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
+                        app:layout_constraintTop_toTopOf="parent" >
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/pigura" />
+
+                    </androidx.cardview.widget.CardView >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="11dp"
+                        android:text="PIGURA"
+                        android:textColor="@color/cool_blue"
+                        android:fontFamily="@font/poppins_bold"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textSize="11sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView >
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginStart="16dp"
+                android:text="FLASH SALE"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textColor="@color/cool_blue"
+                app:layout_constraintTop_toBottomOf="@id/itemFiturBouquet"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/seeAllFs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="16dp"
+                android:text="See all"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:textColor="@color/yankes_blue"
+                app:layout_constraintTop_toBottomOf="@id/itemFiturBouquet"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/flashSaleViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toBottomOf="@id/seeAllFs" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginStart="16dp"
+                android:text="POPULAR"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textColor="@color/cool_blue"
+                app:layout_constraintTop_toBottomOf="@id/flashSaleViewPager"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/seeAllPopular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="16dp"
+                android:text="See all"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:textColor="@color/yankes_blue"
+                app:layout_constraintTop_toBottomOf="@id/flashSaleViewPager"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/popularViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toBottomOf="@id/seeAllPopular" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginStart="16dp"
+                android:text="NEW"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textColor="@color/cool_blue"
+                app:layout_constraintTop_toBottomOf="@id/popularViewPager"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/seeAllNew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="16dp"
+                android:text="See all"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:textColor="@color/yankes_blue"
+                app:layout_constraintTop_toBottomOf="@id/popularViewPager"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/newViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toBottomOf="@id/seeAllNew" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardBackgroundColor="@color/secondary"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/newViewPager" >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp" >
+
+                    <TextView
+                        android:id="@+id/customGiftbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CUSTOM GIFTBOX"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/poppins_bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Rangkai giftbox sendiri sesuai\nkebutuhan!"
+                        android:gravity="left"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/poppins_regular"
+                        app:layout_constraintTop_toBottomOf="@id/customGiftbox"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <Button
+                        android:id="@+id/btnCustom"
+                        android:layout_width="180dp"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/rounded_border_button6"
+                        android:text="Custom Disini!"
+                        android:textAlignment="center"
+                        android:textColor="@color/yankes_blue"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="12sp"
+                        app:layout_constraintTop_toBottomOf="@id/description"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/boxing"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

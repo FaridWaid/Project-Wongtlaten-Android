@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".modules.pembeli.home.DetailProdukPembeliActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/prevButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/chevron_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textDetailProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="20dp"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:textColor="@color/cool_blue"
+        android:text="DETAIL PRODUK"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintStart_toEndOf="@id/prevButton"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemFiturPayment"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wallet" />
+
+    </androidx.cardview.widget.CardView >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemFiturCart"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:layout_constraintEnd_toStartOf="@id/itemFiturPayment"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/shop" />
+
+    </androidx.cardview.widget.CardView >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemFiturChat"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card"
+        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ep_message" />
+
+    </androidx.cardview.widget.CardView >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/textDetailProduk"
+        app:layout_constraintBottom_toTopOf="@id/bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            >
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/produkViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="360dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/typeProduk"
+                android:layout_width="110dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:text="Bouquet"
+                android:textColor="@color/card"
+                android:textSize="15sp"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:background="@drawable/rounded_border_button"
+                app:layout_constraintTop_toBottomOf="@id/produkViewPager"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturLove"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@id/produkViewPager"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/loveInactivated"
+                    android:layout_width="14dp"
+                    android:layout_height="13dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible"
+                    android:src="@drawable/wishlist_pembeli_selector" />
+
+                <ImageView
+                    android:id="@+id/loveActivated"
+                    android:layout_width="14dp"
+                    android:layout_height="13dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:visibility="invisible"
+                    android:src="@drawable/love_wishlist" />
+            </androidx.cardview.widget.CardView >
+
+            <TextView
+                android:id="@+id/nameProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Bouquet Type 3"
+                android:textColor="@color/cool_blue"
+                android:textSize="15sp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/typeProduk"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="7dp"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="0.5"
+                android:foregroundGravity="center"
+                android:textAlignment="center"
+                android:isIndicator="false"
+                android:theme="@style/RatingBar"
+                app:layout_constraintTop_toBottomOf="@id/nameProduk"
+                style="?android:attr/ratingBarStyleSmall"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="(5)"
+                android:gravity="center"
+                android:textColor="@color/textfield"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintStart_toEndOf="@id/ratingBar"
+                app:layout_constraintTop_toBottomOf="@id/nameProduk"/>
+
+            <TextView
+                android:id="@+id/komentar"
+                android:layout_width="88dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginStart="10dp"
+                android:text="Komentar (3)"
+                android:textAlignment="center"
+                android:textColor="@color/card"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:background="@drawable/backgorund_textfield"
+                app:layout_constraintTop_toBottomOf="@id/nameProduk"
+                app:layout_constraintStart_toEndOf="@id/textRate"/>
+
+            <TextView
+                android:id="@+id/deskripsiProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="sadjbasjkdbkasdbaskdsadbaskhdvasjdavsdaskdjbsakdvsajdvhasdhvsajdvhsadjavsdjasvdajsdvhasjdvasjd\nsadhaisudbiasd"
+                android:textAlignment="textStart"
+                android:textColor="@color/yankes_blue"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toBottomOf="@id/ratingBar"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/textBacaSelengkapnya"
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Baca Selengkapnya"
+                android:textColor="@color/secondary"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/deskripsiProduk"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/totalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Rp. 50.000"
+                android:textColor="@color/cool_blue"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturPlus"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya" >
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/plus_textfield" />
+
+            </androidx.cardview.widget.CardView >
+
+            <TextView
+                android:id="@+id/totalProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="8dp"
+                android:text="1"
+                android:textColor="@color/yankes_blue"
+                android:textSize="20sp"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                app:layout_constraintEnd_toStartOf="@id/itemFiturPlus"
+                app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturMinus"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="10dp"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white"
+                app:layout_constraintEnd_toStartOf="@id/totalProduk"
+                app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya" >
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/minuss" />
+
+            </androidx.cardview.widget.CardView >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginStart="16dp"
+                android:text="MUNGKIN ANDA SUKA"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textColor="@color/cool_blue"
+                app:layout_constraintTop_toBottomOf="@id/totalPrice"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/seeAllRekom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="16dp"
+                android:text="See all"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:textColor="@color/yankes_blue"
+                app:layout_constraintTop_toBottomOf="@id/totalPrice"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/recomViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toBottomOf="@id/seeAllRekom" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnBeli"
+        android:layout_width="150dp"
+        android:layout_height="38dp"
+        android:background="@drawable/rounded_border_button_nobackground"
+        android:text="Beli"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnKeranjang"/>
+
+    <Button
+        android:id="@+id/btnKeranjang"
+        android:layout_width="150dp"
+        android:layout_height="38dp"
+        android:background="@drawable/rounded_border_button"
+        android:text="+ Keranjang"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnBeli"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

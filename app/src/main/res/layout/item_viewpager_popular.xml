@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageProduk"
+                android:layout_width="148dp"
+                android:layout_height="184dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="H, 2:1.6"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:riv_corner_radius="8dp"
+                android:src="@drawable/acrylic" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/itemFiturLove"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="bottom|right"
+                app:cardCornerRadius="35dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card">
+
+                <ImageView
+                    android:id="@+id/loveInactivated"
+                    android:layout_width="14dp"
+                    android:layout_height="13dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible"
+                    android:src="@drawable/wishlist_pembeli_selector" />
+
+                <ImageView
+                    android:id="@+id/loveActivated"
+                    android:layout_width="14dp"
+                    android:layout_height="13dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:visibility="invisible"
+                    android:src="@drawable/love_wishlist" />
+
+            </androidx.cardview.widget.CardView >
+
+        </FrameLayout>
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="80dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="7dp"
+            android:numStars="5"
+            android:rating="3.3"
+            android:stepSize="0.1"
+            android:isIndicator="false"
+            android:theme="@style/RatingBar"
+            app:layout_constraintTop_toBottomOf="@id/frameLayout"
+            style="?android:attr/ratingBarStyleSmall"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="(5)"
+            android:gravity="center"
+            android:textColor="@color/textfield"
+            android:textSize="10sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintStart_toEndOf="@id/ratingBar"
+            app:layout_constraintTop_toBottomOf="@id/frameLayout"/>
+
+        <TextView
+            android:id="@+id/typeProduk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Bouquet"
+            android:textColor="@color/textfield"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintTop_toBottomOf="@id/ratingBar"/>
+
+        <TextView
+            android:id="@+id/nameProduk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Bouquet Type 1"
+            android:textColor="@color/yankes_blue"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintTop_toBottomOf="@id/typeProduk"/>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Rp. 50.000"
+            android:textColor="@color/yankes_blue"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintTop_toBottomOf="@id/nameProduk"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

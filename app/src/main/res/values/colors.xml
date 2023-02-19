@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#caa056</color>
+    <color name="secondary">#9e663e</color>
+    <color name="third">#e2bfa6</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="cool_blue">#002E63</color>
+    <color name="yankes_blue">#1C2841</color>
+    <color name="textfield">#9B9B9B</color>
+    <color name="error">#F01F0E</color>
+    <color name="succes">#21BF73</color>
+    <color name="card">#EBECF1</color>
+    <color name="blue">#B5DEFF</color>
+    <color name="space">#B4AEE8</color>
+    <color name="yellow">#FFFBAC</color>
+    <color name="green">#CEEDC7</color>
+    <color name="gold">#FFD700</color>
+</resources>

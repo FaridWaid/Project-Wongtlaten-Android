@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".modules.penjual.profile.UbahKelaminPenjualActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/prevButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/chevron_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textUbahKelamin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:textColor="@color/cool_blue"
+        android:text="UBAH JENIS KELAMIN"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintStart_toEndOf="@id/prevButton"
+        app:layout_constraintTop_toTopOf="@id/prevButton"
+        app:layout_constraintBottom_toBottomOf="@id/prevButton" />
+
+    <View
+        android:id="@+id/line_1"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toBottomOf="@id/prevButton"
+        android:background="@color/textfield" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/line_1"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:textColor="@color/textfield"
+                android:text="Silakan pilih jenis kelamin anda."
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/icManInactived"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginStart="32dp"
+                android:src="@drawable/man"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/textDescription"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/icManActived"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginStart="32dp"
+                android:src="@drawable/man_activated"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/textDescription"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textMan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Laki-Laki"
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/textfield"
+                app:layout_constraintStart_toStartOf="@id/icManActived"
+                app:layout_constraintEnd_toEndOf="@id/icManActived"
+                app:layout_constraintTop_toBottomOf="@id/icManActived" />
+
+            <ImageView
+                android:id="@+id/icWomanInactived"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:src="@drawable/woman"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/textDescription"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/icWomanActived"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:src="@drawable/woman_activated"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/textDescription"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/textWoman"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Perempuan"
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/textfield"
+                app:layout_constraintStart_toStartOf="@id/icWomanActived"
+                app:layout_constraintEnd_toEndOf="@id/icWomanActived"
+                app:layout_constraintTop_toBottomOf="@id/icWomanActived" />
+
+            <Button
+                android:id="@+id/btnSimpanPerubahan"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/rounded_border_button"
+                android:text="SIMPAN PERUBAHAN"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/primary"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textMan" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

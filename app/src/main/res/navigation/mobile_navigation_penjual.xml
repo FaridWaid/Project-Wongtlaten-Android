@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/nav_home"
+    android:id="@+id/mobile_navigation_penjual">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.wongtlaten.application.modules.penjual.home.HomePenjualFragment"
+        android:label="HOME"
+        tools:layout="@layout/fragment_home_penjual" />
+
+    <fragment
+        android:id="@+id/nav_payment"
+        android:name="com.wongtlaten.application.modules.penjual.payment.PaymentPenjualFragment"
+        android:label="PAYMENT"
+        tools:layout="@layout/fragment_payment_penjual" />
+
+    <fragment
+        android:id="@+id/nav_chatting"
+        android:name="com.wongtlaten.application.modules.penjual.chatting.ChattingPenjualFragment"
+        android:label="CHATTING"
+        tools:layout="@layout/fragment_chatting_penjual" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.wongtlaten.application.modules.penjual.profile.ProfilePenjualFragment"
+        android:label="PROFILE"
+        tools:layout="@layout/fragment_profile_penjual" />
+
+</navigation>
