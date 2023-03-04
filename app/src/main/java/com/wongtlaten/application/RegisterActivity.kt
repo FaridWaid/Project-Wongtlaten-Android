@@ -24,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.wongtlaten.application.core.AttemptLogin
 import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.LoadingDialog
+import java.util.regex.Pattern
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -56,7 +57,7 @@ class RegisterActivity : AppCompatActivity() {
         btnRegistrasi = findViewById(R.id.btnRegistrasi)
 
         textLogin.setOnClickListener {
-            // Pindah ke RegisterActivity
+            // Pindah ke LoginActivity
             Intent(applicationContext, LoginActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
@@ -70,7 +71,7 @@ class RegisterActivity : AppCompatActivity() {
         ref = FirebaseDatabase.getInstance().getReference("dataAkunCustomer")
         refAttempt = FirebaseDatabase.getInstance().getReference("attemptLogin")
 
-        // Memanggil fungsi "usernameFocusListener", "emailFocusListener"
+        // Memanggil fungsi "usernameFocusListener", "emailFocusListener", "passwordFocusListener"
         usernameFocusListener()
         emailFocusListener()
         passwordFocusListener()
@@ -102,14 +103,13 @@ class RegisterActivity : AppCompatActivity() {
             }else {
                 loadingBar(1000)
                 alertDialog("Gagal membuat akun!", "Pastikan anda menginputkan nama, email, dan password dengan benar!", false)
-                // Jika gagal maka akan memunculkan toast gagal
             }
         }
 
     }
 
     // Membuat fungsi "createNewUser"
-    private fun createNewUser(username: String, email: String, password: String) {
+    fun createNewUser(username: String, email: String, password: String) {
         // Membuat user baru dengan email dan password dan langsung tersambung ke Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this){
@@ -169,7 +169,6 @@ class RegisterActivity : AppCompatActivity() {
                 } else{
                     // Jika gagal membuat akun baru, maka akan memunculkan toast error
                     alertDialog("Gagal membuat akun!", "Email yang anda inputkan sudah terdaftar!", false)
-//                    alertDialog("Gagal membuat akun!", "${it.exception?.message}!", false)
                 }
             }
     }
@@ -184,6 +183,7 @@ class RegisterActivity : AppCompatActivity() {
             setTitle(title)
             setMessage(message)
             window.setBackgroundDrawableResource(android.R.color.background_light)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->
@@ -228,6 +228,9 @@ class RegisterActivity : AppCompatActivity() {
 
     // Membuat fungsi "validEmail"
     private fun validEmail(): String? {
+
+        val EMAIL_ADDRESS_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(gmail)+\\.(com)\$")
+
         val email = etEmail.text.toString()
         // Jika email kosong maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
         if (email.isEmpty()){
@@ -235,6 +238,10 @@ class RegisterActivity : AppCompatActivity() {
         }
         // Jika email tidak sesuai format maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return "Email Tidak Valid. Seharusnya your@gmail.com"
+        }
+        // Jika email tidak sesuai format maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
+        if(!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
             return "Email Tidak Valid. Seharusnya your@gmail.com"
         }
         return null
@@ -261,18 +268,6 @@ class RegisterActivity : AppCompatActivity() {
         if(password.length < 6) {
             return "Password Harus Lebih Dari 6 Karakter!"
         }
-//        // Jika panjang password tidak mengandung huruf maka akan gagal login
-//        if (!password.matches(".*[a-z].*".toRegex())){
-//            return "Password Harus Mengandung Huruf"
-//        }
-//        // Jika panjang password tidak mengandung angka maka akan gagal login
-//        if (!password.matches(".*[0-9].*".toRegex())){
-//            return "Password Harus Mengandung Angka"
-//        }
-//        // Jika panjang password tidak mengandung karakter maka akan gagal login
-//        if (!password.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())){
-//            return "Password Harus Mengandung Karakter"
-//        }
         return null
     }
 

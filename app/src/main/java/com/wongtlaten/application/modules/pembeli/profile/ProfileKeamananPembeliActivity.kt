@@ -100,28 +100,6 @@ class ProfileKeamananPembeliActivity : AppCompatActivity() {
         })
     }
 
-    // Membuat fungsi "alertDialog" dengan parameter title, message, dan backActivity
-    // Fungsi ini digunakan untuk menampilkan alert dialog
-    private fun alertDialog(title: String, message: String, backActivity: Boolean){
-        // Membuat variabel yang berisikan AlertDialog
-        val alertDialog = AlertDialog.Builder(this)
-        alertDialog.apply {
-            // Menambahkan title dan pesan ke dalam alert dialog
-            setTitle(title)
-            setMessage(message)
-            window.setBackgroundDrawableResource(android.R.color.background_light)
-            setPositiveButton(
-                "OK",
-                DialogInterface.OnClickListener { dialogInterface, i ->
-                    dialogInterface.dismiss()
-                    if (backActivity){
-                        onBackPressed()
-                    }
-                })
-        }
-        alertDialog.show()
-    }
-
     //back button
     override fun onBackPressed() {
         super.onBackPressed()

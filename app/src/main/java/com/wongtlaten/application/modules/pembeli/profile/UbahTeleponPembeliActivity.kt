@@ -38,26 +38,38 @@ class UbahTeleponPembeliActivity : AppCompatActivity() {
             // Membuat variabel baru yang berisi inputan user
             val teleponInput = etTelepon.text.toString().trim()
 
-            // Jika nameSampahInput kosong maka akan muncul error harus isi terlebih dahulu
+            // Jika teleponInput kosong maka akan muncul error harus isi terlebih dahulu
             if (teleponInput.isEmpty()){
                 etTelepon.error = "Masukkan nomor telepon terlebih dahulu!"
                 etTelepon.requestFocus()
                 return@setOnClickListener
             }
-            // Jika nameSampahInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
+            // Jika teleponInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
             if(teleponInput.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())) {
                 etTelepon.error = "Tidak boleh ada simbol pada nomor telepon!"
                 etTelepon.requestFocus()
                 return@setOnClickListener
             }
-            // Jika nameSampahInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+            // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
             if(teleponInput.matches(".*[a-z].*".toRegex())) {
                 etTelepon.error = "Tidak boleh ada huruf pada nomor telepon!"
                 etTelepon.requestFocus()
                 return@setOnClickListener
             }
+            // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+            if(teleponInput.length < 10) {
+                etTelepon.error = "Masukkan nomor telepon yang valid!"
+                etTelepon.requestFocus()
+                return@setOnClickListener
+            }
+            // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+            if(teleponInput.length > 13) {
+                etTelepon.error = "Masukkan nomor telepon yang valid!"
+                etTelepon.requestFocus()
+                return@setOnClickListener
+            }
 
-            // Pindah ke ResetPasswordActivity
+            // Pindah ke UbahDataPribadiPembeliActivity
             Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
                 it.putExtra("NAMA", nama)
                 it.putExtra("KELAMIN", kelamin)

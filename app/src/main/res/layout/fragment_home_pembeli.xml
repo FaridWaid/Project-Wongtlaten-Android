@@ -361,7 +361,7 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/flashSaleViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
@@ -395,7 +395,7 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/popularViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
@@ -429,7 +429,7 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/newViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"

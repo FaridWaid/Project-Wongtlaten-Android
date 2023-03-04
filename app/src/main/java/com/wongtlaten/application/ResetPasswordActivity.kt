@@ -60,6 +60,7 @@ class ResetPasswordActivity : AppCompatActivity() {
             setMessage(message)
             alertDialog.setCancelable(false)
             window.setBackgroundDrawableResource(android.R.color.transparent)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->

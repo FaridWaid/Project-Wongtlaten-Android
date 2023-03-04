@@ -1,16 +1,17 @@
 package com.wongtlaten.application.modules.pembeli.profile
 
+import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
-import com.wongtlaten.application.ForgotPasswordActivity
 import com.wongtlaten.application.R
 import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.LoadingDialog
@@ -35,6 +36,7 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
     private lateinit var email : String
     private lateinit var telepon : String
     private lateinit var alamat : String
+    private lateinit var change : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,9 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         // Membuat userIdentity daru auth untuk mendapatkan userid/currrent user
         val userIdentity = auth.currentUser!!
+
+        // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
+        referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(userIdentity.uid)
 
         // Mendefinisikan variabel edit text yang nantinya akan berisi inputan user
         textUid = findViewById(R.id.Uid)
@@ -59,11 +64,18 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
         telepon = ""
         alamat = ""
 
-        // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
-        referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(userIdentity.uid)
+        try {
+            change = intent.getStringExtra(CHANGE)!!
+        } catch (e: Exception){
+            change = "false"
+        }
 
-        // Memanggil fungsi loadingBar dan mengeset time = 4000
-        loadingBar(1000)
+        if (change == "true"){
+            alertDialog("Konfirmasi!", "Data pribadi anda berhasil diubah!", false)
+        }
+
+        // Memanggil fungsi loadingBar dan mengeset time = 2000
+        loadingBar(2000)
 
         // Memanggil fungsi keepData
         keepData()
@@ -78,6 +90,7 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
                 it.putExtra("ALAMAT", alamat)
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                finish()
             }
         }
 
@@ -92,7 +105,7 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
 
     }
 
-    private fun keepData() {
+    fun keepData() {
         // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -132,6 +145,32 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
         referen.addListenerForSingleValueEvent(menuListener)
     }
 
+    // Membuat fungsi "alertDialog" dengan parameter title, message, dan backActivity
+    // Fungsi ini digunakan untuk menampilkan alert dialog
+    private fun alertDialog(title: String, message: String, backActivity: Boolean){
+        // Membuat variabel yang berisikan AlertDialog
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle(title)
+            setMessage(message)
+            setCancelable(false)
+            window.setBackgroundDrawableResource(android.R.color.background_light)
+            setCancelable(false)
+            setPositiveButton(
+                "OK",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (backActivity){
+                        onBackPressed()
+                    }
+                    // Memanggil fungsi keepData
+                    keepData()
+                })
+        }
+        alertDialog.show()
+    }
+
     // Membuat fungsi "loadingBar" dengan parameter time,
     // Fungsi ini digunakan untuk menampilkan loading dialog
     private fun loadingBar(time: Long) {
@@ -150,6 +189,10 @@ class ProfileDataPribadiPembeliActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    companion object{
+        const val CHANGE = "CHANGE"
     }
 
 }

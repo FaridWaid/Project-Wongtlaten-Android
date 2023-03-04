@@ -13,6 +13,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.wongtlaten.application.core.LoadingDialog
+import java.util.regex.Pattern
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
@@ -80,7 +81,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
     }
 
     // Membuat fungsi "emailFocusListener"
-    private fun emailFocusListener() {
+    fun emailFocusListener() {
         // Memastikan apakah etEmail sudah sesuai dengan format pengisian
         etEmail.setOnFocusChangeListener { _, focused ->
             if(!focused){
@@ -90,7 +91,10 @@ class ForgotPasswordActivity : AppCompatActivity() {
     }
 
     // Membuat fungsi "validEmail"
-    private fun validEmail(): String? {
+     fun validEmail(): String? {
+
+        val EMAIL_ADDRESS_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(gmail)+\\.(com)\$")
+
         val email = etEmail.text.toString()
         // Jika email kosong maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
         if (email.isEmpty()){
@@ -100,12 +104,16 @@ class ForgotPasswordActivity : AppCompatActivity() {
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return "Email Tidak Valid. Seharusnya your@gmail.com"
         }
+        // Jika email tidak sesuai format maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
+        if(!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
+            return "Email Tidak Valid. Seharusnya your@gmail.com"
+        }
         return null
     }
 
     // Membuat fungsi "loadingBar" dengan parameter time,
     // Fungsi ini digunakan untuk menampilkan loading dialog
-    private fun loadingBar(time: Long) {
+     fun loadingBar(time: Long) {
         val loading = LoadingDialog(this)
         loading.startDialog()
         val handler = Handler()
@@ -119,7 +127,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
     // Membuat fungsi "alertDialog" dengan parameter title, message, dan backActivity
     // Fungsi ini digunakan untuk menampilkan alert dialog
-    private fun alertDialog(title: String, message: String, backActivity: Boolean){
+     fun alertDialog(title: String, message: String, backActivity: Boolean){
         // Membuat variabel yang berisikan AlertDialog
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.apply {
@@ -128,6 +136,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
             setMessage(message)
             alertDialog.setCancelable(false)
             window.setBackgroundDrawableResource(android.R.color.transparent)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->

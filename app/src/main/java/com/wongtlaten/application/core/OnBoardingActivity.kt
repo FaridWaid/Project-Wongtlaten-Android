@@ -41,15 +41,10 @@ class OnBoardingActivity : AppCompatActivity() {
         // Mendefinisikan variabel yang nantinya akan digunakan
         private lateinit var indicatorContainer: LinearLayout
         private lateinit var buttonNext: AppCompatImageView
-        // Mendefinisikan variabel global untuk connect ke Firebase
-//        private lateinit var auth: FirebaseAuth
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_on_boarding)
-
-            // Mengisi variabel auth dengan fungsi yang ada pada FirebaseAuth
-//            auth = FirebaseAuth.getInstance()
 
             // Mengambil Id dari view pager 2 dan dijadikan variabel
             val introSlideViewPager: ViewPager2 = findViewById(R.id.introSliderViewPager)
@@ -92,7 +87,7 @@ class OnBoardingActivity : AppCompatActivity() {
         }
 
     // Mendefinisakan fungsi "setupIndicators"
-    private fun setupIndicators(){
+     fun setupIndicators(){
         // Mendefinisikan varibale "indicators" yang bersisi jumlah dari data image yang ada ada introSlideAdapter
         val indicators = arrayOfNulls<ImageView>(introSlideAdapter.itemCount)
         val layoutParams: LinearLayout.LayoutParams =
@@ -117,7 +112,7 @@ class OnBoardingActivity : AppCompatActivity() {
     }
 
     // Mendefinisakan fungsi "setCurrentIndicators"
-    private fun setCurrentIndicators(index: Int){
+    fun setCurrentIndicators(index: Int){
         val childCount = indicatorContainer.childCount
         for (i in 0 until childCount){
             val imageView = indicatorContainer[i] as ImageView

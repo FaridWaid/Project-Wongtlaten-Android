@@ -21,10 +21,21 @@
         android:id="@+id/checkbox"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="10dp"
+        android:buttonTint="@color/succes"
+        app:layout_constraintEnd_toStartOf="@id/deleteKategori"
         app:layout_constraintTop_toTopOf="@id/kategori"
         app:layout_constraintBottom_toBottomOf="@id/kategori"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/deleteKategori"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/kategori"
+        app:layout_constraintBottom_toBottomOf="@id/kategori" />
 
     <View
         android:id="@+id/line_1"

@@ -96,7 +96,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/imageProduk"
+                android:id="@+id/imageProduk1"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="16dp"
@@ -108,25 +108,66 @@
                 app:layout_constraintTop_toBottomOf="@id/textFotoProduk"
                 app:riv_corner_radius="5dp" />
 
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageProduk2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/textfield"
+                android:scaleType="centerCrop"
+                android:src="@drawable/picture"
+                app:layout_constraintStart_toEndOf="@id/imageProduk1"
+                app:layout_constraintTop_toBottomOf="@id/textFotoProduk"
+                app:riv_corner_radius="5dp" />
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageProduk3"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/textfield"
+                android:scaleType="centerCrop"
+                android:src="@drawable/picture"
+                app:layout_constraintStart_toEndOf="@id/imageProduk2"
+                app:layout_constraintTop_toBottomOf="@id/textFotoProduk"
+                app:riv_corner_radius="5dp" />
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageProduk4"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/textfield"
+                android:scaleType="centerCrop"
+                android:src="@drawable/picture"
+                app:layout_constraintStart_toEndOf="@id/imageProduk3"
+                app:layout_constraintTop_toBottomOf="@id/textFotoProduk"
+                app:riv_corner_radius="5dp" />
+
             <TextView
-                android:id="@+id/hapusFOto"
+                android:id="@+id/hapusFoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:textSize="14sp"
                 android:textColor="@color/error"
                 android:text="Hapus foto!"
                 android:visibility="invisible"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="top"
-                app:layout_constraintStart_toEndOf="@id/imageProduk"
-                app:layout_constraintBottom_toBottomOf="@id/imageProduk" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageProduk1" />
 
             <TextView
                 android:id="@+id/textNamaProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:textSize="14sp"
@@ -136,20 +177,20 @@
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="center_horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imageProduk" />
+                app:layout_constraintTop_toBottomOf="@id/hapusFoto" />
 
             <TextView
                 android:id="@+id/wajibNamaProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:textSize="14sp"
                 android:textColor="@color/error"
                 android:text="*"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="top"
                 app:layout_constraintStart_toEndOf="@id/textNamaProduk"
-                app:layout_constraintTop_toBottomOf="@id/imageProduk" />
+                app:layout_constraintTop_toBottomOf="@id/hapusFoto" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -474,10 +515,23 @@
                 android:textSize="14sp"
                 android:textAlignment="center"
                 android:textColor="@color/yankes_blue"
-                android:text="Deskripsi Produk"
+                android:text="Deskripsi Produk "
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="center_horizontal"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/kategoriProduk" />
+
+            <TextView
+                android:id="@+id/wajibDeskripsiProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:textColor="@color/error"
+                android:text="*"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="top"
+                app:layout_constraintStart_toEndOf="@id/textDeskripsiProduk"
                 app:layout_constraintTop_toBottomOf="@id/kategoriProduk" />
 
             <EditText
@@ -499,6 +553,128 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
+            <TextView
+                android:id="@+id/textJenisProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:textColor="@color/yankes_blue"
+                android:text="Jenis Produk "
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etDeskripsiProduk" />
+
+            <TextView
+                android:id="@+id/wajibJenisProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:textColor="@color/error"
+                android:text="*"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="top"
+                app:layout_constraintStart_toEndOf="@id/textJenisProduk"
+                app:layout_constraintTop_toBottomOf="@id/etDeskripsiProduk" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/jenisContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textJenisProduk">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTextViewJenis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="none"
+                    android:text="Pilih Jenis Produk"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textPromoProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:textColor="@color/yankes_blue"
+                android:text="Presentase Promo Produk "
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/jenisContainer" />
+
+            <TextView
+                android:id="@+id/wajibPromoProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:textColor="@color/error"
+                android:text="*"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="top"
+                app:layout_constraintStart_toEndOf="@id/textPromoProduk"
+                app:layout_constraintTop_toBottomOf="@id/jenisContainer" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:id="@+id/PromoProdukContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textColorHint="@color/textfield"
+                app:helperTextTextColor="@color/error"
+                app:helperTextEnabled="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textPromoProduk" >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPromoProduk"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:lines="1"
+                    android:backgroundTint="@color/primary"
+                    android:inputType="number"
+                    android:hint="Presentase promo produk" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textPromoDeskripsi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/textfield"
+                android:text="Masukkan presentase promo produk (%)"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/PromoProdukContainer" />
+
             <Button
                 android:id="@+id/btnSimpan"
                 android:layout_width="match_parent"
@@ -516,7 +692,7 @@
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etDeskripsiProduk" />
+                app:layout_constraintTop_toBottomOf="@+id/textPromoDeskripsi" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

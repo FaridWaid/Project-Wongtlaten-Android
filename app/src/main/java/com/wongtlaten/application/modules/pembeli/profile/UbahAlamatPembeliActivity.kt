@@ -36,14 +36,14 @@ class UbahAlamatPembeliActivity : AppCompatActivity() {
             // Membuat variabel baru yang berisi inputan user
             val alamatInput = etAlamat.text.toString().trim()
 
-            // Jika nameSampahInput kosong maka akan muncul error harus isi terlebih dahulu
+            // Jika alamatInput kosong maka akan muncul error harus isi terlebih dahulu
             if (alamatInput.isEmpty()){
                 etAlamat.error = "Masukkan alamat terlebih dahulu!"
                 etAlamat.requestFocus()
                 return@setOnClickListener
             }
 
-            // Pindah ke ResetPasswordActivity
+            // Pindah ke UbahDataPribadiPembeliActivity
             Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
                 it.putExtra("NAMA", nama)
                 it.putExtra("KELAMIN", kelamin)

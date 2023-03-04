@@ -1,14 +1,18 @@
 package com.wongtlaten.application.modules.pembeli.profile
 
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
@@ -41,6 +45,11 @@ class ProfilePembeliFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile_pembeli, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        keepData()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -61,16 +70,16 @@ class ProfilePembeliFragment : Fragment() {
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
         referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(userIdentity.uid)
 
-        // Memanggil fungsi loadingBar dan mengeset time = 4000
+        // Memanggil fungsi loadingBar dan mengeset time = 1000
         loadingBar(1000)
 
         // Memanggil fungsi keepData
         keepData()
 
-        // Mendefinisikan variabel item fitur 2
+        // Mendefinisikan variabel nextDataPribadi
         // overridePendingTransition digunakan untuk animasi dari intent
         nextDataPribadi.setOnClickListener {
-            // Jika berhasil maka akan pindah ke DaftarSampahAdminActivity
+            // Jika berhasil maka akan pindah ke ProfileDataPribadiPembeliActivity
             requireActivity().run{
                 startActivity(Intent(this, ProfileDataPribadiPembeliActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -78,7 +87,7 @@ class ProfilePembeliFragment : Fragment() {
         }
 
         nextKeamanan.setOnClickListener {
-            // Jika berhasil maka akan pindah ke DaftarSampahAdminActivity
+            // Jika berhasil maka akan pindah ke ProfileKeamananPembeliActivity
             requireActivity().run{
                 startActivity(Intent(this, ProfileKeamananPembeliActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -89,6 +98,7 @@ class ProfilePembeliFragment : Fragment() {
             auth.signOut()
             requireActivity().run{
                 startActivity(Intent(this, LoginActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
                 finish()
             }
         }

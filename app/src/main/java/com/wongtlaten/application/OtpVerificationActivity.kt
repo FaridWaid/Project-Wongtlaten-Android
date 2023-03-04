@@ -22,6 +22,7 @@ import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Otp
 import com.wongtlaten.application.modules.pembeli.home.HomePembeliActivity
 import com.wongtlaten.application.modules.penjual.home.HomePenjualActivity
+import com.wongtlaten.application.modules.penjual.home.TambahKategoriProdukPenjualActivity
 import java.util.*
 import javax.mail.*
 import javax.mail.internet.InternetAddress
@@ -124,7 +125,7 @@ class OtpVerificationActivity : AppCompatActivity() {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val users = snapshot.getValue(Customers::class.java)!!
                             if (users.accessLevel == "customers"){
-                                // Jika berhasil maka akan pindah activity ke activity OtpVerificationActivity
+                                // Jika berhasil maka akan pindah activity ke activity HomePembeliActivity
                                 Intent(this@OtpVerificationActivity, HomePembeliActivity::class.java).also { intent ->
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
@@ -133,7 +134,7 @@ class OtpVerificationActivity : AppCompatActivity() {
                                 }
                             }
                             else {
-                                // Jika berhasil maka akan pindah activity ke activity OtpVerificationActivity
+                                // Jika berhasil maka akan pindah activity ke activity HomePenjualActivity
                                 Intent(this@OtpVerificationActivity, HomePenjualActivity::class.java).also { intent ->
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
@@ -161,7 +162,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         refOtp.addListenerForSingleValueEvent(menuListener)
     }
 
-    private fun sendOtp(emailReceiver: String){
+    fun sendOtp(emailReceiver: String){
 
         //random OTP
         val rnd = Random()
@@ -189,12 +190,12 @@ class OtpVerificationActivity : AppCompatActivity() {
             mimeMessage.setText("$messageEmail")
             Transport.send(mimeMessage)
 
-            // Membuat variabel "newUser" yang berisikan beberapa data dan data tersebut diinputkan ke dalam Users
+            // Membuat variabel "newOtp" yang berisikan beberapa data dan data tersebut diinputkan ke dalam Otp
             val newOtp = Otp(identifyUser!!, emailReceiver, "$kodeOtp")
             // Jika idUser tidak null/kosong
             if (identifyUser != null){
                 // Membuat suatu child realtime database baru dengan child = "idUser",
-                // dan valuenya berisi data yang ada di dalam "newUser"
+                // dan valuenya berisi data yang ada di dalam "newOtp"
                 refOtp.setValue(newOtp).addOnCompleteListener {
                     if (it.isSuccessful){
                         alertDialog("Kode OTP Berhasil Dikirimkan!", "Silakan cek email anda untuk mendapatkan kode OTP!", false)
@@ -202,7 +203,6 @@ class OtpVerificationActivity : AppCompatActivity() {
                 }
             }
         } catch (e: MessagingException) {
-//            e.printStackTrace()
             alertDialog("Kode OTP Gagal Dikirimkan!", "${e}!", false)
         }
 
@@ -219,6 +219,7 @@ class OtpVerificationActivity : AppCompatActivity() {
             setTitle(title)
             setMessage(message)
             window.setBackgroundDrawableResource(android.R.color.background_light)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->
@@ -231,7 +232,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun addTextChangeListener() {
+    fun addTextChangeListener() {
         inputOTP1.addTextChangedListener(EditTextWatcher(inputOTP1))
         inputOTP2.addTextChangedListener(EditTextWatcher(inputOTP2))
         inputOTP3.addTextChangedListener(EditTextWatcher(inputOTP3))
@@ -240,7 +241,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         inputOTP6.addTextChangedListener(EditTextWatcher(inputOTP6))
     }
 
-    private fun init() {
+    fun init() {
         inputOTP1 = findViewById(R.id.otpEditText1)
         inputOTP2 = findViewById(R.id.otpEditText2)
         inputOTP3 = findViewById(R.id.otpEditText3)
@@ -276,7 +277,7 @@ class OtpVerificationActivity : AppCompatActivity() {
     }
 
     //membuat fungsi startTimer
-    private fun startTimer() {
+    fun startTimer() {
         object : CountDownTimer(120000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeInMilies = millisUntilFinished
@@ -292,7 +293,7 @@ class OtpVerificationActivity : AppCompatActivity() {
     }
 
     //membuat fungsi updateCountDownText untuk menghitung waktu dari CountDownTimer dari value timeInMilies
-    private fun updateCountDownText() {
+    fun updateCountDownText() {
         hours = (timeInMilies / 1000) as Long / 3600
         minutes = ((timeInMilies / 1000) as Long / 60) - (hours*60)
         seconds = (timeInMilies / 1000) as Long % 60

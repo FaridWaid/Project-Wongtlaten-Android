@@ -67,7 +67,7 @@ class UbahKelaminPembeliActivity : AppCompatActivity() {
             if (kelamin == ""){
                 alertDialog("GAGAL!", "Gagal mengubah data kelamin, silakan pilih jenis kelamin anda terlebih dahulu!", false)
             } else {
-                // Pindah ke ResetPasswordActivity
+                // Pindah ke UbahDataPribadiPembeliActivity
                 Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
                     it.putExtra("NAMA", nama)
                     it.putExtra("KELAMIN", kelamin)
@@ -108,6 +108,7 @@ class UbahKelaminPembeliActivity : AppCompatActivity() {
             setTitle(title)
             setMessage(message)
             window.setBackgroundDrawableResource(android.R.color.background_light)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->

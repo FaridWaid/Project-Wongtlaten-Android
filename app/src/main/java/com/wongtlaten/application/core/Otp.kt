@@ -1,6 +1,6 @@
 package com.wongtlaten.application.core
 
-// Untuk menampung identitas dari data users
+// Untuk menampung identitas dari data OTP users
 data class Otp(
     val idCustomers : String,
     val email : String,

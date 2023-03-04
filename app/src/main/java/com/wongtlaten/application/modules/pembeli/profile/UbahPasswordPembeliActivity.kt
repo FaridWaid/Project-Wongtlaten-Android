@@ -110,6 +110,7 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
             setTitle(title)
             setMessage(message)
             window.setBackgroundDrawableResource(android.R.color.background_light)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->

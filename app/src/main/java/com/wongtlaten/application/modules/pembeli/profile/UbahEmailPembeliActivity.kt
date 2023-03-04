@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.wongtlaten.application.R
+import java.util.regex.Pattern
 
 class UbahEmailPembeliActivity : AppCompatActivity() {
 
@@ -84,6 +85,9 @@ class UbahEmailPembeliActivity : AppCompatActivity() {
 
     // Membuat fungsi "validEmail"
     private fun validEmail(): String? {
+
+        val EMAIL_ADDRESS_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(gmail)+\\.(com)\$")
+
         val email = etEmail.text.toString()
         // Jika email kosong maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
         if (email.isEmpty()){
@@ -91,6 +95,10 @@ class UbahEmailPembeliActivity : AppCompatActivity() {
         }
         // Jika email tidak sesuai format maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return "Email Tidak Valid. Seharusnya your@gmail.com"
+        }
+        // Jika email tidak sesuai format maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
+        if(!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
             return "Email Tidak Valid. Seharusnya your@gmail.com"
         }
         return null

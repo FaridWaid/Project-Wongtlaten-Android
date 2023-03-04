@@ -22,8 +22,10 @@ import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Otp
 import com.wongtlaten.application.modules.pembeli.home.HomePembeliActivity
+import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity
 import com.wongtlaten.application.modules.penjual.home.HomePenjualActivity
 import java.util.*
+import java.util.regex.Pattern
 import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
@@ -37,15 +39,16 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var ref : DatabaseReference
     private lateinit var refOtp : DatabaseReference
     private lateinit var refAttempt : DatabaseReference
+    // Mendefinisikan variabel global dari view
     private lateinit var textRegister: TextView
     private lateinit var lupaPassword: AppCompatImageView
     private lateinit var btnLogin: Button
-    // Mendefinisikan variabel global dari view
     private lateinit var etEmail: TextInputEditText
     private lateinit var emailContainer: TextInputLayout
     private lateinit var etPassword: TextInputEditText
     private lateinit var passwordContainer: TextInputLayout
     private lateinit var identifyUser : String
+    private lateinit var changeEmail : String
     private var attemptLogin by Delegates.notNull<Int>()
     private var cekAttempt by Delegates.notNull<Int>()
 
@@ -53,10 +56,10 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Mendefinisikan variabel edit text yang nantinya akan berisi inputan user
         textRegister = findViewById(R.id.textRegister)
         lupaPassword = findViewById(R.id.nextButton)
         btnLogin = findViewById(R.id.btnLogin)
-        // Mendefinisikan variabel edit text yang nantinya akan berisi inputan user
         etEmail = findViewById(R.id.etEmail)
         emailContainer = findViewById(R.id.emailContainer)
         etPassword = findViewById(R.id.etPassword)
@@ -64,6 +67,16 @@ class LoginActivity : AppCompatActivity() {
         identifyUser = ""
         attemptLogin = 0
         cekAttempt = 0
+
+        try {
+            changeEmail = intent.getStringExtra(CHANGE_EMAIL)!!
+        } catch (e: Exception){
+            changeEmail = "false"
+        }
+
+        if (changeEmail == "true"){
+            alertDialog("Konfirmasi!", "Email anda berhasil diubah, silakan verifikasi email baru anda terlebih dahulu!", false)
+        }
 
         textRegister.setOnClickListener {
             // Pindah ke RegisterActivity
@@ -75,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         lupaPassword.setOnClickListener {
-            // Pindah ke RegisterActivity
+            // Pindah ke ForgotPasswordActivity
             Intent(applicationContext, ForgotPasswordActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -106,7 +119,7 @@ class LoginActivity : AppCompatActivity() {
             // Jika semua sudah diisi maka akan melakukan "loginUser"
             if (validEmail && validPassword) {
                 loadingBar(6000)
-                // Memanggil fungsi "loginUser" dengan membawa variabel ("username","email","password"),
+                // Memanggil fungsi "loginUser" dengan membawa variabel ("email","password"),
                 // Fungsi ini digunakan untuk masuk ke halaman user
                 loginUser(email, password)
             }else{
@@ -125,7 +138,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun loginUser(email: String, password: String) {
+     fun loginUser(email: String, password: String) {
         // Masuk ke halaman user dengan email dan password sebagai autentikasi dan langsung tersambung ke Firebase Authentication
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this){
@@ -150,7 +163,7 @@ class LoginActivity : AppCompatActivity() {
                                                 sendOtp(users.email)
                                             }
                                             else if (users.accessLevel == "customers"){
-                                                // Jika berhasil maka akan pindah activity ke activity OtpVerificationActivity
+                                                // Jika berhasil maka akan pindah activity ke activity HomePembeliActivity
                                                 Intent(this@LoginActivity, HomePembeliActivity::class.java).also { intent ->
                                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                     startActivity(intent)
@@ -159,7 +172,7 @@ class LoginActivity : AppCompatActivity() {
                                                 }
                                             }
                                             else {
-                                                // Jika berhasil maka akan pindah activity ke activity OtpVerificationActivity
+                                                // Jika berhasil maka akan pindah activity ke activity HomePenjualActivity
                                                 Intent(this@LoginActivity, HomePenjualActivity::class.java).also { intent ->
                                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                     startActivity(intent)
@@ -225,7 +238,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun sendOtp(emailReceiver: String){
+     fun sendOtp(emailReceiver: String){
 
         //random OTP
         val rnd = Random()
@@ -256,12 +269,12 @@ class LoginActivity : AppCompatActivity() {
             mimeMessage.setText("$messageEmail")
             Transport.send(mimeMessage)
 
-            // Membuat variabel "newUser" yang berisikan beberapa data dan data tersebut diinputkan ke dalam Users
+            // Membuat variabel "newOtp" yang berisikan beberapa data dan data tersebut diinputkan ke dalam Users
             val newOtp = Otp(identifyUser!!, emailReceiver, "$kodeOtp")
             // Jika idUser tidak null/kosong
             if (identifyUser != null){
                 // Membuat suatu child realtime database baru dengan child = "idUser",
-                // dan valuenya berisi data yang ada di dalam "newUser"
+                // dan valuenya berisi data yang ada di dalam "newOtp"
                 refOtp.child("$identifyUser").setValue(newOtp).addOnCompleteListener {
                     if (it.isSuccessful){
                         Intent(this@LoginActivity, OtpVerificationActivity::class.java).also { intent ->
@@ -295,6 +308,7 @@ class LoginActivity : AppCompatActivity() {
             setTitle(title)
             setMessage(message)
             window.setBackgroundDrawableResource(android.R.color.background_light)
+            setCancelable(false)
             setPositiveButton(
                 "OK",
                 DialogInterface.OnClickListener { dialogInterface, i ->
@@ -319,6 +333,9 @@ class LoginActivity : AppCompatActivity() {
 
     // Membuat fungsi "validEmail"
     private fun validEmail(): String? {
+
+        val EMAIL_ADDRESS_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(gmail)+\\.(com)\$")
+
         val email = etEmail.text.toString()
         // Jika email kosong maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
         if (email.isEmpty()){
@@ -328,11 +345,15 @@ class LoginActivity : AppCompatActivity() {
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return "Email Tidak Valid. Seharusnya your@gmail.com"
         }
+        // Jika email tidak sesuai format maka akan gagal membuat user baru dan muncul error harus isi terlebih dahulu
+        if(!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
+            return "Email Tidak Valid. Seharusnya your@gmail.com"
+        }
         return null
     }
 
     // Membuat fungsi "passwordFocusListener"
-    private fun passwordFocusListener() {
+     fun passwordFocusListener() {
         // Memastikan apakah etPassword sudah sesuai dengan format pengisian
         etPassword.setOnFocusChangeListener { _, focused ->
             if(!focused) {
@@ -342,7 +363,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // Membuat fungsi "validPassword"
-    private fun validPassword(): String? {
+     fun validPassword(): String? {
         val password = etPassword.text.toString()
         // Jika password kosong maka akan gagal login dan muncul error harus isi terlebih dahulu
         if (password.isEmpty()){
@@ -352,18 +373,6 @@ class LoginActivity : AppCompatActivity() {
         if(password.length < 6) {
             return "Password Harus Lebih Dari 6 Karakter!"
         }
-//        // Jika panjang password tidak mengandung huruf maka akan gagal login
-//        if (!password.matches(".*[a-z].*".toRegex())){
-//            return "Password Harus Mengandung Huruf"
-//        }
-//        // Jika panjang password tidak mengandung angka maka akan gagal login
-//        if (!password.matches(".*[0-9].*".toRegex())){
-//            return "Password Harus Mengandung Angka"
-//        }
-//        // Jika panjang password tidak mengandung karakter maka akan gagal login
-//        if (!password.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())){
-//            return "Password Harus Mengandung Karakter"
-//        }
         return null
     }
 
@@ -381,5 +390,8 @@ class LoginActivity : AppCompatActivity() {
         }, time)
     }
 
+    companion object{
+        const val CHANGE_EMAIL = "CHANGE_EMAIL"
+    }
 
 }

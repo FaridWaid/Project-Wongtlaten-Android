@@ -30,7 +30,7 @@ class HomePenjualFragment : Fragment() {
         fiturPengelolaanProduk = view.findViewById(R.id.itemFitur1)
 
         fiturPengelolaanProduk.setOnClickListener {
-            // Jika berhasil maka akan pindah ke DaftarSampahAdminActivity
+            // Jika berhasil maka akan pindah ke DaftarProdukPenjualActivity
             requireActivity().run{
                 startActivity(Intent(this, DaftarProdukPenjualActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)

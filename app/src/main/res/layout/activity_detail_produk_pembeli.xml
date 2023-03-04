@@ -98,6 +98,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/textDetailProduk"
         app:layout_constraintBottom_toTopOf="@id/bottom"
@@ -110,14 +111,20 @@
             android:paddingBottom="16dp"
             >
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/produkViewPager"
+            <com.denzcoskun.imageslider.ImageSlider
                 android:layout_width="match_parent"
                 android:layout_height="360dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="12dp"
-                android:overScrollMode="never"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:id="@+id/imageSlider"
+                app:iss_auto_cycle="false"
+                app:iss_delay="0"
+                app:iss_placeholder="@color/textfield"
+                app:iss_error_image="@color/textfield"
+                app:iss_corner_radius="5"
+                app:iss_selected_dot="@drawable/default_selected_dot"
+                app:iss_unselected_dot="@drawable/default_unselected_dot"
+                tools:ignore="MissingConstraints"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/typeProduk"
@@ -131,7 +138,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:gravity="center"
                 android:background="@drawable/rounded_border_button"
-                app:layout_constraintTop_toBottomOf="@id/produkViewPager"
+                app:layout_constraintTop_toBottomOf="@id/imageSlider"
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <androidx.cardview.widget.CardView
@@ -143,7 +150,7 @@
                 app:cardCornerRadius="35dp"
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="@color/white"
-                app:layout_constraintTop_toBottomOf="@id/produkViewPager"
+                app:layout_constraintTop_toBottomOf="@id/imageSlider"
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <ImageView
@@ -269,8 +276,39 @@
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_bold"
                 android:gravity="center"
+                android:visibility="invisible"
                 app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya"
                 app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/totalPriceSlash"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Rp. 50.000"
+                android:textColor="@color/textfield"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/totalPricePromo"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Rp. 50.000"
+                android:textColor="@color/error"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@id/textBacaSelengkapnya"
+                app:layout_constraintStart_toEndOf="@id/totalPriceSlash"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/itemFiturPlus"
@@ -295,7 +333,7 @@
             <TextView
                 android:id="@+id/totalProduk"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="30dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="8dp"
                 android:text="1"
@@ -335,7 +373,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:textSize="16sp"
                 android:textColor="@color/cool_blue"
-                app:layout_constraintTop_toBottomOf="@id/totalPrice"
+                app:layout_constraintTop_toBottomOf="@id/totalPriceSlash"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
@@ -348,13 +386,13 @@
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/yankes_blue"
-                app:layout_constraintTop_toBottomOf="@id/totalPrice"
+                app:layout_constraintTop_toBottomOf="@id/totalPriceSlash"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/recomViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
@@ -375,13 +413,18 @@
     <Button
         android:id="@+id/btnBeli"
         android:layout_width="150dp"
-        android:layout_height="38dp"
-        android:background="@drawable/rounded_border_button_nobackground"
+        android:layout_height="50dp"
         android:text="Beli"
+        app:backgroundTint="@null"
+        app:cornerRadius="5dp"
+        app:strokeColor="@color/primary"
+        app:strokeWidth="2dp"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/primary"
         android:fontFamily="@font/poppins_bold"
+        android:backgroundTint="@color/white"
         android:textSize="14sp"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/bottom"
         app:layout_constraintBottom_toBottomOf="parent"

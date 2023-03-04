@@ -9,21 +9,31 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo_app"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo_app_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wongtlaten"
         tools:targetApi="31">
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".modules.penjual.home.PreviewDeskripsiProdukActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".OtpAcceptActivity"
+            android:name=".modules.penjual.home.PreviewProdukActivity"
+            android:screenOrientation="portrait"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -31,6 +41,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.home.DetailDeskripsiProdukPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -38,6 +49,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.home.DetailProdukPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -45,6 +57,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.home.SearchPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -52,6 +65,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.home.UbahProdukPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -59,6 +73,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.home.TambahKategoriProdukPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -66,6 +81,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.home.TambahProdukPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -73,6 +89,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.home.DaftarProdukPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -80,6 +97,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.UbahPasswordPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -87,6 +105,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.ProfileKeamananPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -94,6 +113,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.UbahKelaminPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -101,6 +121,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.UbahTeleponPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -108,6 +129,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.UbahEmailPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -115,6 +137,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.UbahNamaPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -122,6 +145,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.UbahDataPribadiPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -129,6 +153,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.profile.ProfileDataPribadiPenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -136,6 +161,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahPasswordPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -143,6 +169,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.ProfileKeamananPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -150,6 +177,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahKelaminPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -157,6 +185,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahTeleponPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -164,6 +193,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahAlamatPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -171,6 +201,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahEmailPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -178,6 +209,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahNamaPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -185,6 +217,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.UbahDataPribadiPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -192,6 +225,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.profile.ProfileDataPribadiPembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -199,6 +233,7 @@
         </activity>
         <activity
             android:name=".modules.penjual.home.HomePenjualActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -206,6 +241,7 @@
         </activity>
         <activity
             android:name=".modules.pembeli.home.HomePembeliActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -213,6 +249,7 @@
         </activity>
         <activity
             android:name=".ChangeNumberActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -220,6 +257,7 @@
         </activity>
         <activity
             android:name=".OtpVerificationActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -227,6 +265,7 @@
         </activity>
         <activity
             android:name=".ForgotPasswordActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -234,6 +273,7 @@
         </activity>
         <activity
             android:name=".RegisterActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -241,6 +281,7 @@
         </activity>
         <activity
             android:name=".LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -248,6 +289,7 @@
         </activity>
         <activity
             android:name=".core.OnBoardingActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -255,6 +297,7 @@
         </activity>
         <activity
             android:name=".SplashScreenActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

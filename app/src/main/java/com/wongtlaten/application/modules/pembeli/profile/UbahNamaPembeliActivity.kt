@@ -33,26 +33,26 @@ class UbahNamaPembeliActivity : AppCompatActivity() {
             // Membuat variabel baru yang berisi inputan user
             val namaInput = etNama.text.toString().trim()
 
-            // Jika nameSampahInput kosong maka akan muncul error harus isi terlebih dahulu
+            // Jika namaInput kosong maka akan muncul error harus isi terlebih dahulu
             if (namaInput.isEmpty()){
                 etNama.error = "Masukkan nama terlebih dahulu!"
                 etNama.requestFocus()
                 return@setOnClickListener
             }
-            // Jika nameSampahInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
+            // Jika namaInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
             if(namaInput.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())) {
                 etNama.error = "Tidak boleh ada simbol pada nama!"
                 etNama.requestFocus()
                 return@setOnClickListener
             }
-            // Jika nameSampahInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+            // Jika namaInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
             if(namaInput.matches(".*[0-9].*".toRegex())) {
                 etNama.error = "Tidak boleh ada angka pada nama!"
                 etNama.requestFocus()
                 return@setOnClickListener
             }
 
-            // Pindah ke ResetPasswordActivity
+            // Pindah ke UbahDataPribadiPembeliActivity
             Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
                 it.putExtra("NAMA", namaInput)
                 it.putExtra("KELAMIN", kelamin)
