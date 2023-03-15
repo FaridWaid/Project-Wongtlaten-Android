@@ -9,11 +9,6 @@ class LoadingDialog(val mActivity: Activity) {
     // Mendefinisikan variabel global dari view
     private lateinit var isDialog: AlertDialog
 
-    fun convert(input: Float): Float {
-        val result: Float = (20F + input)
-        return result
-    }
-
     // Membuat fungsi startDialog(), diguakan untuk mendefiniskan alertdialog yang nantinya akan diisi loading dialog
     fun startDialog(){
         //Set View
@@ -29,6 +24,8 @@ class LoadingDialog(val mActivity: Activity) {
 
     // Membuat fungsi isDissmis(), diguakan untuk dismiss dari alert dialog
     fun isDissmis(){
+        val builder = AlertDialog.Builder(mActivity)
+        isDialog.show()
         isDialog.dismiss()
     }
 

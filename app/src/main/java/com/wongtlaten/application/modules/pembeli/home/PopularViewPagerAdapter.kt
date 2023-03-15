@@ -54,7 +54,6 @@ class PopularViewPagerAdapter(val list: ArrayList<Products>, val method: SearchP
                     val moveIntent = Intent(itemView.context, DetailProdukPembeliActivity::class.java)
                     moveIntent.putExtra(DetailProdukPembeliActivity.EXTRA_ID_PRODUCT, products.idProduct)
                     itemView.context.startActivity(moveIntent)
-                    method.animationToLeft()
                 }
 
             }

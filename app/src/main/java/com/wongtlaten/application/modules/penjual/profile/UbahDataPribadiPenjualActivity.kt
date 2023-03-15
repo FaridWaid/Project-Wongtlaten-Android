@@ -43,6 +43,7 @@ class UbahDataPribadiPenjualActivity : AppCompatActivity() {
     private lateinit var oldEmail: String
     private var changeImage by Delegates.notNull<Boolean>()
     private var changeEmail by Delegates.notNull<Boolean>()
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +64,7 @@ class UbahDataPribadiPenjualActivity : AppCompatActivity() {
         btnSimpan = findViewById(R.id.btnSimpanPerubahan)
         changeImage = false
         changeEmail = false
+        checkClick = true
 
         nama = intent.getStringExtra(NAMA)!!
         kelamin = intent.getStringExtra(KELAMIN)!!
@@ -145,39 +147,56 @@ class UbahDataPribadiPenjualActivity : AppCompatActivity() {
 
         btnSimpan.setOnClickListener {
 
-            var onChange = true
-            if (kelamin == "belum diisi" || telepon == "belum diisi"){
-                onChange = false
-                alertDialog("Gagal Mengubah Data Pribadi!", "Silakan lengkapi data pribadi anda terlebih dahulu!", false)
-            }
-            if (onChange){
-                if (oldEmail != email){
-                    loadingBar(4000)
-                    changeEmail = true
-                    userIdentity.let {
-                        userIdentity.updateEmail(email).addOnCompleteListener {
-                            userIdentity.sendEmailVerification().addOnCompleteListener {
-                                updateData(changeImage)
-                                Intent(this@UbahDataPribadiPenjualActivity, LoginActivity::class.java).also { intent ->
-                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    intent.putExtra("CHANGE_EMAIL", "true")
-                                    startActivity(intent)
-                                    overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
-                                    finish()
+            if (checkClick) {
+                checkClick = false
+
+                var onChange = true
+                if (kelamin == "belum diisi" || telepon == "belum diisi"){
+                    onChange = false
+                    alertDialog("Gagal Mengubah Data Pribadi!", "Silakan lengkapi data pribadi anda terlebih dahulu!", false)
+                    checkClick = true
+                }
+                if (onChange){
+                    if (oldEmail != email){
+                        loadingBar(4000)
+                        changeEmail = true
+                        userIdentity.let {
+                            userIdentity.updateEmail(email).addOnCompleteListener {
+                                userIdentity.sendEmailVerification().addOnCompleteListener {
+                                    updateData(changeImage)
+                                    Intent(this@UbahDataPribadiPenjualActivity, LoginActivity::class.java).also { intent ->
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        intent.putExtra("CHANGE_EMAIL", "true")
+                                        startActivity(intent)
+                                        overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
+                                        val loading = LoadingDialog(this@UbahDataPribadiPenjualActivity)
+                                        loading.startDialog()
+                                        loading.isDissmis()
+                                        finish()
+                                        checkClick = true
+                                    }
                                 }
                             }
                         }
-                    }
-                } else{
-                    updateData(changeImage)
-                    Intent(this@UbahDataPribadiPenjualActivity, ProfileDataPribadiPenjualActivity::class.java).also  { intent ->
-                        intent.putExtra("CHANGE", "true")
-                        startActivity(intent)
-                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                        finish()
+                    } else{
+                        updateData(changeImage)
+                        Intent(this@UbahDataPribadiPenjualActivity, ProfileDataPribadiPenjualActivity::class.java).also  { intent ->
+                            intent.putExtra("CHANGE", "true")
+                            startActivity(intent)
+                            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                            val loading = LoadingDialog(this@UbahDataPribadiPenjualActivity)
+                            loading.startDialog()
+                            loading.isDissmis()
+                            finish()
+                            checkClick = true
+                        }
                     }
                 }
+            } else{
+                return@setOnClickListener
             }
+
+
 
         }
 

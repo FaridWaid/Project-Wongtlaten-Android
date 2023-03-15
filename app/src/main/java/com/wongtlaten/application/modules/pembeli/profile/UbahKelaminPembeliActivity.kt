@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.core.LoadingDialog
+import kotlin.properties.Delegates
 
 class UbahKelaminPembeliActivity : AppCompatActivity() {
 
@@ -21,6 +23,7 @@ class UbahKelaminPembeliActivity : AppCompatActivity() {
     private lateinit var womanInactivated : ImageView
     private lateinit var btnSimpanPerubahan: Button
     private lateinit var kelamin : String
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +34,7 @@ class UbahKelaminPembeliActivity : AppCompatActivity() {
         womanActivated = findViewById(R.id.icWomanActived)
         womanInactivated = findViewById(R.id.icWomanInactived)
         btnSimpanPerubahan = findViewById(R.id.btnSimpanPerubahan)
+        checkClick = true
 
         val nama = intent.getStringExtra(NAMA)!!
         kelamin = intent.getStringExtra(KELAMIN)!!
@@ -64,20 +68,28 @@ class UbahKelaminPembeliActivity : AppCompatActivity() {
 
         btnSimpanPerubahan.setOnClickListener {
 
-            if (kelamin == ""){
-                alertDialog("GAGAL!", "Gagal mengubah data kelamin, silakan pilih jenis kelamin anda terlebih dahulu!", false)
-            } else {
-                // Pindah ke UbahDataPribadiPembeliActivity
-                Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
-                    it.putExtra("NAMA", nama)
-                    it.putExtra("KELAMIN", kelamin)
-                    it.putExtra("EMAIL", email)
-                    it.putExtra("TELEPON", telepon)
-                    it.putExtra("ALAMAT", alamat)
-                    startActivity(it)
-                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                    finish()
+            if (checkClick) {
+                checkClick = false
+
+                if (kelamin == ""){
+                    alertDialog("GAGAL!", "Gagal mengubah data kelamin, silakan pilih jenis kelamin anda terlebih dahulu!", false)
+                    checkClick = true
+                } else {
+                    // Pindah ke UbahDataPribadiPembeliActivity
+                    Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
+                        it.putExtra("NAMA", nama)
+                        it.putExtra("KELAMIN", kelamin)
+                        it.putExtra("EMAIL", email)
+                        it.putExtra("TELEPON", telepon)
+                        it.putExtra("ALAMAT", alamat)
+                        startActivity(it)
+                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                        finish()
+                        checkClick = true
+                    }
                 }
+            } else{
+                return@setOnClickListener
             }
 
         }

@@ -24,10 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
 import com.wongtlaten.application.ResetPasswordActivity
-import com.wongtlaten.application.core.AttemptLogin
-import com.wongtlaten.application.core.CategoryListener
-import com.wongtlaten.application.core.CategoryProduct
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.*
 import java.util.*
 import java.util.Locale.filter
 import kotlin.collections.ArrayList
@@ -47,6 +44,7 @@ class TambahKategoriProdukPenjualActivity : AppCompatActivity(), CategoryListene
     private lateinit var btnTerapkanActive : Button
     private lateinit var etSearch: EditText
     private var checkCategory by Delegates.notNull<Boolean>()
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +56,7 @@ class TambahKategoriProdukPenjualActivity : AppCompatActivity(), CategoryListene
         btnTerapkanInactive = findViewById(R.id.btnTerapkanInactivated)
         btnTerapkanActive = findViewById(R.id.btnTerapkanActivated)
         checkCategory = false
+        checkClick = true
 
         btnTerapkanInactive.visibility = View.VISIBLE
 
@@ -102,15 +101,24 @@ class TambahKategoriProdukPenjualActivity : AppCompatActivity(), CategoryListene
         })
 
         btnTerapkanActive.setOnClickListener {
-            if (daftarCheckedList.size > 1){
-                alertDialog("PERINGATAN!", "Kategori yang dapat ditambahkan hanya boleh satu!", false)
-            } else {
-                var intent = Intent()
-                intent.putExtra("CATEGORY", daftarCheckedList[0])
-                setResult(RESULT_OK, intent);
-                finish()
-                onBackPressed()
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+
+            if (checkClick) {
+                checkClick = false
+
+                if (daftarCheckedList.size > 1){
+                    alertDialog("PERINGATAN!", "Kategori yang dapat ditambahkan hanya boleh satu!", false)
+                    checkClick = true
+                } else {
+                    var intent = Intent()
+                    intent.putExtra("CATEGORY", daftarCheckedList[0])
+                    setResult(RESULT_OK, intent);
+                    finish()
+                    onBackPressed()
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                    checkClick = true
+                }
+            } else{
+                return@setOnClickListener
             }
         }
 
@@ -194,7 +202,7 @@ class TambahKategoriProdukPenjualActivity : AppCompatActivity(), CategoryListene
         val rnd = Random()
         val kodeKategori = rnd.nextInt(999)
         while (kodeKategori.toString().length < 3){
-            val kodeKategori = rnd.nextInt(999999)
+            val kodeKategori = rnd.nextInt(999)
         }
 
         val newKategori = "CAT$kodeKategori"

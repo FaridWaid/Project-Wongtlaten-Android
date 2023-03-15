@@ -111,6 +111,9 @@ class DaftarProdukPenjualActivity : AppCompatActivity() {
 
         // Memasukkan data DaftarProduk ke dalam "daftarProdukList" sebagai array list
         daftarProdukList = arrayListOf<Products>()
+
+        adapter = DaftarProdukPenjualAdapter(daftarProdukList, this@DaftarProdukPenjualActivity)
+
         // Memanggil fungsi "showListProduct" yang digunakan untuk menampilkan recyclerview dari data yang sudah ada,
         // pada list
         showListProduct()

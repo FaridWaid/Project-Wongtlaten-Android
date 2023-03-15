@@ -10,13 +10,16 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.wongtlaten.application.R
+import com.wongtlaten.application.core.LoadingDialog
 import java.util.regex.Pattern
+import kotlin.properties.Delegates
 
 class UbahEmailPembeliActivity : AppCompatActivity() {
 
     private lateinit var etEmail: TextInputEditText
     private lateinit var emailContainer: TextInputLayout
     private lateinit var btnSimpanPerubahan: Button
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +28,7 @@ class UbahEmailPembeliActivity : AppCompatActivity() {
         etEmail = findViewById(R.id.etEmail)
         emailContainer = findViewById(R.id.emailContainer)
         btnSimpanPerubahan = findViewById(R.id.btnSimpanPerubahan)
+        checkClick = true
 
         val nama = intent.getStringExtra(NAMA)!!
         val kelamin = intent.getStringExtra(KELAMIN)!!
@@ -38,26 +42,34 @@ class UbahEmailPembeliActivity : AppCompatActivity() {
 
         btnSimpanPerubahan.setOnClickListener {
 
-            val email = etEmail.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-            // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
-            emailContainer.helperText = validEmail()
+                val email = etEmail.text.toString().trim()
 
-            // Jika sudah benar, maka helper pada edittext diisikan dengan null
-            val validEmail = emailContainer.helperText == null
+                // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
+                emailContainer.helperText = validEmail()
 
-            if (validEmail){
-                // Pindah ke ResetPasswordActivity
-                Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
-                    it.putExtra("NAMA", nama)
-                    it.putExtra("KELAMIN", kelamin)
-                    it.putExtra("EMAIL", email)
-                    it.putExtra("TELEPON", telepon)
-                    it.putExtra("ALAMAT", alamat)
-                    startActivity(it)
-                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                    finish()
+                // Jika sudah benar, maka helper pada edittext diisikan dengan null
+                val validEmail = emailContainer.helperText == null
+
+                if (validEmail){
+                    // Pindah ke ResetPasswordActivity
+                    Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
+                        it.putExtra("NAMA", nama)
+                        it.putExtra("KELAMIN", kelamin)
+                        it.putExtra("EMAIL", email)
+                        it.putExtra("TELEPON", telepon)
+                        it.putExtra("ALAMAT", alamat)
+                        startActivity(it)
+                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                        finish()
+                        checkClick = true
+                    }
                 }
+                checkClick = true
+            } else{
+                return@setOnClickListener
             }
 
         }

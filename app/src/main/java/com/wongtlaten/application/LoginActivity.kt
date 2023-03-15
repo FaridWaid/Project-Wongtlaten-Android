@@ -22,7 +22,6 @@ import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Otp
 import com.wongtlaten.application.modules.pembeli.home.HomePembeliActivity
-import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity
 import com.wongtlaten.application.modules.penjual.home.HomePenjualActivity
 import java.util.*
 import java.util.regex.Pattern
@@ -51,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var changeEmail : String
     private var attemptLogin by Delegates.notNull<Int>()
     private var cekAttempt by Delegates.notNull<Int>()
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
         identifyUser = ""
         attemptLogin = 0
         cekAttempt = 0
+        checkClick = true
 
         try {
             changeEmail = intent.getStringExtra(CHANGE_EMAIL)!!
@@ -83,6 +84,8 @@ class LoginActivity : AppCompatActivity() {
             Intent(applicationContext, RegisterActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                val loading = LoadingDialog(this@LoginActivity)
+                loading.isDissmis()
                 finish()
             }
         }
@@ -102,31 +105,41 @@ class LoginActivity : AppCompatActivity() {
         refOtp = FirebaseDatabase.getInstance().getReference("OTP")
         refAttempt = FirebaseDatabase.getInstance().getReference("attemptLogin")
 
+
+
         btnLogin.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
+            if (checkClick){
+                checkClick = false
+                // Membuat variabel baru yang berisi inputan user
+                val email = etEmail.text.toString().trim()
+                val password = etPassword.text.toString().trim()
 
-            // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
-            emailContainer.helperText = validEmail()
-            passwordContainer.helperText = validPassword()
+                // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
+                emailContainer.helperText = validEmail()
+                passwordContainer.helperText = validPassword()
 
-            // Jika sudah benar, maka helper pada edittext diisikan dengan null
-            val validEmail = emailContainer.helperText == null
-            val validPassword = passwordContainer.helperText == null
+                // Jika sudah benar, maka helper pada edittext diisikan dengan null
+                val validEmail = emailContainer.helperText == null
+                val validPassword = passwordContainer.helperText == null
 
-            // Jika semua sudah diisi maka akan melakukan "loginUser"
-            if (validEmail && validPassword) {
-                loadingBar(6000)
-                // Memanggil fungsi "loginUser" dengan membawa variabel ("email","password"),
-                // Fungsi ini digunakan untuk masuk ke halaman user
-                loginUser(email, password)
-            }else{
-                loadingBar(1000)
-                alertDialog("Gagal Login Ke Akun!", "Pastikan email dan password yang anda inputkan sudah benar!", false)
-                // Jika gagal maka akan memunculkan toast gagal
+                // Jika semua sudah diisi maka akan melakukan "loginUser"
+                if (validEmail && validPassword) {
+                    loadingBar(6000)
+                    // Memanggil fungsi "loginUser" dengan membawa variabel ("email","password"),
+                    // Fungsi ini digunakan untuk masuk ke halaman user
+                    loginUser(email, password)
+                }else{
+                    loadingBar(1000)
+                    alertDialog("Gagal Login Ke Akun!", "Pastikan email dan password yang anda inputkan sudah benar!", false)
+                    // Jika gagal maka akan memunculkan toast gagal
+                    checkClick = true
+                }
+            } else {
+                return@setOnClickListener
             }
+
+
         }
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
@@ -159,24 +172,31 @@ class LoginActivity : AppCompatActivity() {
                                         if (it.isSuccessful){
 
                                             if (users.checkOtp == "active"){
+                                                checkClick = true
                                                 identifyUser = users.idCustomers
                                                 sendOtp(users.email)
                                             }
                                             else if (users.accessLevel == "customers"){
+                                                checkClick = true
                                                 // Jika berhasil maka akan pindah activity ke activity HomePembeliActivity
                                                 Intent(this@LoginActivity, HomePembeliActivity::class.java).also { intent ->
                                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                     startActivity(intent)
                                                     overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+                                                    val loading = LoadingDialog(this@LoginActivity)
+                                                    loading.isDissmis()
                                                     finish()
                                                 }
                                             }
                                             else {
+                                                checkClick = true
                                                 // Jika berhasil maka akan pindah activity ke activity HomePenjualActivity
                                                 Intent(this@LoginActivity, HomePenjualActivity::class.java).also { intent ->
                                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                     startActivity(intent)
                                                     overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+                                                    val loading = LoadingDialog(this@LoginActivity)
+                                                    loading.isDissmis()
                                                     finish()
                                                 }
                                             }
@@ -185,6 +205,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
+                                    checkClick = true
                                     alertDialog("Gagal Login Ke Akun!", "error!", false)
                                 }
 
@@ -192,6 +213,7 @@ class LoginActivity : AppCompatActivity() {
 
                         })
                     } else{
+                        checkClick = true
                         alertDialog("Gagal Login Ke Akun!", "Verifikasi email anda terlebih dahulu, silakan cek email anda untuk memverifikasi akun!", false)
                     }
                 } else{
@@ -212,10 +234,12 @@ class LoginActivity : AppCompatActivity() {
 
                                         })
                                         if (cekAttempt < 3){
+                                            checkClick = true
                                             cekAttempt += 1
                                             val newAttempt = AttemptLogin(email, cekAttempt)
                                             refAttempt.child("${cekCustomers.idCustomers}").setValue(newAttempt)
                                         } else{
+                                            checkClick = true
                                             // Pindah ke ResetPasswordActivity
                                             Intent(applicationContext, ResetPasswordActivity::class.java).also {
                                                 it.putExtra("EMAIL", email)
@@ -225,6 +249,7 @@ class LoginActivity : AppCompatActivity() {
                                             }
                                         }
                                     } else{
+                                        checkClick = true
                                         alertDialog("Gagal Login Ke Akun!", "Pastikan email dan password yang anda inputkan sudah benar!", false)
                                     }
                                 }
@@ -283,6 +308,8 @@ class LoginActivity : AppCompatActivity() {
                             intent.putExtra("USER", identifyUser)
                             startActivity(intent)
                             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                            val loading = LoadingDialog(this@LoginActivity)
+                            loading.isDissmis()
                             finish()
                         }
                     }

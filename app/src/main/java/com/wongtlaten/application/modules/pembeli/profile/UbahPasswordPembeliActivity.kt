@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.wongtlaten.application.R
 import com.wongtlaten.application.core.LoadingDialog
+import kotlin.properties.Delegates
 
 class UbahPasswordPembeliActivity : AppCompatActivity() {
 
@@ -25,6 +26,7 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
     private lateinit var passwordLamaContainer: TextInputLayout
     private lateinit var etPasswordBaru: TextInputEditText
     private lateinit var passwordBaruContainer: TextInputLayout
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,7 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
         // Mengisi variabel auth dengan fungsi yang ada pada FirebaseAuth
         auth = FirebaseAuth.getInstance()
         val userIdentity = auth.currentUser!!
+        checkClick = true
 
         etPasswordLama = findViewById(R.id.etPasswordLama)
         passwordLamaContainer = findViewById(R.id.passwordLamaContainer)
@@ -47,45 +50,56 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
         val buttonSubmit: Button = findViewById(R.id.btnSimpanPerubahan)
         buttonSubmit.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val oldPassword = etPasswordLama.text.toString()
-            val newPassword = etPasswordBaru.text.toString()
+            if (checkClick) {
+                checkClick = false
 
-            // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
-            passwordLamaContainer.helperText = validPassword(oldPassword)
-            passwordBaruContainer.helperText = validPassword(newPassword)
+                // Membuat variabel baru yang berisi inputan user
+                val oldPassword = etPasswordLama.text.toString()
+                val newPassword = etPasswordBaru.text.toString()
 
-            // Jika sudah benar, maka helper pada edittext diisikan dengan null
-            val validOldPassword = passwordLamaContainer.helperText == null
-            val validNewPassword = passwordBaruContainer.helperText == null
+                // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
+                passwordLamaContainer.helperText = validPassword(oldPassword)
+                passwordBaruContainer.helperText = validPassword(newPassword)
 
-            // Jika semua sudah diisi maka akan masuk ke dalam kondisi untuk autentikasi email dari user,
-            // kemudian mengupdate password baru yang telah dibuat oleh user,
-            // jika berhasil maka akan mnemapilkan alert dialog berhasil,
-            // dan jika gagal maka akan mnemapilkan alert dialog gagal
-            if (validOldPassword && validNewPassword) {
-                userIdentity.let {
-                    val userCredential = EmailAuthProvider.getCredential(it.email!!, oldPassword)
-                    it.reauthenticate(userCredential).addOnCompleteListener {
-                        if (it.isSuccessful){
-                            loadingBar(2000)
-                            userIdentity.updatePassword(newPassword).addOnCompleteListener {
-                                if (it.isSuccessful){
-                                    alertDialog("Konfirmasi!","Password anda berhasil diubah!", true)
-                                } else{
-                                    Toast.makeText(this, "${it.exception?.message}", Toast.LENGTH_SHORT).show()
+                // Jika sudah benar, maka helper pada edittext diisikan dengan null
+                val validOldPassword = passwordLamaContainer.helperText == null
+                val validNewPassword = passwordBaruContainer.helperText == null
+
+                // Jika semua sudah diisi maka akan masuk ke dalam kondisi untuk autentikasi email dari user,
+                // kemudian mengupdate password baru yang telah dibuat oleh user,
+                // jika berhasil maka akan mnemapilkan alert dialog berhasil,
+                // dan jika gagal maka akan mnemapilkan alert dialog gagal
+                if (validOldPassword && validNewPassword) {
+                    userIdentity.let {
+                        val userCredential = EmailAuthProvider.getCredential(it.email!!, oldPassword)
+                        it.reauthenticate(userCredential).addOnCompleteListener {
+                            if (it.isSuccessful){
+                                loadingBar(2000)
+                                userIdentity.updatePassword(newPassword).addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        alertDialog("Konfirmasi!","Password anda berhasil diubah!", true)
+                                        checkClick = true
+                                    } else{
+                                        Toast.makeText(this, "${it.exception?.message}", Toast.LENGTH_SHORT).show()
+                                        checkClick = true
+                                    }
                                 }
+                            } else if (it.exception is FirebaseAuthInvalidCredentialsException){
+                                alertDialog("Gagal Mengubah Password!","Password lama yang anda masukkan salah!", false)
+                                checkClick = true
+                            } else{
+                                alertDialog("Gagal Mengubah Password!","${it.exception?.message}", false)
+                                checkClick = true
                             }
-                        } else if (it.exception is FirebaseAuthInvalidCredentialsException){
-                            alertDialog("Gagal Mengubah Password!","Password lama yang anda masukkan salah!", false)
-                        } else{
-                            alertDialog("Gagal Mengubah Password!","${it.exception?.message}", false)
                         }
                     }
+                }else {
+                    // Jika gagal maka akan memunculkan toast gagal
+                    alertDialog("Gagal Mengubah Password!","Pastikan password yang anda inputkan sudah sesuai format!", false)
+                    checkClick = true
                 }
-            }else {
-                // Jika gagal maka akan memunculkan toast gagal
-                alertDialog("Gagal Mengubah Password!","Pastikan password yang anda inputkan sudah sesuai format!", false)
+            } else{
+                return@setOnClickListener
             }
         }
 

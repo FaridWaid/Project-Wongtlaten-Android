@@ -65,7 +65,6 @@ class FsViewPagerAdapter(val list: ArrayList<Products>, val method: SearchPembel
                     val moveIntent = Intent(itemView.context, DetailProdukPembeliActivity::class.java)
                     moveIntent.putExtra(EXTRA_ID_PRODUCT, products.idProduct)
                     itemView.context.startActivity(moveIntent)
-                    method.animationToLeft()
                 }
 
             }

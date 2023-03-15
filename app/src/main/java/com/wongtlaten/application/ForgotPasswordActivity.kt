@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.wongtlaten.application.core.LoadingDialog
 import java.util.regex.Pattern
+import kotlin.properties.Delegates
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
@@ -24,6 +25,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
     private lateinit var etEmail: TextInputEditText
     private lateinit var emailContainer: TextInputLayout
     private lateinit var btnSubmit: Button
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         // Mengisi variabel auth dengan fungsi yang ada pada FirebaseAuth
         auth = FirebaseAuth.getInstance()
+        checkClick = true
 
         prevButton = findViewById(R.id.prevButton)
         btnSubmit = findViewById(R.id.btnSubmit)
@@ -46,33 +49,44 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         btnSubmit.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val email = etEmail.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-            // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
-            emailContainer.helperText = validEmail()
+                // Membuat variabel baru yang berisi inputan user
+                val email = etEmail.text.toString().trim()
 
-            // Jika sudah benar, maka helper pada edittext diisikan dengan null
-            val validEmail = emailContainer.helperText == null
+                // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
+                emailContainer.helperText = validEmail()
 
-            // Jika semua sudah diisi maka akan melakukan autentikasi email
-            if (validEmail){
-                // Mengirimkan pesan ke email user untuk membuat password baru, dan jika berhasil..
-                auth.sendPasswordResetEmail(email).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        loadingBar(2000)
-                        alertDialog("Konfirmasi!", "Cek email anda untuk membuat password baru pada akun anda!", true)
-                    } else {
-                        loadingBar(2000)
-                        alertDialog("Gagal Mengirim Email!", "Email anda belum terdaftar pada aplikasi, silakan melakukan registrasi terlebih dahulu!", false)
-                        // Jika gagal membuat akun baru, maka akan memunculkan toast error
+                // Jika sudah benar, maka helper pada edittext diisikan dengan null
+                val validEmail = emailContainer.helperText == null
+
+                // Jika semua sudah diisi maka akan melakukan autentikasi email
+                if (validEmail){
+                    // Mengirimkan pesan ke email user untuk membuat password baru, dan jika berhasil..
+                    auth.sendPasswordResetEmail(email).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            loadingBar(2000)
+                            alertDialog("Konfirmasi!", "Cek email anda untuk membuat password baru pada akun anda!", true)
+                            checkClick = true
+                        } else {
+                            loadingBar(2000)
+                            alertDialog("Gagal Mengirim Email!", "Email anda belum terdaftar pada aplikasi, silakan melakukan registrasi terlebih dahulu!", false)
+                            // Jika gagal membuat akun baru, maka akan memunculkan toast error
+                            checkClick = true
+                        }
+
                     }
+                }else{
+                    loadingBar(2000)
+                    alertDialog("Gagal Mengirim Email!", "Pastikan anda menginputkan email dengan benar!", false)
+                    // Jika gagal membuat akun baru, maka akan memunculkan toast error
+                    checkClick = true
                 }
-            }else{
-                loadingBar(2000)
-                alertDialog("Gagal Mengirim Email!", "Pastikan anda menginputkan email dengan benar!", false)
-                // Jika gagal membuat akun baru, maka akan memunculkan toast error
+            } else{
+                return@setOnClickListener
             }
+
         }
 
         // Memanggil fungsi "emailFocusListener"

@@ -7,14 +7,17 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.widget.AppCompatImageView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity
 import com.wongtlaten.application.modules.pembeli.profile.UbahTeleponPembeliActivity
+import kotlin.properties.Delegates
 
 class UbahTeleponPenjualActivity : AppCompatActivity() {
 
     private lateinit var etTelepon: EditText
     private lateinit var btnSimpanPerubahan: Button
     private lateinit var telepon : String
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +25,7 @@ class UbahTeleponPenjualActivity : AppCompatActivity() {
 
         etTelepon = findViewById(R.id.etTelepon)
         btnSimpanPerubahan = findViewById(R.id.btnSimpanPerubahan)
+        checkClick = true
 
         val nama = intent.getStringExtra(NAMA)!!
         val kelamin = intent.getStringExtra(KELAMIN)!!
@@ -36,49 +40,61 @@ class UbahTeleponPenjualActivity : AppCompatActivity() {
 
         btnSimpanPerubahan.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val teleponInput = etTelepon.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-            // Jika teleponInput kosong maka akan muncul error harus isi terlebih dahulu
-            if (teleponInput.isEmpty()){
-                etTelepon.error = "Masukkan nomor telepon terlebih dahulu!"
-                etTelepon.requestFocus()
-                return@setOnClickListener
-            }
-            // Jika teleponInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
-            if(teleponInput.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())) {
-                etTelepon.error = "Tidak boleh ada simbol pada nomor telepon!"
-                etTelepon.requestFocus()
-                return@setOnClickListener
-            }
-            // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
-            if(teleponInput.matches(".*[a-z].*".toRegex())) {
-                etTelepon.error = "Tidak boleh ada huruf pada nomor telepon!"
-                etTelepon.requestFocus()
-                return@setOnClickListener
-            }
-            // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
-            if(teleponInput.length < 10) {
-                etTelepon.error = "Masukkan nomor telepon yang valid!"
-                etTelepon.requestFocus()
-                return@setOnClickListener
-            }
-            // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
-            if(teleponInput.length > 13) {
-                etTelepon.error = "Masukkan nomor telepon yang valid!"
-                etTelepon.requestFocus()
-                return@setOnClickListener
-            }
+                // Membuat variabel baru yang berisi inputan user
+                val teleponInput = etTelepon.text.toString().trim()
 
-            // Pindah ke UbahDataPribadiPenjualActivity
-            Intent(applicationContext, UbahDataPribadiPenjualActivity::class.java).also {
-                it.putExtra("NAMA", nama)
-                it.putExtra("KELAMIN", kelamin)
-                it.putExtra("EMAIL", email)
-                it.putExtra("TELEPON", teleponInput)
-                startActivity(it)
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                finish()
+                // Jika teleponInput kosong maka akan muncul error harus isi terlebih dahulu
+                if (teleponInput.isEmpty()){
+                    etTelepon.error = "Masukkan nomor telepon terlebih dahulu!"
+                    etTelepon.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                // Jika teleponInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
+                if(teleponInput.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())) {
+                    etTelepon.error = "Tidak boleh ada simbol pada nomor telepon!"
+                    etTelepon.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+                if(teleponInput.matches(".*[a-z].*".toRegex())) {
+                    etTelepon.error = "Tidak boleh ada huruf pada nomor telepon!"
+                    etTelepon.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+                if(teleponInput.length < 10) {
+                    etTelepon.error = "Masukkan nomor telepon yang valid!"
+                    etTelepon.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                // Jika teleponInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+                if(teleponInput.length > 13) {
+                    etTelepon.error = "Masukkan nomor telepon yang valid!"
+                    etTelepon.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+
+                // Pindah ke UbahDataPribadiPenjualActivity
+                Intent(applicationContext, UbahDataPribadiPenjualActivity::class.java).also {
+                    it.putExtra("NAMA", nama)
+                    it.putExtra("KELAMIN", kelamin)
+                    it.putExtra("EMAIL", email)
+                    it.putExtra("TELEPON", teleponInput)
+                    startActivity(it)
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                    finish()
+                    checkClick = true
+                }
+            } else{
+                return@setOnClickListener
             }
 
         }

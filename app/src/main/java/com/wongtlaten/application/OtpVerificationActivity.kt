@@ -50,6 +50,7 @@ class OtpVerificationActivity : AppCompatActivity() {
     private var minutes by Delegates.notNull<Long>()
     private var seconds by Delegates.notNull<Long>()
     private var timeInMilies by Delegates.notNull<Long>()
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         resendOtp = findViewById(R.id.resendOtp)
         timeLeft = findViewById(R.id.timeLeft)
         timeLeft.visibility = View.VISIBLE
+        checkClick = true
         startTimer()
 
         layoutResend.visibility = View.INVISIBLE
@@ -97,7 +99,12 @@ class OtpVerificationActivity : AppCompatActivity() {
         btnVerification = findViewById(R.id.btnVerifikasi)
 
         btnVerification.setOnClickListener {
-            cekOtp()
+            if (checkClick) {
+                checkClick = false
+                cekOtp()
+            } else{
+                return@setOnClickListener
+            }
         }
 
         init()
@@ -130,7 +137,10 @@ class OtpVerificationActivity : AppCompatActivity() {
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
                                     overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+                                    val loading = LoadingDialog(this@OtpVerificationActivity)
+                                    loading.isDissmis()
                                     finish()
+                                    checkClick = true
                                 }
                             }
                             else {
@@ -139,19 +149,24 @@ class OtpVerificationActivity : AppCompatActivity() {
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     startActivity(intent)
                                     overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+                                    val loading = LoadingDialog(this@OtpVerificationActivity)
+                                    loading.isDissmis()
                                     finish()
+                                    checkClick = true
                                 }
                             }
                         }
 
                         override fun onCancelled(error: DatabaseError) {
                             alertDialog("Gagal Login Ke Akun!", "error!", false)
+                            checkClick = true
                         }
 
                     })
                 } else{
                     loadingBar(2000)
                     alertDialog("Verifikasi OTP Tidak Berhasil!", "Silakan cek kembali kode OTP anda pada email yang terhubung dengan akun untuk melakukan verifikasi kode OTP!", false)
+                    checkClick = true
                 }
 
             }

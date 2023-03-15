@@ -7,11 +7,14 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.widget.AppCompatImageView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.core.LoadingDialog
+import kotlin.properties.Delegates
 
 class UbahNamaPembeliActivity : AppCompatActivity() {
 
     private lateinit var etNama: EditText
     private lateinit var btnSimpanPerubahan: Button
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,43 +28,54 @@ class UbahNamaPembeliActivity : AppCompatActivity() {
         val email = intent.getStringExtra(EMAIL)!!
         val telepon = intent.getStringExtra(TELEPON)!!
         val alamat = intent.getStringExtra(ALAMAT)!!
+        checkClick = true
 
         etNama.setText(nama)
 
         btnSimpanPerubahan.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val namaInput = etNama.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-            // Jika namaInput kosong maka akan muncul error harus isi terlebih dahulu
-            if (namaInput.isEmpty()){
-                etNama.error = "Masukkan nama terlebih dahulu!"
-                etNama.requestFocus()
-                return@setOnClickListener
-            }
-            // Jika namaInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
-            if(namaInput.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())) {
-                etNama.error = "Tidak boleh ada simbol pada nama!"
-                etNama.requestFocus()
-                return@setOnClickListener
-            }
-            // Jika namaInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
-            if(namaInput.matches(".*[0-9].*".toRegex())) {
-                etNama.error = "Tidak boleh ada angka pada nama!"
-                etNama.requestFocus()
-                return@setOnClickListener
-            }
+                // Membuat variabel baru yang berisi inputan user
+                val namaInput = etNama.text.toString().trim()
 
-            // Pindah ke UbahDataPribadiPembeliActivity
-            Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
-                it.putExtra("NAMA", namaInput)
-                it.putExtra("KELAMIN", kelamin)
-                it.putExtra("EMAIL", email)
-                it.putExtra("TELEPON", telepon)
-                it.putExtra("ALAMAT", alamat)
-                startActivity(it)
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                finish()
+                // Jika namaInput kosong maka akan muncul error harus isi terlebih dahulu
+                if (namaInput.isEmpty()){
+                    etNama.error = "Masukkan nama terlebih dahulu!"
+                    etNama.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                // Jika namaInput memiliki inputan symbol maka akan muncul error harus isi terlebih dahulu
+                if(namaInput.matches(".*[?=.*/><,!@#$%^&()_=+].*".toRegex())) {
+                    etNama.error = "Tidak boleh ada simbol pada nama!"
+                    etNama.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                // Jika namaInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+                if(namaInput.matches(".*[0-9].*".toRegex())) {
+                    etNama.error = "Tidak boleh ada angka pada nama!"
+                    etNama.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+
+                // Pindah ke UbahDataPribadiPembeliActivity
+                Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
+                    it.putExtra("NAMA", namaInput)
+                    it.putExtra("KELAMIN", kelamin)
+                    it.putExtra("EMAIL", email)
+                    it.putExtra("TELEPON", telepon)
+                    it.putExtra("ALAMAT", alamat)
+                    startActivity(it)
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                    finish()
+                    checkClick = true
+                }
+            } else{
+                return@setOnClickListener
             }
 
         }

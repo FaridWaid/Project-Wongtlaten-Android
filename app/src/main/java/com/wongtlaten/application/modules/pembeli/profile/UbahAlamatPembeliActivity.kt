@@ -10,11 +10,14 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.wongtlaten.application.R
 import com.wongtlaten.application.ResetPasswordActivity
+import com.wongtlaten.application.core.LoadingDialog
+import kotlin.properties.Delegates
 
 class UbahAlamatPembeliActivity : AppCompatActivity() {
 
     private lateinit var etAlamat: EditText
     private lateinit var btnSimpanPerubahan: Button
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +25,7 @@ class UbahAlamatPembeliActivity : AppCompatActivity() {
 
         etAlamat = findViewById(R.id.etAlamat)
         btnSimpanPerubahan = findViewById(R.id.btnSimpanPerubahan)
+        checkClick = true
 
         val nama = intent.getStringExtra(NAMA)!!
         val kelamin = intent.getStringExtra(KELAMIN)!!
@@ -33,26 +37,34 @@ class UbahAlamatPembeliActivity : AppCompatActivity() {
 
         btnSimpanPerubahan.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val alamatInput = etAlamat.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-            // Jika alamatInput kosong maka akan muncul error harus isi terlebih dahulu
-            if (alamatInput.isEmpty()){
-                etAlamat.error = "Masukkan alamat terlebih dahulu!"
-                etAlamat.requestFocus()
+                // Membuat variabel baru yang berisi inputan user
+                val alamatInput = etAlamat.text.toString().trim()
+
+                // Jika alamatInput kosong maka akan muncul error harus isi terlebih dahulu
+                if (alamatInput.isEmpty()){
+                    etAlamat.error = "Masukkan alamat terlebih dahulu!"
+                    etAlamat.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+
+                // Pindah ke UbahDataPribadiPembeliActivity
+                Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
+                    it.putExtra("NAMA", nama)
+                    it.putExtra("KELAMIN", kelamin)
+                    it.putExtra("EMAIL", email)
+                    it.putExtra("TELEPON", telepon)
+                    it.putExtra("ALAMAT", alamatInput)
+                    startActivity(it)
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                    finish()
+                    checkClick = true
+                }
+            } else{
                 return@setOnClickListener
-            }
-
-            // Pindah ke UbahDataPribadiPembeliActivity
-            Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {
-                it.putExtra("NAMA", nama)
-                it.putExtra("KELAMIN", kelamin)
-                it.putExtra("EMAIL", email)
-                it.putExtra("TELEPON", telepon)
-                it.putExtra("ALAMAT", alamatInput)
-                startActivity(it)
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                finish()
             }
 
         }

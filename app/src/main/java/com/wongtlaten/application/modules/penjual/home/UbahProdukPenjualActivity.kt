@@ -68,6 +68,7 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
     private var changePhoto2 by Delegates.notNull<Boolean>()
     private var changePhoto3 by Delegates.notNull<Boolean>()
     private var changePhoto4 by Delegates.notNull<Boolean>()
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +112,7 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
         imageUri2 = Uri.parse("android.resource://com.wongtlaten.application/drawable/picture")
         imageUri3 = Uri.parse("android.resource://com.wongtlaten.application/drawable/picture")
         imageUri4 = Uri.parse("android.resource://com.wongtlaten.application/drawable/picture")
+        checkClick = true
 
         hapusFoto.visibility = View.VISIBLE
 
@@ -198,76 +200,92 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
         }
 
         btnSimpan.setOnClickListener {
-            if (countPhoto == 0){
-                alertDialog("PERINGATAN!", "Silakan pilih foto produk terlebih dahulu!", false)
-            } else if (category== ""){
-                alertDialog("PERINGATAN!", "Silakan tambahkan kategori produk terlebih dahulu!", false)
-            } else {
 
-                // Membuat variabel baru yang berisi inputan user
-                val namaProduk = etNamaProduk.text.toString().trim()
-                val hargaProduk = etHargaProduk.text.toString().trim()
-                val stokInput = etStok.text.toString().trim()
-                val minimumPemesananInput = etMinimumPemesanan.text.toString().trim()
-                val beratInput = etBerat.text.toString().trim()
-                val deskripsiInput = etDeskripsi.text.toString().trim()
-                val dropDownJenisInput = autoCompleteJenis.text.toString().trim().toLowerCase()
-                val promoProduk = etPromoProduk.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-                // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
-                namaProdukContainer.helperText = validNamaProduk()
-                hargaProdukContainer.helperText = validHargaProduk()
-                promoProdukContainer.helperText = validPromoProduk()
+                if (countPhoto == 0){
+                    alertDialog("PERINGATAN!", "Silakan pilih foto produk terlebih dahulu!", false)
+                    checkClick = true
+                } else if (category== ""){
+                    alertDialog("PERINGATAN!", "Silakan tambahkan kategori produk terlebih dahulu!", false)
+                    checkClick = true
+                } else {
 
-                // Jika sudah benar, maka helper pada edittext diisikan dengan null
-                val validNamaProduk = namaProdukContainer.helperText == null
-                val validHargaProduk = hargaProdukContainer.helperText == null
-                val validPromoProduk = promoProdukContainer.helperText == null
+                    // Membuat variabel baru yang berisi inputan user
+                    val namaProduk = etNamaProduk.text.toString().trim()
+                    val hargaProduk = etHargaProduk.text.toString().trim()
+                    val stokInput = etStok.text.toString().trim()
+                    val minimumPemesananInput = etMinimumPemesanan.text.toString().trim()
+                    val beratInput = etBerat.text.toString().trim()
+                    val deskripsiInput = etDeskripsi.text.toString().trim()
+                    val dropDownJenisInput = autoCompleteJenis.text.toString().trim().toLowerCase()
+                    val promoProduk = etPromoProduk.text.toString().trim()
 
-                // Jika semua sudah diisi maka akan melakukan "addNewProduct"
-                if (validNamaProduk && validHargaProduk && validPromoProduk) {
-                    // Jika stokInput kosong maka akan muncul error harus isi terlebih dahulu
-                    if (stokInput.isEmpty()){
-                        etStok.error = "Masukkan jumlah stok produk terlebih dahulu!"
-                        etStok.requestFocus()
-                        return@setOnClickListener
+                    // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
+                    namaProdukContainer.helperText = validNamaProduk()
+                    hargaProdukContainer.helperText = validHargaProduk()
+                    promoProdukContainer.helperText = validPromoProduk()
+
+                    // Jika sudah benar, maka helper pada edittext diisikan dengan null
+                    val validNamaProduk = namaProdukContainer.helperText == null
+                    val validHargaProduk = hargaProdukContainer.helperText == null
+                    val validPromoProduk = promoProdukContainer.helperText == null
+
+                    // Jika semua sudah diisi maka akan melakukan "addNewProduct"
+                    if (validNamaProduk && validHargaProduk && validPromoProduk) {
+                        // Jika stokInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (stokInput.isEmpty()){
+                            etStok.error = "Masukkan jumlah stok produk terlebih dahulu!"
+                            etStok.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika minimumPemesananInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (minimumPemesananInput.isEmpty()){
+                            etMinimumPemesanan.error = "Masukkan jumlah minimum pemesanan produk terlebih dahulu!"
+                            etMinimumPemesanan.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (beratInput.isEmpty()){
+                            etBerat.error = "Masukkan berat produk terlebih dahulu!"
+                            etBerat.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika deskripsiInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (deskripsiInput.isEmpty()){
+                            etDeskripsi.error = "Masukkan deskripsi produk terlebih dahulu!"
+                            etDeskripsi.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (dropDownJenisInput == "pilih jenis produk"){
+                            autoCompleteJenis.error = "Silakan pilih jenis produk terlebih dahulu!"
+                            autoCompleteJenis.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+                        addNewProduct(imageUri1, imageUri2, imageUri3, imageUri4, namaProduk, hargaProduk, stokInput, minimumPemesananInput, beratInput, category, deskripsiInput, dropDownJenisInput, promoProduk)
+                        loadingBar(12000)
+                    }else {
+                        loadingBar(1000)
+                        alertDialog("GAGAL!", "Produk baru gagal ditambahkan, silakan isi nama dan harga produk terlebih dahulu!", false)
+                        checkClick = true
                     }
-
-                    // Jika minimumPemesananInput kosong maka akan muncul error harus isi terlebih dahulu
-                    if (minimumPemesananInput.isEmpty()){
-                        etMinimumPemesanan.error = "Masukkan jumlah minimum pemesanan produk terlebih dahulu!"
-                        etMinimumPemesanan.requestFocus()
-                        return@setOnClickListener
-                    }
-
-                    // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
-                    if (beratInput.isEmpty()){
-                        etBerat.error = "Masukkan berat produk terlebih dahulu!"
-                        etBerat.requestFocus()
-                        return@setOnClickListener
-                    }
-
-                    // Jika deskripsiInput kosong maka akan muncul error harus isi terlebih dahulu
-                    if (deskripsiInput.isEmpty()){
-                        etDeskripsi.error = "Masukkan deskripsi produk terlebih dahulu!"
-                        etDeskripsi.requestFocus()
-                        return@setOnClickListener
-                    }
-
-                    // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
-                    if (dropDownJenisInput == "pilih jenis produk"){
-                        autoCompleteJenis.error = "Silakan pilih jenis produk terlebih dahulu!"
-                        autoCompleteJenis.requestFocus()
-                        return@setOnClickListener
-                    }
-                    addNewProduct(imageUri1, imageUri2, imageUri3, imageUri4, namaProduk, hargaProduk, stokInput, minimumPemesananInput, beratInput, category, deskripsiInput, dropDownJenisInput, promoProduk)
-                    loadingBar(12000)
-                }else {
-                    loadingBar(1000)
-                    alertDialog("GAGAL!", "Produk baru gagal ditambahkan, silakan isi nama dan harga produk terlebih dahulu!", false)
                 }
-
+            } else{
+                return@setOnClickListener
             }
+
+
         }
 
         // Ketika "backButton" di klik
@@ -301,8 +319,10 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
             reference.setValue(productUpdate).addOnCompleteListener {
                 if (it.isSuccessful){
                     alertDialog("BERHASIL!", "Produk baru berhasil di ubah!", true)
+                    checkClick = true
                 } else {
                     alertDialog("GAGAL!", "Produk baru gagal di ubah!", false)
+                    checkClick = true
                 }
             }
         } else if (!changePhoto3){
@@ -315,8 +335,10 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
                     reference.setValue(productUpdate).addOnCompleteListener {
                         if (it.isSuccessful){
                             alertDialog("BERHASIL!", "Produk baru berhasil di ubah!", true)
+                            checkClick = true
                         } else {
                             alertDialog("GAGAL!", "Produk baru gagal di ubah!", false)
+                            checkClick = true
                         }
                     }
                 }
@@ -336,8 +358,10 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
                                     alertDialog("BERHASIL!", "Produk baru berhasil ditambahkan!", true)
+                                    checkClick = true
                                 } else {
                                     alertDialog("GAGAL!", "Produk baru gagal ditambahkan!", false)
+                                    checkClick = true
                                 }
                             }
                         }
@@ -364,8 +388,10 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
                                     reference.setValue(productUpdate).addOnCompleteListener {
                                         if (it.isSuccessful){
                                             alertDialog("BERHASIL!", "Produk baru berhasil ditambahkan!", true)
+                                            checkClick = true
                                         } else {
                                             alertDialog("GAGAL!", "Produk baru gagal ditambahkan!", false)
+                                            checkClick = true
                                         }
                                     }
                                 }
@@ -398,8 +424,10 @@ class UbahProdukPenjualActivity : AppCompatActivity() {
                                             reference.setValue(productUpdate).addOnCompleteListener {
                                                 if (it.isSuccessful){
                                                     alertDialog("BERHASIL!", "Produk baru berhasil ditambahkan!", true)
+                                                    checkClick = true
                                                 } else {
                                                     alertDialog("GAGAL!", "Produk baru gagal ditambahkan!", false)
+                                                    checkClick = true
                                                 }
                                             }
                                         }

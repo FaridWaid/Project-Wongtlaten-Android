@@ -54,7 +54,6 @@ class NewViewPagerAdapter(val list: ArrayList<Products>, val method: SearchPembe
                     val moveIntent = Intent(itemView.context, DetailProdukPembeliActivity::class.java)
                     moveIntent.putExtra(DetailProdukPembeliActivity.EXTRA_ID_PRODUCT, products.idProduct)
                     itemView.context.startActivity(moveIntent)
-                    method.animationToLeft()
                 }
 
             }

@@ -25,6 +25,7 @@ import com.wongtlaten.application.core.AttemptLogin
 import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.LoadingDialog
 import java.util.regex.Pattern
+import kotlin.properties.Delegates
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -42,6 +43,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var etPassword: TextInputEditText
     private lateinit var passwordContainer: TextInputLayout
     private lateinit var btnRegistrasi: Button
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +57,15 @@ class RegisterActivity : AppCompatActivity() {
         etPassword = findViewById(R.id.etPassword)
         passwordContainer = findViewById(R.id.passwordContainer)
         btnRegistrasi = findViewById(R.id.btnRegistrasi)
+        checkClick = true
 
         textLogin.setOnClickListener {
             // Pindah ke LoginActivity
             Intent(applicationContext, LoginActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                val loading = LoadingDialog(this@RegisterActivity)
+                loading.isDissmis()
                 finish()
             }
         }
@@ -79,31 +84,40 @@ class RegisterActivity : AppCompatActivity() {
         // Ketika "btnRegistrasi" di klik maka akan mencoba mendaftarkan akun baru
         btnRegistrasi.setOnClickListener {
 
-            // Membuat variabel baru yang berisi inputan user
-            val username = etUsername.text.toString().trim()
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
+            if (checkClick) {
+                checkClick = false
 
-            // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
-            emailContainer.helperText = validEmail()
-            passwordContainer.helperText = validPassword()
-            usernameContainer.helperText = validUsername()
+                // Membuat variabel baru yang berisi inputan user
+                val username = etUsername.text.toString().trim()
+                val email = etEmail.text.toString().trim()
+                val password = etPassword.text.toString().trim()
 
-            // Jika sudah benar, maka helper pada edittext diisikan dengan null
-            val validEmail = emailContainer.helperText == null
-            val validPassword = passwordContainer.helperText == null
-            val validUsername = usernameContainer.helperText == null
+                // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
+                emailContainer.helperText = validEmail()
+                passwordContainer.helperText = validPassword()
+                usernameContainer.helperText = validUsername()
 
-            // Jika semua sudah diisi maka akan melakukan "createNewUser"
-            if (validEmail && validPassword && validUsername) {
-                // Memanggil fungsi "createNewUser" dengan membawa variabel ("username","email","password"),
-                // Fungsi ini digunakan untuk membuat user baru
-                createNewUser(username, email, password)
-                loadingBar(6000)
-            }else {
-                loadingBar(1000)
-                alertDialog("Gagal membuat akun!", "Pastikan anda menginputkan nama, email, dan password dengan benar!", false)
+                // Jika sudah benar, maka helper pada edittext diisikan dengan null
+                val validEmail = emailContainer.helperText == null
+                val validPassword = passwordContainer.helperText == null
+                val validUsername = usernameContainer.helperText == null
+
+                // Jika semua sudah diisi maka akan melakukan "createNewUser"
+                if (validEmail && validPassword && validUsername) {
+                    // Memanggil fungsi "createNewUser" dengan membawa variabel ("username","email","password"),
+                    // Fungsi ini digunakan untuk membuat user baru
+                    createNewUser(username, email, password)
+                    loadingBar(6000)
+                }else {
+                    loadingBar(1000)
+                    alertDialog("Gagal membuat akun!", "Pastikan anda menginputkan nama, email, dan password dengan benar!", false)
+                    checkClick = true
+                }
+            } else {
+                return@setOnClickListener
             }
+
+
         }
 
     }
@@ -149,11 +163,15 @@ class RegisterActivity : AppCompatActivity() {
                                                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                                 startActivity(intent)
                                                                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                                                                val loading = LoadingDialog(this@RegisterActivity)
+                                                                loading.isDissmis()
                                                                 finish()
                                                             }
                                                             Toast.makeText(this,"Silakan buka email anda untuk memverifikasi akun yang anda buat!",Toast.LENGTH_SHORT).show()
+                                                            checkClick = true
                                                         } else {
                                                             alertDialog("Gagal Memverifikasi Akun!", "Pastikan anda menginputkan email dengan benar!", false)
+                                                            checkClick = true
                                                         }
                                                     }
                                                 }
@@ -162,6 +180,7 @@ class RegisterActivity : AppCompatActivity() {
                                     } else {
                                         // Jika gagal menambahkan child baru ke realtime database, maka akan memunculkan toast gagal
                                         alertDialog("Gagal membuat akun!", "Pastikan anda menginputkan nama, email, dan password dengan benar!", false)
+                                        checkClick = true
                                     }
                                 })
                         }
@@ -169,6 +188,7 @@ class RegisterActivity : AppCompatActivity() {
                 } else{
                     // Jika gagal membuat akun baru, maka akan memunculkan toast error
                     alertDialog("Gagal membuat akun!", "Email yang anda inputkan sudah terdaftar!", false)
+                    checkClick = true
                 }
             }
     }
