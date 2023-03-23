@@ -15,6 +15,7 @@ class HomePenjualFragment : Fragment() {
 
     // Mendefinisikan variabel global dari view
     private lateinit var fiturPengelolaanProduk: CardView
+    private lateinit var fiturKustomisasiProduk: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,11 +29,20 @@ class HomePenjualFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         fiturPengelolaanProduk = view.findViewById(R.id.itemFitur1)
+        fiturKustomisasiProduk = view.findViewById(R.id.itemFitur5)
 
         fiturPengelolaanProduk.setOnClickListener {
             // Jika berhasil maka akan pindah ke DaftarProdukPenjualActivity
             requireActivity().run{
                 startActivity(Intent(this, DaftarProdukPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        fiturKustomisasiProduk.setOnClickListener {
+            // Jika berhasil maka akan pindah ke KustomisasiProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, KustomisasiProdukPenjualActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
             }
         }

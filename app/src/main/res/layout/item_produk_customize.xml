@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/namaProdukCustomize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Totebag"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="14sp"
+        android:textColor="@color/yankes_blue"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/deskripsiProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Deskripsi Produk"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
+        android:textColor="@color/textfield"
+        app:layout_constraintTop_toBottomOf="@id/namaProdukCustomize"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/hargaProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Rp. 20.000"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="12sp"
+        android:textColor="@color/yankes_blue"
+        app:layout_constraintTop_toBottomOf="@id/deskripsiProduk"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textStok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Stok: "
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
+        android:textColor="@color/textfield"
+        app:layout_constraintTop_toBottomOf="@id/hargaProduk"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/stok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="20"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
+        android:textColor="@color/yankes_blue"
+        app:layout_constraintTop_toBottomOf="@id/hargaProduk"
+        app:layout_constraintStart_toEndOf="@id/textStok" />
+
+    <ImageView
+        android:id="@+id/imageProduk"
+        android:layout_width="130dp"
+        android:layout_height="120dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/unboxing2"
+        app:layout_constraintTop_toTopOf="@id/namaProdukCustomize"
+        app:layout_constraintBottom_toBottomOf="@id/stok"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnTambahProduk"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:visibility="visible"
+        android:text="TAMBAH"
+        app:backgroundTint="@null"
+        app:cornerRadius="15dp"
+        app:strokeColor="@color/secondary"
+        app:strokeWidth="2dp"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:fontFamily="@font/poppins_bold"
+        android:backgroundTint="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/imageProduk"
+        app:layout_constraintEnd_toEndOf="@id/imageProduk"
+        app:layout_constraintTop_toBottomOf="@id/imageProduk" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnMinus"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:visibility="invisible"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/button_minus"
+        app:layout_constraintStart_toStartOf="@id/imageProduk"
+        app:layout_constraintTop_toBottomOf="@id/imageProduk" />
+
+    <TextView
+        android:id="@+id/countProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:text="1"
+        android:textSize="18sp"
+        android:textColor="@color/yankes_blue"
+        android:fontFamily="@font/poppins_regular"
+        app:layout_constraintTop_toTopOf="@id/btnPlus"
+        app:layout_constraintBottom_toBottomOf="@id/btnPlus"
+        app:layout_constraintStart_toEndOf="@id/btnMinus"
+        app:layout_constraintEnd_toStartOf="@id/btnPlus" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnPlus"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="5dp"
+        android:visibility="invisible"
+        android:src="@drawable/button_plus"
+        app:layout_constraintEnd_toEndOf="@id/imageProduk"
+        app:layout_constraintTop_toBottomOf="@id/imageProduk" />
+
+    <View
+        android:id="@+id/line_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toBottomOf="@id/btnTambahProduk"
+        android:background="@color/card" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

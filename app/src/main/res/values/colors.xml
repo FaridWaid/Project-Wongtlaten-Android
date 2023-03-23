@@ -15,5 +15,7 @@
     <color name="space">#B4AEE8</color>
     <color name="yellow">#FFFBAC</color>
     <color name="green">#CEEDC7</color>
+    <color name="red">#FF7878</color>
     <color name="gold">#FFD700</color>
+    <color name="background">#F9F9F9</color>
 </resources>

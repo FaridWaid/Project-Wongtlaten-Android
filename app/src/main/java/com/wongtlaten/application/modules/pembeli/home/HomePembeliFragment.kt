@@ -27,16 +27,18 @@ class HomePembeliFragment : Fragment() {
 
     // Mendefinisikan variabel global dari view
     private lateinit var etSearch: EditText
-    private lateinit var itemFiturChat: CardView
     private lateinit var fsViewPager: ViewPager2
     private lateinit var daftarFsList: ArrayList<Products>
     private lateinit var adapterFs: FsViewPagerAdapter
+    private lateinit var seeAllFs: TextView
     private lateinit var newViewPager: ViewPager2
     private lateinit var daftarNewList: ArrayList<Products>
     private lateinit var adapterNew: NewViewPagerAdapter
+    private lateinit var seeAllNew: TextView
     private lateinit var popularViewPager: ViewPager2
     private lateinit var daftarPopularList: ArrayList<Products>
     private lateinit var adapterPopular: PopularViewPagerAdapter
+    private lateinit var seeAllPopular: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +57,7 @@ class HomePembeliFragment : Fragment() {
         fsViewPager.offscreenPageLimit = 3
         fsViewPager.getChildAt(0)
         fsViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        seeAllFs = view.findViewById(R.id.seeAllFs)
 
         newViewPager = view.findViewById(R.id.newViewPager)
         newViewPager.clipToPadding = false
@@ -62,6 +65,7 @@ class HomePembeliFragment : Fragment() {
         newViewPager.offscreenPageLimit = 3
         newViewPager.getChildAt(0)
         newViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        seeAllNew = view.findViewById(R.id.seeAllNew)
 
         popularViewPager = view.findViewById(R.id.popularViewPager)
         popularViewPager.clipToPadding = false
@@ -69,6 +73,7 @@ class HomePembeliFragment : Fragment() {
         popularViewPager.offscreenPageLimit = 3
         popularViewPager.getChildAt(0)
         popularViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        seeAllPopular = view.findViewById(R.id.seeAllPopular)
 
         daftarFsList = arrayListOf<Products>()
         daftarNewList = arrayListOf<Products>()
@@ -76,14 +81,29 @@ class HomePembeliFragment : Fragment() {
 
         showListProduk()
 
-//        itemFiturChat = view.findViewById(R.id.itemFiturChat)
-//        itemFiturChat.setOnClickListener {
-//            // Jika berhasil maka akan pindah ke DetailProdukPembeliActivity
-//            requireActivity().run{
-//                startActivity(Intent(this, DetailProdukPembeliActivity::class.java))
-//                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-//            }
-//        }
+        seeAllFs.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, FlashSaleActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        seeAllNew.setOnClickListener {
+            // Jika berhasil maka akan pindah ke NewActivity
+            requireActivity().run{
+                startActivity(Intent(this, NewActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        seeAllPopular.setOnClickListener {
+            // Jika berhasil maka akan pindah ke PopularActivity
+            requireActivity().run{
+                startActivity(Intent(this, PopularActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
 
         etSearch = view.findViewById(R.id.et_search)
         etSearch.setOnClickListener {

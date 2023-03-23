@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:paddingBottom="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/closeButton"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageKustomisasi"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/unboxing2"
+        app:layout_constraintTop_toBottomOf="@id/closeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/textProduk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/yankes_blue"
+        android:text="Nama Produk"
+        app:layout_constraintTop_toBottomOf="@id/imageKustomisasi"
+        app:layout_constraintStart_toStartOf="@id/closeButton"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textDeskripsiProduk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/textfield"
+        android:text="Deskripsi Produk"
+        app:layout_constraintTop_toBottomOf="@id/textProduk"
+        app:layout_constraintStart_toStartOf="@id/closeButton"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textHargaProduk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/yankes_blue"
+        android:text="Harga Produk"
+        app:layout_constraintTop_toBottomOf="@id/textDeskripsiProduk"
+        app:layout_constraintStart_toStartOf="@id/closeButton"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textBeratProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/textfield"
+        android:text="Berat: "
+        app:layout_constraintTop_toBottomOf="@id/textHargaProduk"
+        app:layout_constraintStart_toStartOf="@id/closeButton" />
+
+    <TextView
+        android:id="@+id/beratProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/yankes_blue"
+        android:text="1 kg"
+        app:layout_constraintTop_toBottomOf="@id/textHargaProduk"
+        app:layout_constraintStart_toEndOf="@id/textBeratProduk" />
+
+    <TextView
+        android:id="@+id/textStokProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/textfield"
+        android:text="Stok: "
+        app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+        app:layout_constraintStart_toStartOf="@id/closeButton" />
+
+    <TextView
+        android:id="@+id/stokProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="12sp"
+        android:textAlignment="textStart"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/yankes_blue"
+        android:text="20"
+        app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+        app:layout_constraintStart_toEndOf="@id/textStokProduk" />
+
+    <TextView
+        android:id="@+id/textKategori"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_marginStart="16dp"
+        android:text="KATEGORI"
+        android:gravity="center"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="11sp"
+        android:textColor="@color/white"
+        android:background="@drawable/background_kategori_kustomisasi"
+        app:layout_constraintTop_toTopOf="@id/stokProduk"
+        app:layout_constraintBottom_toBottomOf="@id/stokProduk"
+        app:layout_constraintStart_toEndOf="@id/stokProduk" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
