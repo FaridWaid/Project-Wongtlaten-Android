@@ -33,7 +33,7 @@ class FlashSaleActivity : AppCompatActivity() {
         // Memasukkan data DaftarProduk ke dalam "daftarFsList" sebagai array list
         daftarFsList = arrayListOf<Products>()
 
-        adapterFs = FsAdapter(daftarFsList, this@FlashSaleActivity)
+        adapterFs = FsAdapter(daftarFsList)
 
         // Memanggil fungsi "showListProduct" yang digunakan untuk menampilkan recyclerview dari data yang sudah ada,
         // pada list
@@ -64,7 +64,7 @@ class FlashSaleActivity : AppCompatActivity() {
                         }
                     }
 
-                    adapterFs = FsAdapter(daftarFsList, FlashSaleActivity())
+                    adapterFs = FsAdapter(daftarFsList)
                     rvDaftarProduk.adapter = adapterFs
                 }
             }

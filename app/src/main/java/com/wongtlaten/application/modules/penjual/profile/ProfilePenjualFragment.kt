@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.LoginActivity
+import com.wongtlaten.application.PrediksiOngkirActivity
 import com.wongtlaten.application.R
 import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.LoadingDialog
@@ -35,6 +36,7 @@ class ProfilePenjualFragment : Fragment() {
     private lateinit var photoProfil: CircleImageView
     private lateinit var nextDataPribadi: AppCompatImageView
     private lateinit var nextKeamanan: AppCompatImageView
+    private lateinit var nextPrediksiOngkir: AppCompatImageView
     private lateinit var nextLogout: AppCompatImageView
 
     override fun onCreateView(
@@ -65,6 +67,7 @@ class ProfilePenjualFragment : Fragment() {
         photoProfil = view.findViewById(R.id.ivProfile)
         nextDataPribadi = view.findViewById(R.id.iconNextDataPribadi)
         nextKeamanan = view.findViewById(R.id.iconNextKeamanan)
+        nextPrediksiOngkir = view.findViewById(R.id.iconNextPrediksiOngkir)
         nextLogout = view.findViewById(R.id.iconNextLogout)
 
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
@@ -94,6 +97,14 @@ class ProfilePenjualFragment : Fragment() {
             // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
             requireActivity().run{
                 startActivity(Intent(this, ProfileKeamananPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        nextPrediksiOngkir.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPembeliActivity
+            requireActivity().run{
+                startActivity(Intent(this, PrediksiOngkirActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
             }
         }

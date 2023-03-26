@@ -21,6 +21,8 @@ import com.google.firebase.database.ValueEventListener
 import com.wongtlaten.application.R
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.modules.pembeli.profile.ProfileDataPribadiPembeliActivity
+import com.wongtlaten.application.modules.pembeli.wishlist.KeranjangPembeliActivity
+import com.wongtlaten.application.modules.pembeli.wishlist.PembayaranPembeliActivity
 import com.wongtlaten.application.modules.penjual.home.RecomViewPagerAdapter
 
 class HomePembeliFragment : Fragment() {
@@ -39,6 +41,8 @@ class HomePembeliFragment : Fragment() {
     private lateinit var daftarPopularList: ArrayList<Products>
     private lateinit var adapterPopular: PopularViewPagerAdapter
     private lateinit var seeAllPopular: TextView
+    private lateinit var itemFiturCart: CardView
+    private lateinit var itemFiturPayment: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +54,9 @@ class HomePembeliFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        itemFiturCart = view.findViewById(R.id.itemFiturCart)
+        itemFiturPayment = view.findViewById(R.id.itemFiturPayment)
 
         fsViewPager = view.findViewById(R.id.flashSaleViewPager)
         fsViewPager.clipToPadding = false
@@ -80,6 +87,22 @@ class HomePembeliFragment : Fragment() {
         daftarPopularList = arrayListOf<Products>()
 
         showListProduk()
+
+        itemFiturCart.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, KeranjangPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        itemFiturPayment.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, PembayaranPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
 
         seeAllFs.setOnClickListener {
             // Jika berhasil maka akan pindah ke FlashSaleActivity

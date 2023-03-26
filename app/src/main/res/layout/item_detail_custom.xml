@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageProduk"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/acrylic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="5dp" />
+
+    <TextView
+        android:id="@+id/nameProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:text="Bouquet Type 1"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/yankes_blue"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imageProduk" />
+
+    <TextView
+        android:id="@+id/countProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="1 produk"
+        android:textSize="11sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/textfield"
+        app:layout_constraintTop_toBottomOf="@id/nameProduk"
+        app:layout_constraintStart_toEndOf="@id/imageProduk" />
+
+    <View
+        android:id="@+id/line_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toBottomOf="@id/imageProduk"
+        android:background="@color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

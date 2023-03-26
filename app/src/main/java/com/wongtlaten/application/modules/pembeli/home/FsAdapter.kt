@@ -16,7 +16,7 @@ import com.wongtlaten.application.core.Products
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
-class FsAdapter (val list: ArrayList<Products>, val method: Activity): RecyclerView.Adapter<FsAdapter.DaftarViewHolder>() {
+class FsAdapter (val list: ArrayList<Products>): RecyclerView.Adapter<FsAdapter.DaftarViewHolder>() {
 
     // Membuat class DaftarViewHolder yang digunakan untuk set view yang akan ditampilkan,
     // Menggunakan picasso untuk loading image

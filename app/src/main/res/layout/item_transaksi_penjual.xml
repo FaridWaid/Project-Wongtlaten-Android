@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iconBag"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/shopping_bag3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/typeProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:text="Type Produk"
+                android:textColor="@color/yankes_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iconBag" />
+
+            <TextView
+                android:id="@+id/datePemesanan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:text="tanggal bulan tahun"
+                android:textColor="@color/textfield"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="10sp"
+                app:layout_constraintTop_toBottomOf="@id/typeProduk"
+                app:layout_constraintStart_toEndOf="@id/iconBag" />
+
+            <TextView
+                android:id="@+id/statusPembayaranBelumLunas"
+                android:layout_width="80dp"
+                android:layout_height="22dp"
+                android:text="Belum Lunas"
+                android:visibility="invisible"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:background="@drawable/rounded_border_status"
+                app:layout_constraintTop_toTopOf="@id/typeProduk"
+                app:layout_constraintBottom_toBottomOf="@id/datePemesanan"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/statusPembayaranLunas"
+                android:layout_width="80dp"
+                android:layout_height="22dp"
+                android:text="Lunas"
+                android:visibility="visible"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:background="@drawable/rounded_border_status2"
+                app:layout_constraintTop_toTopOf="@id/typeProduk"
+                app:layout_constraintBottom_toBottomOf="@id/datePemesanan"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/statusTransaksi"
+                android:layout_width="80dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="5dp"
+                android:text="Status"
+                android:visibility="visible"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:background="@drawable/rounded_border_status3"
+                app:layout_constraintTop_toTopOf="@id/typeProduk"
+                app:layout_constraintBottom_toBottomOf="@id/datePemesanan"
+                app:layout_constraintEnd_toStartOf="@id/statusPembayaranLunas"/>
+
+            <View
+                android:id="@+id/line_1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentTop="true"
+                app:layout_constraintTop_toBottomOf="@id/iconBag"
+                android:background="@color/card2" />
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageProduk"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/acrylic"
+                app:layout_constraintTop_toBottomOf="@id/line_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:riv_corner_radius="5dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/imageProduk"
+                app:layout_constraintTop_toTopOf="@id/imageProduk"
+                app:layout_constraintBottom_toBottomOf="@id/imageProduk">
+
+                <TextView
+                    android:id="@+id/nameProduk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="nama produk"
+                    android:textColor="@color/cool_blue"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular" />
+
+                <TextView
+                    android:id="@+id/countProduk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="count produk"
+                    android:textColor="@color/textfield"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/poppins_regular" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textTotalPembayaran"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Total pembayaran"
+                android:textColor="@color/textfield"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toBottomOf="@id/layoutText"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/totalPembayaran"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Rp. xx.xxx"
+                android:textColor="@color/cool_blue"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"
+                app:layout_constraintTop_toBottomOf="@id/textTotalPembayaran"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/textProdukLainnya"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="+1 produk lainnya"
+                android:textColor="@color/textfield"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toBottomOf="@id/textTotalPembayaran"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <View
+                android:id="@+id/line_3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentTop="true"
+                app:layout_constraintTop_toBottomOf="@id/totalPembayaran"
+                android:background="@color/card2" />
+
+            <TextView
+                android:id="@+id/textIdTransaksi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="idTransaksi"
+                android:textColor="@color/textfield"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="10sp"
+                app:layout_constraintTop_toBottomOf="@id/line_3"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textNamaPemesan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Pemesan"
+                android:textColor="@color/textfield"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="10sp"
+                app:layout_constraintTop_toBottomOf="@id/textIdTransaksi"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/idTransaksi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="idTransaksi"
+                android:textColor="@color/yankes_blue"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="10sp"
+                app:layout_constraintTop_toBottomOf="@id/line_3"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/namaPemesan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Pemesan"
+                android:textColor="@color/yankes_blue"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="10sp"
+                app:layout_constraintTop_toBottomOf="@id/textIdTransaksi"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:id="@+id/line_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toBottomOf="@id/cardHeader"
+        android:background="@color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
