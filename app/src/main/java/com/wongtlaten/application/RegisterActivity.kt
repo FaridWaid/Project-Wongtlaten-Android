@@ -11,18 +11,16 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import at.favre.lib.crypto.bcrypt.BCrypt
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.wongtlaten.application.core.AttemptLogin
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.LoadingDialog
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
@@ -64,8 +62,8 @@ class RegisterActivity : AppCompatActivity() {
             Intent(applicationContext, LoginActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                val loading = LoadingDialog(this@RegisterActivity)
-                loading.isDissmis()
+//                val loading = LoadingDialog(this@RegisterActivity)
+//                loading.isDissmis()
                 finish()
             }
         }
@@ -145,7 +143,7 @@ class RegisterActivity : AppCompatActivity() {
                                     // Mendapatkan token baru
                                     val token = task.result
                                     // Membuat variabel "newUser" yang berisikan beberapa data dan data tersebut diinputkan ke dalam Users
-                                    val newUser = Customers(idCustomers!!, username, "", "", email, downloadUrl.toString(), "", 0, "customers", token!!, "active", "inactive")
+                                    val newUser = Users(idCustomers!!, username, "", "", email, downloadUrl.toString(), "", 0, "customers", token!!, "active", "inactive")
                                     // Jika idUser tidak null/kosong
                                     if (idCustomers != null){
                                         // Membuat suatu child realtime database baru dengan child = "idUser",

@@ -16,9 +16,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.LoginActivity
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.LoadingDialog
-import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity.Companion.NAMA
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlin.properties.Delegates
 
@@ -84,10 +83,10 @@ class UbahDataPribadiPembeliActivity : AppCompatActivity() {
         // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val customers = dataSnapshot.getValue(Customers::class.java)!!
-                oldEmail = customers.email
-                if (customers.photoProfil != ""){
-                    Picasso.get().load(customers.photoProfil).into(photoProfil)
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                oldEmail = users.email
+                if (users.photoProfil != ""){
+                    Picasso.get().load(users.photoProfil).into(photoProfil)
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -237,9 +236,9 @@ class UbahDataPribadiPembeliActivity : AppCompatActivity() {
             // Mengupdate child yang ada pada reference dengan inputan baru,
             val menuListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val customers = dataSnapshot.getValue(Customers::class.java)!!
-                    val customersUpdate = Customers(userIdentity.uid, nama, kelamin, alamat, email, customers.photoProfil, telepon, customers.jumlahTransaksi, customers.accessLevel, customers.token, customers.status, customers.checkOtp)
-                    referen.setValue(customersUpdate).addOnCompleteListener {
+                    val users = dataSnapshot.getValue(Users::class.java)!!
+                    val usersUpdate = Users(userIdentity.uid, nama, kelamin, alamat, email, users.photoProfil, telepon, users.jumlahTransaksi, users.accessLevel, users.token, users.status, users.checkOtp)
+                    referen.setValue(usersUpdate).addOnCompleteListener {
                         if (it.isSuccessful){
                         } else{
                             alertDialog("Gagal Mengubah Data Pribadi!", "${it.exception?.message}", false)
@@ -261,9 +260,9 @@ class UbahDataPribadiPembeliActivity : AppCompatActivity() {
                     // Mengupdate child yang ada pada reference dengan inputan baru,
                     val menuListener = object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
-                            val customers = dataSnapshot.getValue(Customers::class.java)!!
-                            val customersUpdate = Customers(userIdentity.uid, nama, kelamin, alamat, email, downloadUrl.toString(), telepon, customers.jumlahTransaksi, customers.accessLevel, customers.token, customers.status, customers.checkOtp)
-                            referen.setValue(customersUpdate).addOnCompleteListener {
+                            val users = dataSnapshot.getValue(Users::class.java)!!
+                            val usersUpdate = Users(userIdentity.uid, nama, kelamin, alamat, email, downloadUrl.toString(), telepon, users.jumlahTransaksi, users.accessLevel, users.token, users.status, users.checkOtp)
+                            referen.setValue(usersUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
                                 } else{
                                     alertDialog("Gagal Mengubah Data Pribadi!", "${it.exception?.message}", false)

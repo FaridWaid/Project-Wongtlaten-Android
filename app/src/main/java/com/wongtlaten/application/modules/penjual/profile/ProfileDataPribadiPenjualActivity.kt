@@ -13,10 +13,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.modules.pembeli.profile.ProfileDataPribadiPembeliActivity
-import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ProfileDataPribadiPenjualActivity : AppCompatActivity() {
@@ -108,27 +107,27 @@ class ProfileDataPribadiPenjualActivity : AppCompatActivity() {
         // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val customers = dataSnapshot.getValue(Customers::class.java)!!
-                textUid.text = customers.idCustomers
-                textNama.text = customers.username
-                nama = customers.username
-                if (customers.kelamin == ""){
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                textUid.text = users.idUsers
+                textNama.text = users.username
+                nama = users.username
+                if (users.kelamin == ""){
                     textKelamin.text = "belum diisi"
                     kelamin = "belum diisi"
                 } else{
-                    textKelamin.text = customers.kelamin
-                    kelamin = customers.kelamin
+                    textKelamin.text = users.kelamin
+                    kelamin = users.kelamin
                 }
-                textEmail.text = customers.email
-                email = customers.email
-                if (customers.noTelp == ""){
+                textEmail.text = users.email
+                email = users.email
+                if (users.noTelp == ""){
                     textNomor.text = "belum diisi"
                     telepon = "belum diisi"
                 } else{
-                    textNomor.text = customers.noTelp
-                    telepon = customers.noTelp
+                    textNomor.text = users.noTelp
+                    telepon = users.noTelp
                 }
-                Picasso.get().load(customers.photoProfil).into(photoProfil)
+                Picasso.get().load(users.photoProfil).into(photoProfil)
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 // handle error

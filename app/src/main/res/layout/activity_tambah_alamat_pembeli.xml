@@ -51,13 +51,59 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp">
+            android:layout_height="0dp"
+            android:paddingBottom="32dp">
+
+            <TextView
+                android:id="@+id/textNamaPenerima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:textColor="@color/yankes_blue"
+                android:text="Nama Penerima "
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/wajibNama"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/error"
+                android:text="*"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="top"
+                app:layout_constraintStart_toEndOf="@id/textNamaPenerima"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/etNamaPenerima"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/poppins_regular"
+                android:inputType="text"
+                android:lines="1"
+                android:hint="nama penerima"
+                android:textColor="@color/yankes_blue"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textNamaPenerima" />
 
             <TextView
                 android:id="@+id/textKota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:textSize="14sp"
@@ -67,19 +113,20 @@
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="center_horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/etNamaPenerima" />
 
             <TextView
                 android:id="@+id/wajibKota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:textSize="14sp"
                 android:textColor="@color/error"
                 android:text="*"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="top"
                 app:layout_constraintStart_toEndOf="@id/textKota"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/etNamaPenerima" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/kotaContainer"
@@ -140,7 +187,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:lines="1"
-                android:text="Alamat lengkap"
+                android:hint="alamat lengkap"
                 android:textSize="16sp"
                 android:textColor="@color/yankes_blue"
                 android:fontFamily="@font/poppins_regular"
@@ -186,7 +233,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:lines="1"
-                android:text="Kode pos"
+                android:hint="kode pos"
                 android:textSize="16sp"
                 android:textColor="@color/yankes_blue"
                 android:fontFamily="@font/poppins_regular"
@@ -232,7 +279,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:lines="1"
-                android:text="Nomor Telepon"
+                android:hint="nomor telepon"
                 android:textSize="16sp"
                 android:textColor="@color/yankes_blue"
                 android:fontFamily="@font/poppins_regular"
@@ -241,7 +288,33 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginTop="32dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/etTelepon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/btnSimpan"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_border_button"
+        android:text="SIMPAN"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

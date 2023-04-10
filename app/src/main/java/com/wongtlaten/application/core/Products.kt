@@ -18,7 +18,7 @@ data class Products(
     val photoProduct4 : String,
     val ratingProduct : Float,
     val jumlahPembelianProduct : Int
-){
+): java.io.Serializable{
     constructor(): this("","", 0, 0, 0, 0, "", "", "", 0, "", "", "", "", 0F, 0){
 
     }

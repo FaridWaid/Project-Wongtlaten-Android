@@ -17,12 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Otp
 import com.wongtlaten.application.modules.pembeli.home.HomePembeliActivity
 import com.wongtlaten.application.modules.penjual.home.HomePenjualActivity
-import com.wongtlaten.application.modules.penjual.home.TambahKategoriProdukPenjualActivity
 import java.util.*
 import javax.mail.*
 import javax.mail.internet.InternetAddress
@@ -130,7 +129,7 @@ class OtpVerificationActivity : AppCompatActivity() {
                     loadingBar(2000)
                     ref.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            val users = snapshot.getValue(Customers::class.java)!!
+                            val users = snapshot.getValue(Users::class.java)!!
                             if (users.accessLevel == "customers"){
                                 // Jika berhasil maka akan pindah activity ke activity HomePembeliActivity
                                 Intent(this@OtpVerificationActivity, HomePembeliActivity::class.java).also { intent ->

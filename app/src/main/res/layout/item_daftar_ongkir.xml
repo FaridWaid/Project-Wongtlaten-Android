@@ -6,9 +6,10 @@
     android:background="@color/white">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/roundedBackground"
+        android:id="@+id/roundedBackgroundTiki"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:visibility="invisible"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         app:cardCornerRadius="35dp"
@@ -18,9 +19,62 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <TextView
+            android:id="@+id/textCourierTiki"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="text"
+            android:text="TIKI"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="12sp"
+            android:textColor="@color/yankes_blue"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+
+    </androidx.cardview.widget.CardView >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/roundedBackgroundPos"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="invisible"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <TextView
+            android:id="@+id/textCourierPos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="POS"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="12sp"
+            android:textColor="@color/yankes_blue"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+
+    </androidx.cardview.widget.CardView >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/roundedBackgroundJne"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="invisible"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:cardCornerRadius="35dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/green"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <TextView
+            android:id="@+id/textCourierJne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="JNE"
             android:fontFamily="@font/poppins_bold"
             android:textSize="12sp"
             android:textColor="@color/yankes_blue"
@@ -41,7 +95,7 @@
         android:textColor="@color/cool_blue"
         android:layout_gravity="center"
         android:gravity="center"
-        app:layout_constraintStart_toEndOf="@id/roundedBackground"
+        app:layout_constraintStart_toEndOf="@id/roundedBackgroundTiki"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
@@ -55,7 +109,7 @@
         android:textColor="@color/textfield"
         android:layout_gravity="center"
         android:gravity="center"
-        app:layout_constraintStart_toEndOf="@id/roundedBackground"
+        app:layout_constraintStart_toEndOf="@id/roundedBackgroundTiki"
         app:layout_constraintTop_toBottomOf="@id/jasaOngkir"/>
 
     <TextView
@@ -93,7 +147,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
         android:layout_alignParentTop="true"
-        app:layout_constraintTop_toBottomOf="@id/roundedBackground"
+        app:layout_constraintTop_toBottomOf="@id/roundedBackgroundTiki"
         android:background="@color/card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

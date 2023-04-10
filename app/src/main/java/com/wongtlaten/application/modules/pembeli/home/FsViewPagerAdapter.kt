@@ -8,11 +8,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.makeramen.roundedimageview.RoundedImageView
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.R
+import com.wongtlaten.application.core.CartProducts
 import com.wongtlaten.application.core.Products
+import com.wongtlaten.application.core.WishlistProducts
 import com.wongtlaten.application.modules.pembeli.home.DetailProdukPembeliActivity.Companion.EXTRA_ID_PRODUCT
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -51,14 +59,41 @@ class FsViewPagerAdapter(val list: ArrayList<Products>, val method: SearchPembel
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
 
-                loveInactive.visibility = View.VISIBLE
+                val auth = FirebaseAuth.getInstance()
+                val userIdentity = auth.currentUser!!
+
+                // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
+                val referenceWishlist = FirebaseDatabase.getInstance().getReference("dataWishlistProduk").child(userIdentity.uid)
+                referenceWishlist.addValueEventListener(object: ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()){
+                            for (i in snapshot.children){
+                                val productWishlist = i.getValue(WishlistProducts::class.java)!!
+                                if (productWishlist.idProduct == products.idProduct){
+                                    loveActive.visibility = View.VISIBLE
+                                } else {
+                                    loveInactive.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
+
                 loveInactive.setOnClickListener {
                     loveActive.visibility = View.VISIBLE
                     loveInactive.visibility = View.INVISIBLE
+                    val cartUpdate = CartProducts(userIdentity.uid, products.idProduct)
+                    referenceWishlist.child(products.idProduct).setValue(cartUpdate)
                 }
                 loveActive.setOnClickListener {
                     loveInactive.visibility = View.VISIBLE
                     loveActive.visibility = View.INVISIBLE
+                    referenceWishlist.child(products.idProduct).removeValue()
                 }
 
                 itemView.setOnClickListener {

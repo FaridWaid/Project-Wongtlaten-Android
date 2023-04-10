@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textDaftarProduk"
+        android:id="@+id/textPengiriman"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -59,6 +59,7 @@
                 android:id="@+id/imageDelivery"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="16dp"
                 app:cardCornerRadius="35dp"
                 app:cardElevation="8dp"
@@ -76,9 +77,10 @@
             </androidx.cardview.widget.CardView >
 
             <TextView
-                android:id="@+id/textPengiriman"
+                android:id="@+id/textJasaPengiriman"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:text="Jasa Pengiriman"
                 android:fontFamily="@font/poppins_bold"
@@ -97,7 +99,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/yankes_blue"
                 app:layout_constraintStart_toEndOf="@id/imageDelivery"
-                app:layout_constraintTop_toBottomOf="@id/textPengiriman" />
+                app:layout_constraintTop_toBottomOf="@id/textJasaPengiriman" />
 
             <Button
                 android:id="@+id/btnUbahJasaPengiriman"
@@ -116,7 +118,7 @@
                 android:backgroundTint="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/textPengiriman"
+                app:layout_constraintTop_toTopOf="@id/textJasaPengiriman"
                 app:layout_constraintBottom_toBottomOf="@id/pengiriman" />
 
             <View
@@ -142,6 +144,31 @@
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
+                android:id="@+id/textNamaPenerima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Nama Penerima:"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="14sp"
+                android:textColor="@color/yankes_blue"
+                app:layout_constraintTop_toBottomOf="@id/textAlamatTujuan"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/namaPenerima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="nama penerima"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:textColor="@color/textfield"
+                app:layout_constraintTop_toBottomOf="@id/textNamaPenerima"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
                 android:id="@+id/textKota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,7 +178,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:textSize="14sp"
                 android:textColor="@color/yankes_blue"
-                app:layout_constraintTop_toBottomOf="@id/textAlamatTujuan"
+                app:layout_constraintTop_toBottomOf="@id/namaPenerima"
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
@@ -159,7 +186,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Mojokerto/61625"
+                android:text="kota/kode pos"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/textfield"
@@ -184,7 +211,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Wates gang 5, empunala mojokerto"
+                android:text="alamat lengkap"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/textfield"
@@ -209,7 +236,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="0895338759831"
+                android:text="nomor telepon"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/textfield"
@@ -362,6 +389,32 @@
 
 
             <TextView
+                android:id="@+id/textTotalHarga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Total harga (1 produk)"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="14sp"
+                android:textColor="@color/textfield"
+                app:layout_constraintTop_toBottomOf="@id/textTotalPembayaran"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/totalHarga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:text="harga"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="14sp"
+                android:textColor="@color/textfield"
+                app:layout_constraintTop_toBottomOf="@id/textTotalPembayaran"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
                 android:id="@+id/textOngkosKirim"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -371,7 +424,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="14sp"
                 android:textColor="@color/textfield"
-                app:layout_constraintTop_toBottomOf="@id/textTotalPembayaran"
+                app:layout_constraintTop_toBottomOf="@id/textTotalHarga"
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
@@ -384,33 +437,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="14sp"
                 android:textColor="@color/textfield"
-                app:layout_constraintTop_toBottomOf="@id/textTotalPembayaran"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
-            <TextView
-                android:id="@+id/textKotakGiftbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="16dp"
-                android:text="Kotak giftbox"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="14sp"
-                android:textColor="@color/textfield"
-                app:layout_constraintTop_toBottomOf="@id/textOngkosKirim"
-                app:layout_constraintStart_toStartOf="parent"/>
-
-            <TextView
-                android:id="@+id/kotakGiftbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="16dp"
-                android:text="harga"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="14sp"
-                android:textColor="@color/textfield"
-                app:layout_constraintTop_toBottomOf="@id/ongkosKirim"
+                app:layout_constraintTop_toBottomOf="@id/totalHarga"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
             <View
@@ -421,7 +448,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_alignParentTop="true"
-                app:layout_constraintTop_toBottomOf="@id/textKotakGiftbox"
+                app:layout_constraintTop_toBottomOf="@id/textOngkosKirim"
                 android:background="@color/card" />
 
             <TextView

@@ -10,18 +10,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.LoginActivity
 import com.wongtlaten.application.PrediksiOngkirActivity
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.LoadingDialog
-import com.wongtlaten.application.modules.pembeli.profile.ProfileDataPribadiPembeliActivity
-import com.wongtlaten.application.modules.pembeli.profile.ProfileKeamananPembeliActivity
+import com.wongtlaten.application.modules.penjual.home.DaftarProdukPenjualActivity
+import com.wongtlaten.application.modules.penjual.home.DaftarTransaksiPenjualActivity
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ProfilePenjualFragment : Fragment() {
@@ -34,10 +33,12 @@ class ProfilePenjualFragment : Fragment() {
     private lateinit var textTransaksi: TextView
     private lateinit var textTotal: TextView
     private lateinit var photoProfil: CircleImageView
-    private lateinit var nextDataPribadi: AppCompatImageView
-    private lateinit var nextKeamanan: AppCompatImageView
-    private lateinit var nextPrediksiOngkir: AppCompatImageView
-    private lateinit var nextLogout: AppCompatImageView
+    private lateinit var nextDataPribadi: ConstraintLayout
+    private lateinit var nextKeamanan: ConstraintLayout
+    private lateinit var nextPengelolaanProduk: ConstraintLayout
+    private lateinit var nextPengelolaanTransaksi: ConstraintLayout
+    private lateinit var nextPrediksiOngkir: ConstraintLayout
+    private lateinit var nextLogout: ConstraintLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,10 +66,12 @@ class ProfilePenjualFragment : Fragment() {
         textTransaksi = view.findViewById(R.id.transaction)
         textTotal = view.findViewById(R.id.countTotal)
         photoProfil = view.findViewById(R.id.ivProfile)
-        nextDataPribadi = view.findViewById(R.id.iconNextDataPribadi)
-        nextKeamanan = view.findViewById(R.id.iconNextKeamanan)
-        nextPrediksiOngkir = view.findViewById(R.id.iconNextPrediksiOngkir)
-        nextLogout = view.findViewById(R.id.iconNextLogout)
+        nextDataPribadi = view.findViewById(R.id.layoutDataPribadi)
+        nextKeamanan = view.findViewById(R.id.layoutKeamanan)
+        nextPengelolaanProduk = view.findViewById(R.id.layoutPengelolaanProduk)
+        nextPengelolaanTransaksi = view.findViewById(R.id.layoutPengelolaanTransaksi)
+        nextPrediksiOngkir = view.findViewById(R.id.layoutPrediksiOngkir)
+        nextLogout = view.findViewById(R.id.layoutLogout)
 
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
         referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(userIdentity.uid)
@@ -78,10 +81,6 @@ class ProfilePenjualFragment : Fragment() {
 
         // Memanggil fungsi keepData
         keepData()
-
-        // Mendefinisikan variabel yang berisi view
-        nextDataPribadi = view.findViewById(R.id.iconNextDataPribadi)
-        nextKeamanan = view.findViewById(R.id.iconNextKeamanan)
 
         // Mendefinisikan variabel nextDataPribadi
         // overridePendingTransition digunakan untuk animasi dari intent
@@ -97,6 +96,22 @@ class ProfilePenjualFragment : Fragment() {
             // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
             requireActivity().run{
                 startActivity(Intent(this, ProfileKeamananPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        nextPengelolaanProduk.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarProdukPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        nextPengelolaanTransaksi.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarTransaksiPenjualActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
             }
         }
@@ -124,10 +139,10 @@ class ProfilePenjualFragment : Fragment() {
         // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val customers = dataSnapshot.getValue(Customers::class.java)!!
-                textName.text = customers.username
-                textTransaksi.text = customers.jumlahTransaksi.toString()
-                Picasso.get().load(customers.photoProfil).into(photoProfil)
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                textName.text = users.username
+                textTransaksi.text = users.jumlahTransaksi.toString()
+                Picasso.get().load(users.photoProfil).into(photoProfil)
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 // handle error

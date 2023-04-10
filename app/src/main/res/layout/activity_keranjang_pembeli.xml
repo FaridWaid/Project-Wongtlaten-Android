@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="-"
+        android:text="Rp. 0"
         android:textSize="14sp"
         android:textColor="@color/yankes_blue"
         android:fontFamily="@font/poppins_bold"

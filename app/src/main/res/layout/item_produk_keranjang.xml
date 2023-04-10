@@ -23,12 +23,24 @@
             android:padding="8dp">
 
             <CheckBox
-                android:id="@+id/checkbox1"
+                android:id="@+id/checkbox"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:visibility="visible"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="16dp"
                 android:buttonTint="@color/succes"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/closeProduk"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:visibility="invisible"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/icon_close"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +52,7 @@
                 android:layout_marginTop="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/acrylic"
-                app:layout_constraintStart_toEndOf="@id/checkbox1"
+                app:layout_constraintStart_toEndOf="@id/checkbox"
                 app:layout_constraintTop_toTopOf="parent"
                 app:riv_corner_radius="5dp" />
 

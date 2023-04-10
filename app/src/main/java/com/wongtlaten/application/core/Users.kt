@@ -1,8 +1,8 @@
 package com.wongtlaten.application.core
 
 // Untuk menampung identitas dari data users
-data class Customers(
-    val idCustomers : String,
+data class Users(
+    val idUsers : String,
     val username : String,
     val kelamin : String,
     val alamat : String,

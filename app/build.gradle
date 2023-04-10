@@ -7,7 +7,7 @@ plugins {
 android {
     namespace 'com.wongtlaten.application'
     compileSdk 32
-
+    flavorDimensions "mode"
     defaultConfig {
         configurations.all {
             resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
@@ -19,6 +19,20 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    productFlavors{
+        sandbox{
+            buildConfigField "String", "BASE_URL", "\"https://wongtlaten-midtrans.000webhostapp.com/index.php/\""
+            buildConfigField "String", "CLIENT_KEY", "\"SB-Mid-client-W_fr1Eg_qXdR7Ssz\""
+        }
+
+//        production{
+//            applicationId = "com.wongtlaten.application.sanbox"
+//            resValue "string", "app_name", "Wongtlaten"
+//            buildConfigField "String", "MERCHANT_BASE_URL", "\"https://wongtlaten-midtrans.000webhostapp.com/index.php/\""
+//            buildConfigField "String", "CLIENT_KEY", "\"SB-Mid-client-W_fr1Eg_qXdR7Ssz\""
+//        }
     }
 
     buildTypes {
@@ -104,6 +118,18 @@ dependencies {
     //Image Slider
     implementation 'com.github.denzcoskun:ImageSlideshow:0.1.0'
 
+    //Library API
+    //Library api
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
+
 //    implementation 'com.sun.mail:android-mail:1.6.0'
 //    implementation 'com.sun.mail:android-activation:1.6.0'
+
+    //payments gateway midtrans
+    implementation 'com.midtrans:uikit:1.28.0-SANDBOX'
+//    implementation 'com.midtrans:uikit:1.23.1'
+
+    implementation 'com.koushikdutta.ion:ion:3.1.0'
 }

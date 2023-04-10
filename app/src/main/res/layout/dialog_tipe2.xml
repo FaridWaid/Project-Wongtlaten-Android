@@ -10,10 +10,10 @@
         android:id="@+id/closeButton"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/close"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:text="Informasi Tipe 2"
         app:layout_constraintTop_toTopOf="@id/closeButton"
         app:layout_constraintBottom_toBottomOf="@id/closeButton"
-        app:layout_constraintStart_toEndOf="@id/closeButton" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textDeskripsi"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="10dp"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:layout_gravity="center"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/yankes_blue"
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="10dp"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:layout_gravity="center"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/yankes_blue"
@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="10dp"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:layout_gravity="center"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/yankes_blue"

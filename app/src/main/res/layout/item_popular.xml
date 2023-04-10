@@ -67,6 +67,7 @@
                     android:visibility="invisible"
                     android:src="@drawable/wishlist_pembeli_selector" />
 
+
                 <ImageView
                     android:id="@+id/loveActivated"
                     android:layout_width="18dp"
@@ -74,7 +75,7 @@
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
                     android:visibility="invisible"
-                    android:src="@drawable/love_wishlist" />
+                    android:src="@drawable/wishlist_pembeli" />
 
             </androidx.cardview.widget.CardView >
 

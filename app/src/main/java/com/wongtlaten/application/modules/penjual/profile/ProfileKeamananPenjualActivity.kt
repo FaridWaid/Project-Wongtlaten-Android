@@ -11,8 +11,7 @@ import androidx.appcompat.widget.SwitchCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Customers
-import com.wongtlaten.application.modules.pembeli.profile.UbahPasswordPembeliActivity
+import com.wongtlaten.application.core.Users
 
 class ProfileKeamananPenjualActivity : AppCompatActivity() {
 
@@ -42,8 +41,8 @@ class ProfileKeamananPenjualActivity : AppCompatActivity() {
         // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val customers = dataSnapshot.getValue(Customers::class.java)!!
-                if (customers.checkOtp == "active"){
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                if (users.checkOtp == "active"){
                     switchCheck.setChecked(true)
                 }
             }
@@ -84,8 +83,8 @@ class ProfileKeamananPenjualActivity : AppCompatActivity() {
     fun updateSwitchCheck(check: String){
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val customers = snapshot.getValue(Customers::class.java)!!
-                val customerUpdate = Customers(customers.idCustomers!!, customers.username, customers.kelamin, customers.alamat, customers.email, customers.photoProfil, customers.noTelp, customers.jumlahTransaksi, customers.accessLevel, customers.token, customers.status, check)
+                val users = snapshot.getValue(Users::class.java)!!
+                val customerUpdate = Users(users.idUsers!!, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi, users.accessLevel, users.token, users.status, check)
                 ref.setValue(customerUpdate).addOnCompleteListener {
                     if (it.isSuccessful){
 

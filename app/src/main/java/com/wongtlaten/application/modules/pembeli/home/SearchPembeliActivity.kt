@@ -106,7 +106,7 @@ class SearchPembeliActivity : AppCompatActivity() {
                         }
                     }
 
-                    adapter = DaftarProdukAdapter(daftarProdukList, this@SearchPembeliActivity)
+                    adapter = DaftarProdukAdapter(daftarProdukList)
                     rvDaftarProduk.adapter = adapter
 
                 }
@@ -138,12 +138,6 @@ class SearchPembeliActivity : AppCompatActivity() {
             rvDaftarProduk.visibility = View.VISIBLE
             produkNotFound.visibility = View.INVISIBLE
         }
-    }
-
-    // Membuat fungsi "animationToLeft" yang berisi animasi ketika pinday activity
-    // fungsi ini digunakan pada adapter
-    fun animationToLeft() {
-        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 
     //back button

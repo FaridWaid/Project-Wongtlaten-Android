@@ -1,5 +1,6 @@
 package com.wongtlaten.application.modules.pembeli.customize
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,8 @@ import android.widget.Button
 import android.widget.CheckBox
 import androidx.appcompat.widget.AppCompatImageView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.modules.pembeli.wishlist.PengirimanPembeliActivity
+import com.wongtlaten.application.modules.pembeli.wishlist.PengirimanPembeliActivity.Companion.EXTRA_JASA_PENGIRIMAN
 
 class UbahJasaPengirimanPembeliActivity : AppCompatActivity() {
 
@@ -14,6 +17,7 @@ class UbahJasaPengirimanPembeliActivity : AppCompatActivity() {
     private lateinit var btnTerapkanActivated : Button
     private lateinit var checkbox1 : CheckBox
     private lateinit var checkbox2 : CheckBox
+    private lateinit var textJasaPengiriman: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,20 @@ class UbahJasaPengirimanPembeliActivity : AppCompatActivity() {
                 btnTerapkanActivated.visibility = View.INVISIBLE
                 btnTerapkanInactivated.visibility = View.VISIBLE
             }
+        }
+
+        btnTerapkanActivated.setOnClickListener {
+            if (checkbox1.isChecked){
+                textJasaPengiriman = "JNE"
+            } else{
+                textJasaPengiriman = "POS"
+            }
+            var intent = Intent()
+            intent.putExtra(EXTRA_JASA_PENGIRIMAN, textJasaPengiriman)
+            setResult(RESULT_OK, intent);
+            finish()
+            onBackPressed()
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
         }
 
         // Ketika "backButton" di klik

@@ -18,7 +18,7 @@ import com.wongtlaten.application.modules.penjual.home.PreviewProdukActivity
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
-class DaftarProdukAdapter(private var list: ArrayList<Products>, val method: SearchPembeliActivity): RecyclerView.Adapter<DaftarProdukAdapter.DaftarProdukViewHolder>() {
+class DaftarProdukAdapter(private var list: ArrayList<Products>): RecyclerView.Adapter<DaftarProdukAdapter.DaftarProdukViewHolder>() {
 
     // Membuat class DaftarViewHolder yang digunakan untuk set view yang akan ditampilkan,
     // Menggunakan picasso untuk loading image

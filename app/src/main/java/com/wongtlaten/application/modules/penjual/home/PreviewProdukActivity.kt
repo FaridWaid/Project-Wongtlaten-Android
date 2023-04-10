@@ -13,11 +13,8 @@ import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Customers
 import com.wongtlaten.application.core.Products
-import com.wongtlaten.application.modules.penjual.profile.UbahDataPribadiPenjualActivity
 import java.text.DecimalFormat
 import java.text.NumberFormat
 

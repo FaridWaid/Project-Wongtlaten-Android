@@ -61,6 +61,13 @@ class UbahNamaPembeliActivity : AppCompatActivity() {
                     checkClick = true
                     return@setOnClickListener
                 }
+                // Jika namaInput memiliki inputan angka maka akan muncul error harus isi terlebih dahulu
+                if(namaInput.length > 16) {
+                    etNama.error = "Nama tidak boleh lebih dari 16 karakter!"
+                    etNama.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
 
                 // Pindah ke UbahDataPribadiPembeliActivity
                 Intent(applicationContext, UbahDataPribadiPembeliActivity::class.java).also {

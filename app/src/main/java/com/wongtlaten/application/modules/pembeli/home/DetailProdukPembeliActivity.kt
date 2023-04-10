@@ -5,11 +5,14 @@ import android.content.Intent
 import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
@@ -18,13 +21,23 @@ import androidx.viewpager2.widget.ViewPager2
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.midtrans.sdk.corekit.models.snap.TransactionStatusResponse
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Products
-import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity
-import com.wongtlaten.application.modules.penjual.home.PreviewDeskripsiProdukActivity
+import com.wongtlaten.application.api.RetrofitClient
+import com.wongtlaten.application.core.*
+import com.wongtlaten.application.core.Transaction
+import com.wongtlaten.application.modules.pembeli.wishlist.KeranjangPembeliActivity
+import com.wongtlaten.application.modules.pembeli.wishlist.PembayaranPembeliActivity
+import com.wongtlaten.application.modules.pembeli.wishlist.PengirimanPembeliActivity
+import com.wongtlaten.application.modules.pembeli.wishlist.PengirimanPembeliActivity.Companion.EXTRA_PRODUK
+import com.wongtlaten.application.modules.pembeli.wishlist.PengirimanPembeliActivity.Companion.TOTAL_PRODUK
 import com.wongtlaten.application.modules.penjual.home.PreviewProdukActivity
 import com.wongtlaten.application.modules.penjual.home.RecomViewPagerAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.properties.Delegates
@@ -33,6 +46,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
 
     // Mendefinisikan variabel global untuk connect ke Firebase
     private lateinit var reference : DatabaseReference
+    private lateinit var referenceCart : DatabaseReference
     private lateinit var typeProduk : TextView
     private lateinit var namaProduk : TextView
     private lateinit var ratingBar: RatingBar
@@ -47,10 +61,23 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     private lateinit var adapterRecom: RecomViewPagerAdapter
     private lateinit var loveInactive: ImageView
     private lateinit var loveActive: ImageView
+    private lateinit var itemFiturPayment: CardView
+    private lateinit var itemFiturCart: CardView
     private lateinit var itemFiturPlus : CardView
     private lateinit var itemFiturMinus : CardView
     private lateinit var totalProduk : TextView
+    private lateinit var btnKeranjang : Button
+    private lateinit var btnBeli : Button
     private var countTotalProduk by Delegates.notNull<Int>()
+    private lateinit var textDetail : TextView
+    private var isProductOnCart by Delegates.notNull<Boolean>()
+    private lateinit var textKeranjang : TextView
+    private lateinit var textPayment : TextView
+    private var stokProduk by Delegates.notNull<Int>()
+    private var minimumPemesanan by Delegates.notNull<Int>()
+    private lateinit var tempProduk: ArrayList<Products>
+    private var countPayment by Delegates.notNull<Int>()
+    private lateinit var idUser: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,24 +100,64 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
         recomViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         loveInactive = findViewById(R.id.loveInactivated)
         loveActive = findViewById(R.id.loveActivated)
+        itemFiturPayment = findViewById(R.id.itemFiturPayment)
+        itemFiturCart = findViewById(R.id.itemFiturCart)
         itemFiturPlus = findViewById(R.id.itemFiturPlus)
         itemFiturMinus = findViewById(R.id.itemFiturMinus)
         totalProduk = findViewById(R.id.totalProduk)
-        countTotalProduk = 1
+        btnKeranjang = findViewById(R.id.btnKeranjang)
+        btnBeli = findViewById(R.id.btnBeli)
+        textDetail = findViewById(R.id.textDetailProduk)
+        textKeranjang = findViewById(R.id.textKeranjang)
+        textPayment = findViewById(R.id.textPayment)
+        isProductOnCart = false
+        stokProduk = 0
+        minimumPemesanan = 0
+        tempProduk = arrayListOf<Products>()
+        countPayment = 0
 
-        loveInactive.visibility = View.VISIBLE
-        loveInactive.setOnClickListener {
-            loveActive.visibility = View.VISIBLE
-            loveInactive.visibility = View.INVISIBLE
-        }
-        loveActive.setOnClickListener {
-            loveInactive.visibility = View.VISIBLE
-            loveActive.visibility = View.INVISIBLE
-        }
+        val auth = FirebaseAuth.getInstance()
+        val userIdentity = auth.currentUser!!
+
+        idUser = userIdentity.uid
+
+        val idProduct = intent.getStringExtra(PreviewProdukActivity.EXTRA_ID_PRODUCT)!!
+        reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(idProduct)
+
+        showListProduk()
+
+        // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
+        referenceCart = FirebaseDatabase.getInstance().getReference("dataCartProduk").child(userIdentity.uid)
+
+        // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
+        val referenceWishlist = FirebaseDatabase.getInstance().getReference("dataWishlistProduk").child(userIdentity.uid)
+        referenceWishlist.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (i in snapshot.children){
+                        val productWishlist = i.getValue(WishlistProducts::class.java)!!
+                        if (productWishlist.idProduct == idProduct){
+                            loveActive.visibility = View.VISIBLE
+                        } else {
+                            loveInactive.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
 
         itemFiturPlus.setOnClickListener {
-            countTotalProduk += 1
-            totalProduk.text = "$countTotalProduk"
+            if (countTotalProduk == stokProduk){
+                alertDialog("GAGAL!", "Jumlah stock produk ini hanya $countTotalProduk stok", false)
+            } else {
+                countTotalProduk += 1
+                totalProduk.text = "$countTotalProduk"
+            }
         }
         itemFiturMinus.setOnClickListener {
             countTotalProduk -= 1
@@ -102,58 +169,23 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
             }
         }
 
-        val idProduct = intent.getStringExtra(PreviewProdukActivity.EXTRA_ID_PRODUCT)!!
-        reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(idProduct)
-
-        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
-        val menuListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val produk = dataSnapshot.getValue(Products::class.java)!!
-
-                typeProduk.text = produk.kategoriProduct
-                namaProduk.text = produk.namaProduct
-                ratingBar.rating = produk.ratingProduct
-                textRate.setText("(${produk.ratingProduct})")
-                deskripsiProduk.text = produk.deskripsiProduct
-                val formatter: NumberFormat = DecimalFormat("#,###")
-                val price = produk.hargaProduct
-                val promo = 100 - produk.hargaPromoProduct
-                val totalPromo = ((promo.toFloat()/100) * produk.hargaProduct)
-                val formattedNumberPrice: String = formatter.format(price)
-                val formattedNumberPrice2: String = formatter.format(totalPromo.toLong())
-                if (produk.jenisProduct == "flash sale"){
-                    totalPriceSlash.paintFlags = totalPriceSlash.getPaintFlags() or Paint.STRIKE_THRU_TEXT_FLAG
-                    totalPriceSlash.visibility = View.VISIBLE
-                    totalPriceSlash.text = "Rp. ${formattedNumberPrice}"
-                    totalPricePromo.visibility = View.VISIBLE
-                    totalPricePromo.text = "Rp. ${formattedNumberPrice2}"
-                } else {
-                    totalPrice.visibility = View.VISIBLE
-                    totalPrice.text = "Rp. ${formattedNumberPrice}"
-                }
-
-                val imageSlider = findViewById<ImageSlider>(R.id.imageSlider)
-                val imageList = ArrayList<SlideModel>()
-
-                imageList.add(SlideModel(produk.photoProduct1))
-                imageList.add(SlideModel(produk.photoProduct2))
-                imageList.add(SlideModel(produk.photoProduct3))
-                imageList.add(SlideModel(produk.photoProduct4))
-
-                imageSlider.setImageList(imageList, ScaleTypes.FIT)
-
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                // handle error
-            }
+        loveInactive.setOnClickListener {
+            loveActive.visibility = View.VISIBLE
+            loveInactive.visibility = View.INVISIBLE
+            val cartUpdate = CartProducts(userIdentity.uid, idProduct)
+            referenceWishlist.child(idProduct).setValue(cartUpdate)
         }
-        reference.addListenerForSingleValueEvent(menuListener)
+        loveActive.setOnClickListener {
+            loveInactive.visibility = View.VISIBLE
+            loveActive.visibility = View.INVISIBLE
+            referenceWishlist.child(idProduct).removeValue()
+        }
 
         // Memasukkan data DaftarProduk ke dalam "daftarRecomList" sebagai array list
         daftarRecomList = arrayListOf<Products>()
         // Memanggil fungsi "showListProduk" yang digunakan untuk menampilkan recyclerview dari data yang sudah ada,
         // pada list
-        showListProduk()
+        showListProdukPopular()
 
         textBacaSelengkapnya = findViewById(R.id.textBacaSelengkapnya)
         textBacaSelengkapnya.setOnClickListener {
@@ -161,6 +193,54 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
                 it.putExtra("EXTRA_ID_PRODUCT", idProduct)
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+            }
+        }
+
+        itemFiturCart.setOnClickListener {
+            Intent(applicationContext, KeranjangPembeliActivity::class.java).also {
+                startActivity(it)
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        itemFiturPayment.setOnClickListener {
+            Intent(applicationContext, PembayaranPembeliActivity::class.java).also {
+                startActivity(it)
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        checkIsProductOnDatabase(idProduct)
+        updateTransaction()
+
+        btnBeli.setOnClickListener {
+            if (countTotalProduk == 0){
+                alertDialog("GAGAL!", "Produk ini gagal di beli karena stok habis", false)
+            } else if (countTotalProduk < minimumPemesanan){
+                alertDialog("GAGAL!", "Minimum pembelian produk ini adalah $minimumPemesanan produk", false)
+            } else {
+                Intent(applicationContext, PengirimanPembeliActivity::class.java).also {
+                    it.putExtra(EXTRA_PRODUK, tempProduk)
+                    it.putExtra(TOTAL_PRODUK, countTotalProduk)
+                    startActivity(it)
+                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                    finish()
+                }
+            }
+        }
+
+        btnKeranjang.setOnClickListener {
+            if (isProductOnCart){
+                Toast.makeText(this, "Produk tersebut sudah ada di keranjang", Toast.LENGTH_SHORT).show()
+            } else {
+                val cartUpdate = CartProducts(userIdentity.uid, idProduct)
+                referenceCart.child(idProduct).setValue(cartUpdate).addOnCompleteListener {
+                    if (it.isSuccessful){
+                        Toast.makeText(this, "Produk tersebut berhasil ditambahkan di keranjang", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Produk tersebut gagal ditambahkan di keranjang", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
@@ -198,9 +278,93 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    private fun checkIsProductOnDatabase(idProduct: String) : Boolean{
+        referenceCart.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    var countCart = 0
+                    for (i in snapshot.children){
+                        val products = i.getValue(CartProducts::class.java)!!
+                        if (products.idProduct == idProduct){
+                            isProductOnCart = true
+                        }
+                        countCart += 1
+                    }
+                    if (countCart > 0){
+                        textKeranjang.visibility = View.VISIBLE
+                        textKeranjang.text = " $countCart "
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+        return isProductOnCart
+    }
+
+    private fun showListProduk(){
+        tempProduk.clear()
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val produk = dataSnapshot.getValue(Products::class.java)!!
+
+                typeProduk.text = produk.kategoriProduct
+                stokProduk = produk.stockProduct
+                if (stokProduk != 0){
+                    countTotalProduk = 1
+                } else {
+                    countTotalProduk = 0
+                }
+                minimumPemesanan = produk.minimumPemesananProduct
+                totalProduk.text = "$countTotalProduk"
+                namaProduk.text = produk.namaProduct
+                ratingBar.rating = produk.ratingProduct
+                textRate.setText("(${produk.ratingProduct})")
+                deskripsiProduk.text = produk.deskripsiProduct
+                val formatter: NumberFormat = DecimalFormat("#,###")
+                val price = produk.hargaProduct
+                val promo = 100 - produk.hargaPromoProduct
+                val totalPromo = ((promo.toFloat()/100) * produk.hargaProduct)
+                val formattedNumberPrice: String = formatter.format(price)
+                val formattedNumberPrice2: String = formatter.format(totalPromo.toLong())
+                if (produk.jenisProduct == "flash sale"){
+                    totalPriceSlash.paintFlags = totalPriceSlash.getPaintFlags() or Paint.STRIKE_THRU_TEXT_FLAG
+                    totalPriceSlash.visibility = View.VISIBLE
+                    totalPriceSlash.text = "Rp. ${formattedNumberPrice}"
+                    totalPricePromo.visibility = View.VISIBLE
+                    totalPricePromo.text = "Rp. ${formattedNumberPrice2}"
+                } else {
+                    totalPrice.visibility = View.VISIBLE
+                    totalPrice.text = "Rp. ${formattedNumberPrice}"
+                }
+
+                val imageSlider = findViewById<ImageSlider>(R.id.imageSlider)
+                val imageList = ArrayList<SlideModel>()
+
+                imageList.add(SlideModel(produk.photoProduct1))
+                imageList.add(SlideModel(produk.photoProduct2))
+                imageList.add(SlideModel(produk.photoProduct3))
+                imageList.add(SlideModel(produk.photoProduct4))
+
+                imageSlider.setImageList(imageList, ScaleTypes.FIT)
+
+                tempProduk.add(produk)
+
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                // handle error
+            }
+        }
+        reference.addListenerForSingleValueEvent(menuListener)
+    }
+
     // Membuat fungsi "showListProduk" yang digunakan untuk menampilkan data dari database ke dalam,
     // recyclerview
-    private fun showListProduk() {
+    private fun showListProdukPopular() {
         val ref = FirebaseDatabase.getInstance().getReference("dataProduk")
 
         ref.addValueEventListener(object: ValueEventListener {
@@ -217,6 +381,32 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
                     adapterRecom = RecomViewPagerAdapter(daftarRecomList)
                     recomViewPager.adapter = adapterRecom
 
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
+    private fun updateTransaction() {
+        val reference = FirebaseDatabase.getInstance().getReference("dataTransaksi")
+        reference.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    countPayment = 0
+                    for (i in snapshot.children){
+                        val transaction = i.getValue(Transaction::class.java)!!
+                        if (transaction.idUser == idUser && transaction.statusPembayaran == "pending"){
+                            countPayment += 1
+                        }
+                    }
+                    if (countPayment > 0){
+                        textPayment.visibility = View.VISIBLE
+                        textPayment.text = " $countPayment "
+                    }
                 }
             }
 

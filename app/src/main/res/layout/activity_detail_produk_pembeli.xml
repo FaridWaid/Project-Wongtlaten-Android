@@ -32,68 +32,134 @@
         app:layout_constraintStart_toEndOf="@id/prevButton"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/itemFiturPayment"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card"
+    <FrameLayout
+        android:id="@+id/framePayment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/itemFiturPayment"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:cardCornerRadius="35dp"
             android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/wallet" />
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/card">
 
-    </androidx.cardview.widget.CardView >
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/wallet" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/itemFiturCart"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card"
-        app:layout_constraintEnd_toStartOf="@id/itemFiturPayment"
-        app:layout_constraintTop_toTopOf="parent" >
+            <TextView
+                android:id="@+id/textPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/background_text_keranjang"
+                android:text=" 0 "
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="10sp"
+                android:visibility="invisible"
+                android:textColor="@color/white" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        </androidx.cardview.widget.CardView >
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frameCart"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toStartOf="@id/framePayment"
+        app:layout_constraintTop_toTopOf="@id/framePayment"
+        app:layout_constraintBottom_toBottomOf="@id/framePayment">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/itemFiturCart"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:cardCornerRadius="35dp"
             android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/shop" />
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/card">
 
-    </androidx.cardview.widget.CardView >
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/shop" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/itemFiturChat"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card"
-        app:layout_constraintEnd_toStartOf="@id/itemFiturCart"
-        app:layout_constraintTop_toTopOf="parent" >
+            <TextView
+                android:id="@+id/textKeranjang"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/background_text_keranjang"
+                android:text=" 0 "
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="10sp"
+                android:visibility="invisible"
+                android:textColor="@color/white" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        </androidx.cardview.widget.CardView >
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frameChat"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toStartOf="@id/frameCart"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/itemFiturChat"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:cardCornerRadius="35dp"
             android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ep_message" />
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/card" >
 
-    </androidx.cardview.widget.CardView >
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ep_message" />
+
+            <TextView
+                android:id="@+id/textChat"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/background_text_keranjang"
+                android:text=" 0 "
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="10sp"
+                android:visibility="invisible"
+                android:textColor="@color/white" />
+
+        </androidx.cardview.widget.CardView >
+    </FrameLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -169,7 +235,7 @@
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
                     android:visibility="invisible"
-                    android:src="@drawable/love_wishlist" />
+                    android:src="@drawable/wishlist_pembeli" />
             </androidx.cardview.widget.CardView >
 
             <TextView

@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.wongtlaten.application.core.AttemptLogin
-import com.wongtlaten.application.core.Customers
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Otp
 import com.wongtlaten.application.modules.pembeli.home.HomePembeliActivity
@@ -84,8 +84,8 @@ class LoginActivity : AppCompatActivity() {
             Intent(applicationContext, RegisterActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-                val loading = LoadingDialog(this@LoginActivity)
-                loading.isDissmis()
+//                val loading = LoadingDialog(this@LoginActivity)
+//                loading.isDissmis()
                 finish()
             }
         }
@@ -166,14 +166,14 @@ class LoginActivity : AppCompatActivity() {
                             // Mengambil token untuk dimasukkan ke dalam user
                             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
-                                    val users = snapshot.getValue(Customers::class.java)!!
-                                    val userUpdate = Customers(users.idCustomers!!, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi, users.accessLevel, token!!, users.status, users.checkOtp)
+                                    val users = snapshot.getValue(Users::class.java)!!
+                                    val userUpdate = Users(users.idUsers!!, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi, users.accessLevel, token!!, users.status, users.checkOtp)
                                     reference.setValue(userUpdate).addOnCompleteListener {
                                         if (it.isSuccessful){
 
                                             if (users.checkOtp == "active"){
                                                 checkClick = true
-                                                identifyUser = users.idCustomers
+                                                identifyUser = users.idUsers
                                                 sendOtp(users.email)
                                             }
                                             else if (users.accessLevel == "customers"){
@@ -221,9 +221,9 @@ class LoginActivity : AppCompatActivity() {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             if (snapshot.exists()){
                                 for (i in snapshot.children){
-                                    val cekCustomers = i.getValue(Customers::class.java)
-                                    if (cekCustomers != null && cekCustomers.email == email){
-                                        refAttempt.child("${cekCustomers.idCustomers}").addListenerForSingleValueEvent(object : ValueEventListener{
+                                    val cekUsers = i.getValue(Users::class.java)
+                                    if (cekUsers != null && cekUsers.email == email){
+                                        refAttempt.child("${cekUsers.idUsers}").addListenerForSingleValueEvent(object : ValueEventListener{
                                             override fun onDataChange(snapshot: DataSnapshot) {
                                                 val attemptUser = snapshot.getValue(AttemptLogin::class.java)!!
                                                 cekAttempt = attemptUser.attempt
@@ -237,7 +237,7 @@ class LoginActivity : AppCompatActivity() {
                                             checkClick = true
                                             cekAttempt += 1
                                             val newAttempt = AttemptLogin(email, cekAttempt)
-                                            refAttempt.child("${cekCustomers.idCustomers}").setValue(newAttempt)
+                                            refAttempt.child("${cekUsers.idUsers}").setValue(newAttempt)
                                         } else{
                                             checkClick = true
                                             // Pindah ke ResetPasswordActivity

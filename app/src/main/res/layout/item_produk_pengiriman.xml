@@ -53,6 +53,21 @@
         app:layout_constraintTop_toBottomOf="@id/countProduk"
         app:layout_constraintStart_toEndOf="@id/imageProduk" />
 
+    <TextView
+        android:id="@+id/pricePromo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginStart="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Rp. xx.xxx"
+        android:textColor="@color/error"
+        android:textSize="11sp"
+        android:fontFamily="@font/poppins_bold"
+        app:layout_constraintStart_toEndOf="@id/priceProduk"
+        app:layout_constraintTop_toBottomOf="@id/countProduk"/>
+
     <View
         android:id="@+id/line_1"
         android:layout_width="match_parent"
@@ -60,6 +75,6 @@
         android:layout_marginTop="16dp"
         android:layout_alignParentTop="true"
         app:layout_constraintTop_toBottomOf="@id/imageProduk"
-        android:background="@color/textfield" />
+        android:background="@color/card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

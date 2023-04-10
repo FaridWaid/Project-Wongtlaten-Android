@@ -19,4 +19,8 @@
     <color name="red">#FF7878</color>
     <color name="gold">#FFD700</color>
     <color name="background">#F9F9F9</color>
+    <color name="dark_blue">#3E54AC</color>
+    <color name="dark_grey">#7B8FA1</color>
+    <color name="dark_brown">#675D50</color>
+    <color name="dark_purple">#5D3891</color>
 </resources>

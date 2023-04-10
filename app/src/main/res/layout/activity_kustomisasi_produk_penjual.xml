@@ -89,6 +89,102 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/kecilInactive"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Kecil"
+        android:visibility="invisible"
+        android:textColor="@color/yankes_blue"
+        android:textSize="10sp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:background="@drawable/background_filter"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/kecilActive"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Kecil"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:background="@drawable/background_filter_active2"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/sedangInactive"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:text="Sedang"
+        android:visibility="invisible"
+        android:textColor="@color/yankes_blue"
+        android:textSize="10sp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:background="@drawable/background_filter"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintStart_toEndOf="@id/kecilActive"/>
+
+    <TextView
+        android:id="@+id/sedangActive"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:text="Sedang"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:background="@drawable/background_filter_active2"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintStart_toEndOf="@id/kecilActive"/>
+
+    <TextView
+        android:id="@+id/besarInactive"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:text="Besar"
+        android:visibility="invisible"
+        android:textColor="@color/yankes_blue"
+        android:textSize="10sp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:background="@drawable/background_filter"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintStart_toEndOf="@id/sedangActive"/>
+
+    <TextView
+        android:id="@+id/besarActive"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="10dp"
+        android:text="Besar"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:background="@drawable/background_filter_active2"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintStart_toEndOf="@id/sedangActive"/>
+
+    <TextView
         android:id="@+id/countProduk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,7 +195,7 @@
         android:textSize="10sp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        app:layout_constraintTop_toBottomOf="@id/besarActive"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <View

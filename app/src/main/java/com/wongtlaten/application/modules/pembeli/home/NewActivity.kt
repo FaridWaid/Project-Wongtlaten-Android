@@ -46,6 +46,11 @@ class NewActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        showListProduct()
+    }
+
     private fun showListProduct() {
         val ref = FirebaseDatabase.getInstance().getReference("dataProduk")
 

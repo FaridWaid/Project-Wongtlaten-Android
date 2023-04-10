@@ -142,6 +142,31 @@
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
+                android:id="@+id/textNamaPenerima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:text="Nama Penerima:"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="14sp"
+                android:textColor="@color/yankes_blue"
+                app:layout_constraintTop_toBottomOf="@id/textAlamatTujuan"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/namaPenerima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="nama penerima"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:textColor="@color/textfield"
+                app:layout_constraintTop_toBottomOf="@id/textNamaPenerima"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
                 android:id="@+id/textKota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,7 +176,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:textSize="14sp"
                 android:textColor="@color/yankes_blue"
-                app:layout_constraintTop_toBottomOf="@id/textAlamatTujuan"
+                app:layout_constraintTop_toBottomOf="@id/namaPenerima"
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
@@ -159,7 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Mojokerto/61625"
+                android:text="kota/kode pos"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/textfield"
@@ -184,7 +209,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Wates gang 5, empunala mojokerto"
+                android:text="alamat lengkap"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/textfield"
@@ -209,7 +234,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="0895338759831"
+                android:text="telepon"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="12sp"
                 android:textColor="@color/textfield"
@@ -335,7 +360,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/line_3"
-                tools:listitem="@layout/item_daftar_customize"
                 tools:itemCount="3"/>
 
             <View

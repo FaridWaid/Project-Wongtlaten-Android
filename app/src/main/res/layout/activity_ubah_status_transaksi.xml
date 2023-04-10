@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
-                android:text="Proses"
+                android:text="Selesai"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="@color/yankes_blue"
