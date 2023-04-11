@@ -72,7 +72,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/yankes_blue"
-            android:text="maksimal 10 produk dengan kategori kecil/sedang/besar"/>
+            android:text="Maksimal 5 produk dengan kategori besar"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

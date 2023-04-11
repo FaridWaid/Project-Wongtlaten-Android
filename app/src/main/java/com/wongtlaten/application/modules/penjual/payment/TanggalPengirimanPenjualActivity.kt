@@ -17,6 +17,7 @@ import com.wongtlaten.application.core.Transaction
 import com.wongtlaten.application.modules.penjual.home.UbahStatusTransaksiActivity
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.Delegates
 
 class TanggalPengirimanPenjualActivity : AppCompatActivity() {
 
@@ -29,6 +30,7 @@ class TanggalPengirimanPenjualActivity : AppCompatActivity() {
     private lateinit var updateDate : String
     private lateinit var statusProduk : String
     private lateinit var statusPembayaran : String
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,7 @@ class TanggalPengirimanPenjualActivity : AppCompatActivity() {
         statusProduk = ""
         statusPembayaran = ""
         updateDate = ""
+        checkClick = true
 
         val myCalender = Calendar.getInstance()
         val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -53,11 +56,17 @@ class TanggalPengirimanPenjualActivity : AppCompatActivity() {
             val sdf = SimpleDateFormat(format, Locale.US)
             updateDate = sdf.format(myCalender.time)
             tanggalPengiriman.setText(updateDate)
+            checkClick = true
         }
 
         btnUbahTanggal.setOnClickListener {
-            DatePickerDialog(this, datePicker, myCalender.get(Calendar.YEAR), myCalender.get(Calendar.MONTH),
-                myCalender.get(Calendar.DAY_OF_MONTH)).show()
+            if (checkClick){
+                checkClick = false
+                DatePickerDialog(this, datePicker, myCalender.get(Calendar.YEAR), myCalender.get(Calendar.MONTH),
+                    myCalender.get(Calendar.DAY_OF_MONTH)).show()
+            } else{
+                return@setOnClickListener
+            }
         }
 
         val referenceStatus = FirebaseDatabase.getInstance().getReference("dataTransaksi").child(idTransaksi)
@@ -74,53 +83,65 @@ class TanggalPengirimanPenjualActivity : AppCompatActivity() {
         referenceStatus.addListenerForSingleValueEvent(menuListener)
 
         btnUbah.setOnClickListener {
-            if (statusPembayaran != "settlement"){
-                Toast.makeText(this@TanggalPengirimanPenjualActivity, "Tanggal Pengiriman gagal di ubah, status pembayaran produk masih belum lunas!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else if (statusProduk != "Selesai") {
-                Toast.makeText(this@TanggalPengirimanPenjualActivity, "Tanggal Pengiriman gagal di ubah, status produk masih belum selesai!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else{
-                val waktuPengiriman = etWaktuPengiriman.text.toString().trim()
-                val nomorResi = etNomorResi.text.toString().trim()
-
-                if (updateDate.length <= 0){
-                    Toast.makeText(this@TanggalPengirimanPenjualActivity, "Masukkan tanggal pengiriman terlebih dahulu!", Toast.LENGTH_SHORT).show()
+            if (checkClick){
+                checkClick = false
+                if (statusPembayaran != "settlement"){
+                    Toast.makeText(this@TanggalPengirimanPenjualActivity, "Tanggal Pengiriman gagal di ubah, status pembayaran produk masih belum lunas!", Toast.LENGTH_SHORT).show()
+                    checkClick = true
                     return@setOnClickListener
-                }
-
-                if (waktuPengiriman.isEmpty()){
-                    etWaktuPengiriman.error = "Masukkan waktu pengiriman terlebih dahulu!"
-                    etWaktuPengiriman.requestFocus()
+                } else if (statusProduk != "Selesai") {
+                    Toast.makeText(this@TanggalPengirimanPenjualActivity, "Tanggal Pengiriman gagal di ubah, status produk masih belum selesai!", Toast.LENGTH_SHORT).show()
+                    checkClick = true
                     return@setOnClickListener
-                }
-                if (nomorResi.isEmpty()){
-                    etNomorResi.error = "Masukkan nomor resi terlebih dahulu!"
-                    etNomorResi.requestFocus()
-                    return@setOnClickListener
-                }
+                } else{
+                    val waktuPengiriman = etWaktuPengiriman.text.toString().trim()
+                    val nomorResi = etNomorResi.text.toString().trim()
 
-                var waktuPengirimanInput = "$updateDate $waktuPengiriman"
-                val referenceStatus = FirebaseDatabase.getInstance().getReference("dataTransaksi").child(idTransaksi)
-                val menuListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val transaction = dataSnapshot.getValue(Transaction::class.java)!!
-                        var updateTransaction = Transaction(transaction.idUser, transaction.idTransaksi, transaction.jenisTransaksi, transaction.namePenerima, transaction.kotaTujuan, transaction.kodePos, transaction.alamatLengkap, transaction.teleponPenerima, transaction.totalBerat, transaction.jumlahOngkir, transaction.totalPembayaran, transaction.typePembayaran, transaction.waktuTransaksi, waktuPengirimanInput, transaction.statusPembayaran, transaction.statusProduk, transaction.kurir, nomorResi, transaction.catatanGiftcard, transaction.pdfUrl, transaction.produkTransaction)
-                        referenceStatus.setValue(updateTransaction).addOnCompleteListener {
-                            if (it.isSuccessful){
-                                Toast.makeText(this@TanggalPengirimanPenjualActivity,"Tanggal pengiriman produk berhasil di ubah!", Toast.LENGTH_SHORT).show()
-                                onBackPressed()
-                                finish()
-                            } else{
-                                Toast.makeText(this@TanggalPengirimanPenjualActivity,"Tanggal pengiriman produk gagal di ubah!", Toast.LENGTH_SHORT).show()
+                    if (updateDate.length <= 0){
+                        Toast.makeText(this@TanggalPengirimanPenjualActivity, "Masukkan tanggal pengiriman terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                        checkClick = true
+                        return@setOnClickListener
+                    }
+
+                    if (waktuPengiriman.isEmpty()){
+                        etWaktuPengiriman.error = "Masukkan waktu pengiriman terlebih dahulu!"
+                        etWaktuPengiriman.requestFocus()
+                        checkClick = true
+                        return@setOnClickListener
+                    }
+                    if (nomorResi.isEmpty()){
+                        etNomorResi.error = "Masukkan nomor resi terlebih dahulu!"
+                        etNomorResi.requestFocus()
+                        checkClick = true
+                        return@setOnClickListener
+                    }
+
+                    var waktuPengirimanInput = "$updateDate $waktuPengiriman"
+                    val referenceStatus = FirebaseDatabase.getInstance().getReference("dataTransaksi").child(idTransaksi)
+                    val menuListener = object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val transaction = dataSnapshot.getValue(Transaction::class.java)!!
+                            var updateTransaction = Transaction(transaction.idUser, transaction.idTransaksi, transaction.jenisTransaksi, transaction.namePenerima, transaction.kotaTujuan, transaction.kodePos, transaction.alamatLengkap, transaction.teleponPenerima, transaction.totalBerat, transaction.jumlahOngkir, transaction.totalPembayaran, transaction.typePembayaran, transaction.waktuTransaksi, waktuPengirimanInput, transaction.statusPembayaran, transaction.statusProduk, transaction.kurir, nomorResi, transaction.catatanGiftcard, transaction.pdfUrl, transaction.produkTransaction)
+                            referenceStatus.setValue(updateTransaction).addOnCompleteListener {
+                                if (it.isSuccessful){
+                                    Toast.makeText(this@TanggalPengirimanPenjualActivity,"Tanggal pengiriman produk berhasil di ubah!", Toast.LENGTH_SHORT).show()
+                                    checkClick = true
+                                    onBackPressed()
+                                    finish()
+                                } else{
+                                    Toast.makeText(this@TanggalPengirimanPenjualActivity,"Tanggal pengiriman produk gagal di ubah!", Toast.LENGTH_SHORT).show()
+                                    checkClick = true
+                                }
                             }
                         }
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // handle error
+                        }
                     }
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // handle error
-                    }
+                    referenceStatus.addListenerForSingleValueEvent(menuListener)
                 }
-                referenceStatus.addListenerForSingleValueEvent(menuListener)
+            } else{
+                return@setOnClickListener
             }
         }
 

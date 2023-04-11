@@ -10,10 +10,10 @@
         android:id="@+id/closeButton"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/close"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:text="Tambah Kategori"
         app:layout_constraintTop_toTopOf="@id/closeButton"
         app:layout_constraintBottom_toBottomOf="@id/closeButton"
-        app:layout_constraintStart_toEndOf="@id/closeButton" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/text"

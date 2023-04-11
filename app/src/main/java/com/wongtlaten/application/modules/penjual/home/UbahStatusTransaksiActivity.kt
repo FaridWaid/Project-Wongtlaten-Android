@@ -17,6 +17,7 @@ import com.wongtlaten.application.R
 import com.wongtlaten.application.core.CustomizeProducts
 import com.wongtlaten.application.core.Transaction
 import com.wongtlaten.application.modules.penjual.payment.DetailPesananPenjualActivity
+import kotlin.properties.Delegates
 
 class UbahStatusTransaksiActivity : AppCompatActivity() {
 
@@ -27,6 +28,7 @@ class UbahStatusTransaksiActivity : AppCompatActivity() {
     private lateinit var btnTerapkanActivated : Button
     private lateinit var btnTerapkanInactivated : Button
     private lateinit var statusTransaksi: String
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,7 @@ class UbahStatusTransaksiActivity : AppCompatActivity() {
         checkbox3 = findViewById(R.id.checkbox3)
         btnTerapkanActivated = findViewById(R.id.btnTerapkanActivated)
         btnTerapkanInactivated = findViewById(R.id.btnTerapkanInactivated)
+        checkClick = true
 
         btnTerapkanInactivated.visibility = View.VISIBLE
 
@@ -83,26 +86,33 @@ class UbahStatusTransaksiActivity : AppCompatActivity() {
         }
 
         btnTerapkanActivated.setOnClickListener {
-            val referenceStatus = FirebaseDatabase.getInstance().getReference("dataTransaksi").child(idTransaksi)
-            val menuListener = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val transaction = dataSnapshot.getValue(Transaction::class.java)!!
-                    var updateTransaction = Transaction(transaction.idUser, transaction.idTransaksi, transaction.jenisTransaksi, transaction.namePenerima, transaction.kotaTujuan, transaction.kodePos, transaction.alamatLengkap, transaction.teleponPenerima, transaction.totalBerat, transaction.jumlahOngkir, transaction.totalPembayaran, transaction.typePembayaran, transaction.waktuTransaksi, transaction.waktuPengiriman, transaction.statusPembayaran, statusTransaksi, transaction.kurir, transaction.resiPengiriman, transaction.catatanGiftcard, transaction.pdfUrl, transaction.produkTransaction)
-                    referenceStatus.setValue(updateTransaction).addOnCompleteListener {
-                        if (it.isSuccessful){
-                            Toast.makeText(this@UbahStatusTransaksiActivity,"Status produk berhasil di ubah!", Toast.LENGTH_SHORT).show()
-                            onBackPressed()
-                            finish()
-                        } else{
-                            Toast.makeText(this@UbahStatusTransaksiActivity,"Status produk gagal di ubah!", Toast.LENGTH_SHORT).show()
+            if (checkClick){
+                checkClick = false
+                val referenceStatus = FirebaseDatabase.getInstance().getReference("dataTransaksi").child(idTransaksi)
+                val menuListener = object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val transaction = dataSnapshot.getValue(Transaction::class.java)!!
+                        var updateTransaction = Transaction(transaction.idUser, transaction.idTransaksi, transaction.jenisTransaksi, transaction.namePenerima, transaction.kotaTujuan, transaction.kodePos, transaction.alamatLengkap, transaction.teleponPenerima, transaction.totalBerat, transaction.jumlahOngkir, transaction.totalPembayaran, transaction.typePembayaran, transaction.waktuTransaksi, transaction.waktuPengiriman, transaction.statusPembayaran, statusTransaksi, transaction.kurir, transaction.resiPengiriman, transaction.catatanGiftcard, transaction.pdfUrl, transaction.produkTransaction)
+                        referenceStatus.setValue(updateTransaction).addOnCompleteListener {
+                            if (it.isSuccessful){
+                                Toast.makeText(this@UbahStatusTransaksiActivity,"Status produk berhasil di ubah!", Toast.LENGTH_SHORT).show()
+                                checkClick = true
+                                onBackPressed()
+                                finish()
+                            } else{
+                                Toast.makeText(this@UbahStatusTransaksiActivity,"Status produk gagal di ubah!", Toast.LENGTH_SHORT).show()
+                                checkClick = true
+                            }
                         }
                     }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // handle error
+                    }
                 }
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // handle error
-                }
+                referenceStatus.addListenerForSingleValueEvent(menuListener)
+            } else{
+                return@setOnClickListener
             }
-            referenceStatus.addListenerForSingleValueEvent(menuListener)
         }
 
         // Ketika "backButton" di klik

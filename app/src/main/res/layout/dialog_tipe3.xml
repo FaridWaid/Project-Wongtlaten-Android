@@ -101,7 +101,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/yankes_blue"
-            android:text="Maksimal 2 produk dengan kategori sedang ditambah 7 produk dengan kategori kecil"/>
+            android:text="Maksimal 4 produk dengan kategori sedang atau 4 produk dengan kategori sedang ditambah 4 produk dengan kategori kecil"/>
 
     </LinearLayout>
 

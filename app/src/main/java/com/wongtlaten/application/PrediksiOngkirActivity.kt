@@ -42,6 +42,7 @@ class PrediksiOngkirActivity : AppCompatActivity() {
     private lateinit var dropDownKotaTujuan : String
     private var idOrigin by Delegates.notNull<Int>()
     private var idDestination by Delegates.notNull<Int>()
+    private var checkClick by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +66,7 @@ class PrediksiOngkirActivity : AppCompatActivity() {
         estimateCourier = ""
         idDestination = 0
         idOrigin = 0
+        checkClick = true
 
         showDataCity()
 
@@ -76,54 +78,61 @@ class PrediksiOngkirActivity : AppCompatActivity() {
 
         btnCekOngkir.setOnClickListener {
 
-            beratInput = etBerat.text.toString().trim()
-            dropDownKotaAsal = autoCompleteKotaAsal.text.toString().trim()
-            dropDownKotaTujuan = autoCompleteKotaTujuan.text.toString().trim()
+            if (checkClick){
+                checkClick = false
+                beratInput = etBerat.text.toString().trim()
+                dropDownKotaAsal = autoCompleteKotaAsal.text.toString().trim()
+                dropDownKotaTujuan = autoCompleteKotaTujuan.text.toString().trim()
 
-            // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
-            if (beratInput.isEmpty()){
-                etBerat.error = "Masukkan berat produk terlebih dahulu!"
-                etBerat.requestFocus()
-//                checkClick = true
-                return@setOnClickListener
-            }
-            if (beratInput == "0"){
-                etBerat.error = "Masukkan berat produk terlebih dahulu!"
-                etBerat.requestFocus()
-//                checkClick = true
-                return@setOnClickListener
-            }
+                // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                if (beratInput.isEmpty()){
+                    etBerat.error = "Masukkan berat produk terlebih dahulu!"
+                    etBerat.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
+                if (beratInput == "0"){
+                    etBerat.error = "Masukkan berat produk terlebih dahulu!"
+                    etBerat.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
 
-            // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
-            if (dropDownKotaAsal == "Pilih Kota"){
-                autoCompleteKotaAsal.error = "Silakan pilih kota asal terlebih dahulu!"
-                autoCompleteKotaAsal.requestFocus()
-//                checkClick = true
-                return@setOnClickListener
-            }
+                // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
+                if (dropDownKotaAsal == "Pilih Kota"){
+                    autoCompleteKotaAsal.error = "Silakan pilih kota asal terlebih dahulu!"
+                    autoCompleteKotaAsal.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
 
-            // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
-            if (dropDownKotaTujuan == "Pilih Kota"){
-                autoCompleteKotaTujuan.error = "Silakan pilih kota tujuan terlebih dahulu!"
-                autoCompleteKotaTujuan.requestFocus()
-//                checkClick = true
-                return@setOnClickListener
-            }
+                // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
+                if (dropDownKotaTujuan == "Pilih Kota"){
+                    autoCompleteKotaTujuan.error = "Silakan pilih kota tujuan terlebih dahulu!"
+                    autoCompleteKotaTujuan.requestFocus()
+                    checkClick = true
+                    return@setOnClickListener
+                }
 
-            checkIdCity(dropDownKotaAsal, dropDownKotaTujuan)
-            showCostJne(idOrigin.toString(), idDestination.toString(), beratInput.toInt(), "jne")
-            showCostPos(idOrigin.toString(), idDestination.toString(), beratInput.toInt(), "pos")
-            tempArray = showCostTiki(idOrigin.toString(), idDestination.toString(), beratInput.toInt(), "tiki")
-            if (!tempArray.isEmpty()){
-                Intent(applicationContext, CekOngkirActivity::class.java).also {
-                    it.putExtra(EXTRA_ONGKIR, tempArray)
-                    startActivity(it)
-                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-                    finish()
+                checkIdCity(dropDownKotaAsal, dropDownKotaTujuan)
+                showCostJne(idOrigin.toString(), idDestination.toString(), beratInput.toInt(), "jne")
+                showCostPos(idOrigin.toString(), idDestination.toString(), beratInput.toInt(), "pos")
+                tempArray = showCostTiki(idOrigin.toString(), idDestination.toString(), beratInput.toInt(), "tiki")
+                if (!tempArray.isEmpty()){
+                    Intent(applicationContext, CekOngkirActivity::class.java).also {
+                        it.putExtra(EXTRA_ONGKIR, tempArray)
+                        startActivity(it)
+                        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                        finish()
+                    }
+                } else {
+                    Toast.makeText(this, "Silakan klik button sekali lagi untuk mendapatkan data ongkir", Toast.LENGTH_SHORT).show()
+                    checkClick = true
                 }
             } else {
-                Toast.makeText(this, "Silakan klik button sekali lagi untuk mendapatkan data ongkir", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
         }
 
         // Ketika "backButton" di klik

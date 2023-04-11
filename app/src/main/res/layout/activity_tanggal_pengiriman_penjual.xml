@@ -25,7 +25,7 @@
         android:textSize="18sp"
         android:textAlignment="center"
         android:textColor="@color/cool_blue"
-        android:text="TAMBAH ALAMAT"
+        android:text="TAMBAH PENGIRIMAN"
         android:fontFamily="@font/poppins_bold"
         android:layout_gravity="center_horizontal"
         app:layout_constraintStart_toEndOf="@id/prevButton"
