@@ -93,7 +93,7 @@
                 android:numStars="5"
                 android:rating="3.3"
                 android:stepSize="0.1"
-                android:isIndicator="false"
+                android:isIndicator="true"
                 android:theme="@style/RatingBar"
                 app:layout_constraintTop_toBottomOf="@id/imageProduk"
                 style="?android:attr/ratingBarStyleSmall"

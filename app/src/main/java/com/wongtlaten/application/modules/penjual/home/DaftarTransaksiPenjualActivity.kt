@@ -1,6 +1,9 @@
 package com.wongtlaten.application.modules.penjual.home
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -8,11 +11,13 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.Transaction
 import com.wongtlaten.application.modules.pembeli.profile.RiwayatTransaksiPembeliAdapter
@@ -32,12 +37,16 @@ class DaftarTransaksiPenjualActivity : AppCompatActivity() {
     private lateinit var normalActive : TextView
     private lateinit var selesaiInactive : TextView
     private lateinit var selesaiActive : TextView
-    private lateinit var textDaftarTransaksi : TextView
     private lateinit var etSearch: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daftar_transaksi_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         reference = FirebaseDatabase.getInstance().getReference("dataTransaksi")
 
@@ -47,18 +56,10 @@ class DaftarTransaksiPenjualActivity : AppCompatActivity() {
         normalActive = findViewById(R.id.normalActive)
         selesaiInactive = findViewById(R.id.selesaiInactive)
         selesaiActive = findViewById(R.id.selesaiActive)
-        textDaftarTransaksi = findViewById(R.id.textDaftarTransaksi)
 
         kustomisasiInactive.visibility = View.VISIBLE
         normalActive.visibility = View.VISIBLE
         selesaiInactive.visibility = View.VISIBLE
-
-        textDaftarTransaksi.setOnClickListener {
-            Intent(applicationContext, DetailTransaksiNormalPenjualActivity::class.java).also {
-                startActivity(it)
-                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-            }
-        }
 
         kustomisasiInactive.setOnClickListener {
             kustomisasiActive.visibility = View.VISIBLE
@@ -101,7 +102,6 @@ class DaftarTransaksiPenjualActivity : AppCompatActivity() {
         // Memanggil fungsi "showListProduct" yang digunakan untuk menampilkan recyclerview dari data yang sudah ada,
         // pada list
         showListTransaksi()
-        filterJenis("custom")
 
         // Mendefinisikan variabel "etSearch", ketika memasukkan query ke etSearch maka akan memanggil fungsi filter
         // terdapat closeSearch digunakan untuk menghapus query/inputan
@@ -159,7 +159,7 @@ class DaftarTransaksiPenjualActivity : AppCompatActivity() {
 
                     })
                     rvDaftarTransaksi.adapter = adapter
-
+                    filterJenis("normal")
                 }
             }
 
@@ -205,7 +205,7 @@ class DaftarTransaksiPenjualActivity : AppCompatActivity() {
             // setiap data yang ada pada daftarAnggotaList disamakan dengan filteredJenis
             daftarTransaksiList.filterTo(filteredJenis) {
                 // jika namaProduk sama dengan text input yang dimasukkan oleh user
-                it.jenisTransaksi.toLowerCase().contains(text.toLowerCase())
+                it.jenisTransaksi.toLowerCase().contains(text.toLowerCase()) && it.statusProduk != "Selesai"
             }
         }
         // maka akan memenaggil fungsi filterlist dari adapter dan hanyak menampilkan data yang cocok
@@ -227,6 +227,37 @@ class DaftarTransaksiPenjualActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DaftarTransaksiPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DaftarTransaksiPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

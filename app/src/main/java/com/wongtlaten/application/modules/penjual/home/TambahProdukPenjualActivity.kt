@@ -1,8 +1,10 @@
 package com.wongtlaten.application.modules.penjual.home
 
 import android.R.attr
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -18,6 +20,7 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.makeramen.roundedimageview.RoundedImageView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.modules.penjual.profile.UbahDataPribadiPenjualActivity
@@ -67,6 +70,11 @@ class TambahProdukPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tambah_produk_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
         reference = FirebaseDatabase.getInstance().getReference("dataProduk")
@@ -193,6 +201,11 @@ class TambahProdukPenjualActivity : AppCompatActivity() {
         autoCompleteJenis.setAdapter(arrayAdapterJenis)
 
         btnSimpan.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
 
             if (checkClick) {
                 checkClick = false
@@ -328,7 +341,7 @@ class TambahProdukPenjualActivity : AppCompatActivity() {
                                     ref.putFile(imageUri4).addOnSuccessListener {
                                         FirebaseStorage.getInstance().reference.child("imgProduct/${idProduk}/$countUpload").downloadUrl.addOnSuccessListener {
                                             image4 = it.toString()
-                                            val productUpdate = Products(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), minimumPemesananInput.toInt(), beratInput.toInt(), category, deskripsiInput, dropDownJenisInput, promoProduk.toLong(), image1, image2, image3, image4, 0F,  0)
+                                            val productUpdate = Products(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), minimumPemesananInput.toInt(), beratInput.toInt(), category, deskripsiInput, dropDownJenisInput, promoProduk.toLong(), image1, image2, image3, image4, 0F,  0, "active")
                                             reference.child("$idProduk").setValue(productUpdate).addOnCompleteListener {
                                                 if (it.isSuccessful){
                                                     val loading = LoadingDialog(this@TambahProdukPenjualActivity)
@@ -503,6 +516,37 @@ class TambahProdukPenjualActivity : AppCompatActivity() {
             }
 
         }, time)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@TambahProdukPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: TambahProdukPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

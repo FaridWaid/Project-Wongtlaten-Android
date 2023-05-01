@@ -1,9 +1,12 @@
 package com.wongtlaten.application.modules.penjual.home
 
 import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -13,11 +16,13 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.CustomizeProducts
 import com.wongtlaten.application.core.Products
 
@@ -42,6 +47,11 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_kustomisasi_produk_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize")
 
@@ -145,16 +155,16 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
                     var countSedang = 0
                     var countBesar = 0
                     for (i in snapshot.children){
-                        count += 1
                         val products = i.getValue(CustomizeProducts::class.java)
-                        if (products != null){
+                        if (products != null && products.statusProduct != "deleted"){
                             daftarProdukList.add(products)
+                            count += 1
                         }
-                        if (products?.kategoriProduct == "kecil"){
+                        if (products?.kategoriProduct == "kecil" && products.statusProduct != "deleted"){
                             countKecil += 1
-                        } else if (products?.kategoriProduct == "sedang"){
+                        } else if (products?.kategoriProduct == "sedang" && products.statusProduct != "deleted"){
                             countSedang += 1
-                        } else if (products?.kategoriProduct == "besar"){
+                        } else if (products?.kategoriProduct == "besar" && products.statusProduct != "deleted"){
                             countBesar += 1
                         }
                     }
@@ -190,6 +200,18 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
         }
         // maka akan memenaggil fungsi filterlist dari adapter dan hanyak menampilkan data yang cocok
         adapter!!.filterList(filteredJenis)
+        adapter.setOnItemClickCallback(object : KustomisasiProdukPenjualAdapter.OnItemClickCallback{
+            override fun onItemClicked() {
+                showListProduct()
+                kecilActive.visibility = View.INVISIBLE
+                sedangActive.visibility = View.INVISIBLE
+                besarActive.visibility = View.INVISIBLE
+                kecilInactive.visibility = View.VISIBLE
+                sedangInactive.visibility = View.VISIBLE
+                besarInactive.visibility = View.VISIBLE
+            }
+
+        })
     }
 
     private fun showDialogAdd(){
@@ -211,6 +233,13 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
             dialog.dismiss()
         }
         btnTambahProduk.setOnClickListener {
+            showListProduct()
+            kecilActive.visibility = View.INVISIBLE
+            sedangActive.visibility = View.INVISIBLE
+            besarActive.visibility = View.INVISIBLE
+            kecilInactive.visibility = View.VISIBLE
+            sedangInactive.visibility = View.VISIBLE
+            besarInactive.visibility = View.VISIBLE
             Intent(applicationContext, TambahKustomisasiProdukPenjualActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -252,6 +281,37 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@KustomisasiProdukPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: KustomisasiProdukPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

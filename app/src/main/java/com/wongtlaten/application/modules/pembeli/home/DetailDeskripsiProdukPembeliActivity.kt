@@ -1,13 +1,18 @@
 package com.wongtlaten.application.modules.pembeli.home
 
+import android.content.Context
+import android.content.DialogInterface
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.modules.penjual.home.PreviewDeskripsiProdukActivity
 
@@ -28,6 +33,11 @@ class DetailDeskripsiProdukPembeliActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_deskripsi_produk_pembeli)
 
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
+
         imageProduk = findViewById(R.id.imageProduk)
         namaProduk = findViewById(R.id.nameProduk)
         beratProduk = findViewById(R.id.berat)
@@ -46,7 +56,7 @@ class DetailDeskripsiProdukPembeliActivity : AppCompatActivity() {
                 val produk = dataSnapshot.getValue(Products::class.java)!!
 
                 namaProduk.text = produk.namaProduct
-                beratProduk.text = "${produk.beratProduct} kg"
+                beratProduk.text = "${produk.beratProduct} gram"
                 minimalPemesanan.text = "${produk.minimumPemesananProduct} buah"
                 kategoriProduk.text = "${produk.kategoriProduct}"
                 stockProduk.text = "${produk.stockProduct} buah"
@@ -76,6 +86,37 @@ class DetailDeskripsiProdukPembeliActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DetailDeskripsiProdukPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DetailDeskripsiProdukPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

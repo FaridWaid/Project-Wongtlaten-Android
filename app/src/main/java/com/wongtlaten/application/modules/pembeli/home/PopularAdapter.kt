@@ -20,6 +20,7 @@ import com.wongtlaten.application.R
 import com.wongtlaten.application.core.CartProducts
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.WishlistProducts
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -43,7 +44,10 @@ class PopularAdapter(val list: ArrayList<Products>, val method: Activity): Recyc
                 val formattedNumber: String = formatter.format(myNumber)
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 ratingBar.rating = products.ratingProduct
-                textRate.text = "(${products.ratingProduct})"
+                ratingBar.isEnabled = false
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.setText("(${df.format(products.ratingProduct).toDouble()})")
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
                 priceProduk.text = "Rp. $formattedNumber"

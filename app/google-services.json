@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "871731436350",
+    "firebase_url": "https://wongtlaten-728dd-default-rtdb.firebaseio.com",
     "project_id": "wongtlaten-728dd",
     "storage_bucket": "wongtlaten-728dd.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "871731436350-5pbk5426cqco629gn2rqr3fcqoeld61n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wongtlaten.application",
+            "certificate_hash": "dfdd9d78d40b6d0779ac6a183042d839b220f834"
+          }
+        },
         {
           "client_id": "871731436350-v0rbqcp0lhmmog44pghku8ja34u0q5dl.apps.googleusercontent.com",
           "client_type": 3

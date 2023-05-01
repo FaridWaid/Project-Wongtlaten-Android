@@ -22,6 +22,7 @@ import com.wongtlaten.application.core.CartProducts
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.WishlistProducts
 import com.wongtlaten.application.modules.pembeli.home.DetailProdukPembeliActivity.Companion.EXTRA_ID_PRODUCT
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -55,7 +56,10 @@ class FsViewPagerAdapter(val list: ArrayList<Products>, val method: SearchPembel
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 textFs.text = " ${products.hargaPromoProduct}% "
                 ratingBar.rating = products.ratingProduct
-                textRate.text = "(${products.ratingProduct})"
+//                ratingBar.isEnabled = false
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.setText("(${df.format(products.ratingProduct).toDouble()})")
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
 

@@ -1,6 +1,7 @@
 package com.wongtlaten.application.modules.penjual.home
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
@@ -11,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +28,13 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProducts>, val method: KustomisasiProdukPenjualActivity): RecyclerView.Adapter<KustomisasiProdukPenjualAdapter.DaftarProdukViewHolder>() {
+
+    private var onItemClickCallback: OnItemClickCallback? = null
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback){
+        this.onItemClickCallback = onItemClickCallback
+    }
+
 
     // Membuat class DaftarProdukViewHolder yang digunakan untuk set view yang akan ditampilkan
     inner class DaftarProdukViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -87,7 +96,7 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                         Picasso.get().load(produk.photoProduct1).into(imageKustomisasi)
                         namaProdukk.text = produk.namaProduct
                         deskripsiProduk.text = produk.deskripsiProduct
-                        beratProduk.text = produk.beratProduct.toString()
+                        beratProduk.text = "${produk.beratProduct} gram"
                         stokProduk.text = produk.stockProduct.toString()
                         kategoriProduk.text = produk.kategoriProduct
                         val formatter: NumberFormat = DecimalFormat("#,###")
@@ -103,19 +112,30 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                     }
 
                     textDeleteProduk.setOnClickListener {
-                        val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child("${produk.idProduct}")
-                        reference.removeValue().addOnCompleteListener {
-                            var ref = FirebaseStorage.getInstance().reference.child("imgProductCustomize/${produk.idProduct}")
-                            ref.delete().addOnCompleteListener {
-                                if (it.isSuccessful){
-                                    dialog.dismiss()
-                                    Toast.makeText(context, "Produk tersebut berhasil dihapus!", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    dialog.dismiss()
-                                    Toast.makeText(context, "Produk tersebut gagal dihapus!", Toast.LENGTH_SHORT).show()
+                        val alertDialog = AlertDialog.Builder(context)
+                        alertDialog.apply {
+                            setTitle("Konfirmasi")
+                            setMessage("Apakah anda yakin ingin menghapus produk ${produk.namaProduct}?")
+                            setNegativeButton("Batal", DialogInterface.OnClickListener { dialogInterface, i ->
+                                dialogInterface.dismiss()
+                            })
+                            setPositiveButton("Hapus", DialogInterface.OnClickListener { dialogInterface, i ->
+                                dialogInterface.dismiss()
+                                val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child("${produk.idProduct}")
+                                val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, "deleted")
+                                reference.setValue(productUpdate).addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        dialog.dismiss()
+                                        onItemClickCallback?.onItemClicked()
+                                        Toast.makeText(context, "Produk tersebut berhasil dihapus!", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        dialog.dismiss()
+                                        Toast.makeText(context, "Produk tersebut gagal dihapus!", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
-                            }
+                            })
                         }
+                        alertDialog.show()
                     }
 
                     btnClose.setOnClickListener {
@@ -148,7 +168,7 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                             etStok.requestFocus()
                             return@setOnClickListener
                         } else {
-                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, stokInput.toInt(), produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1)
+                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, stokInput.toInt(), produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
@@ -192,7 +212,7 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                             etHarga.requestFocus()
                             return@setOnClickListener
                         } else {
-                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, hargaInput.toLong(), produk.stockProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1)
+                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, hargaInput.toLong(), produk.stockProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
@@ -239,6 +259,10 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
     fun filterList(filteredNames: ArrayList<CustomizeProducts>) {
         this.list = filteredNames
         notifyDataSetChanged()
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked()
     }
 
 }

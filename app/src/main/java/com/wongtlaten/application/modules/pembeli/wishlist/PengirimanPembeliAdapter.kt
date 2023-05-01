@@ -56,7 +56,7 @@ class PengirimanPembeliAdapter(val list: ArrayList<Products>, val listIdProduk: 
                 }
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 namaProduk.text = products.namaProduct
-                countProduk.text = "${totalProduk} produk (${products.beratProduct * totalProduk} kg)"
+                countProduk.text = "${totalProduk} produk (${products.beratProduct * totalProduk} gram)"
                 totalWeight += products.beratProduct
                 countProduct += totalProduk
             }

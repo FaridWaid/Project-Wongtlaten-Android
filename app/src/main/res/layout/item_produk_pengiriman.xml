@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:text="1 produk (1 kg)"
+        android:text="1 produk (1 gram)"
         android:textSize="11sp"
         android:fontFamily="@font/poppins_regular"
         android:textColor="@color/textfield"

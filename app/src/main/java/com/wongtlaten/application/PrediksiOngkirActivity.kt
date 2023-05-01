@@ -1,7 +1,9 @@
 package com.wongtlaten.application
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -48,6 +50,11 @@ class PrediksiOngkirActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prediksi_ongkir)
 
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
+
         prediksiOngkir = findViewById(R.id.textPrediksiOngkir)
         autoCompleteKotaTujuan = findViewById(R.id.autoCompleteTextViewKotaTujuan)
         autoCompleteKotaAsal = findViewById(R.id.autoCompleteTextViewKotaAsal)
@@ -77,6 +84,11 @@ class PrediksiOngkirActivity : AppCompatActivity() {
         btnCekOngkir = findViewById(R.id.btnCekOngkir)
 
         btnCekOngkir.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
 
             if (checkClick){
                 checkClick = false
@@ -284,6 +296,37 @@ class PrediksiOngkirActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@PrediksiOngkirActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: PrediksiOngkirActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

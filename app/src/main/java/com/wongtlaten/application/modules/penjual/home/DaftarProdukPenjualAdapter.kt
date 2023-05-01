@@ -1,6 +1,7 @@
 package com.wongtlaten.application.modules.penjual.home
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat.startActivity
@@ -26,6 +28,12 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 class DaftarProdukPenjualAdapter (private var list: ArrayList<Products>, val method: DaftarProdukPenjualActivity): RecyclerView.Adapter<DaftarProdukPenjualAdapter.DaftarProdukViewHolder>() {
+
+    private var onItemClickCallback: OnItemClickCallback? = null
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback){
+        this.onItemClickCallback = onItemClickCallback
+    }
 
     // Membuat class DaftarProdukViewHolder yang digunakan untuk set view yang akan ditampilkan
     inner class DaftarProdukViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -82,25 +90,30 @@ class DaftarProdukPenjualAdapter (private var list: ArrayList<Products>, val met
                     }
 
                     textDeleteProduk.setOnClickListener {
-                        val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child("${produk.idProduct}")
-                        reference.removeValue().addOnCompleteListener {
-                            for (i in 0..3){
-                                var ref = FirebaseStorage.getInstance().reference.child("imgProduct/${produk.idProduct}/$i")
-                                if (i == 3){
-                                    ref.delete().addOnCompleteListener {
-                                        if (it.isSuccessful){
-                                            dialog.dismiss()
-                                            Toast.makeText(context, "Produk tersebut berhasil dihapus!", Toast.LENGTH_SHORT).show()
-                                        } else {
-                                            dialog.dismiss()
-                                            Toast.makeText(context, "Produk tersebut gagal dihapus!", Toast.LENGTH_SHORT).show()
-                                        }
+                        val alertDialog = AlertDialog.Builder(context)
+                        alertDialog.apply {
+                            setTitle("Konfirmasi")
+                            setMessage("Apakah anda yakin ingin menghapus produk ${produk.namaProduct}?")
+                            setNegativeButton("Batal", DialogInterface.OnClickListener { dialogInterface, i ->
+                                dialogInterface.dismiss()
+                            })
+                            setPositiveButton("Hapus", DialogInterface.OnClickListener { dialogInterface, i ->
+                                dialogInterface.dismiss()
+                                val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child("${produk.idProduct}")
+                                val productUpdate = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct, "deleted")
+                                reference.setValue(productUpdate).addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        dialog.dismiss()
+                                        onItemClickCallback?.onItemClicked()
+                                        Toast.makeText(context, "Produk tersebut berhasil dihapus!", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        dialog.dismiss()
+                                        Toast.makeText(context, "Produk tersebut gagal dihapus!", Toast.LENGTH_SHORT).show()
                                     }
-                                } else {
-                                    ref.delete()
                                 }
-                            }
+                            })
                         }
+                        alertDialog.show()
                     }
 
                     btnClose.setOnClickListener {
@@ -133,7 +146,7 @@ class DaftarProdukPenjualAdapter (private var list: ArrayList<Products>, val met
                             etStok.requestFocus()
                             return@setOnClickListener
                         } else {
-                            val productUpdate = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, stokInput.toInt(), produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct)
+                            val productUpdate = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, stokInput.toInt(), produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
@@ -177,7 +190,7 @@ class DaftarProdukPenjualAdapter (private var list: ArrayList<Products>, val met
                             etHarga.requestFocus()
                             return@setOnClickListener
                         } else if (produk.jenisProduct == "flash sale"){
-                            val productUpdate = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, hargaInput.toLong(), produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct)
+                            val productUpdate = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, hargaInput.toLong(), produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
@@ -189,7 +202,7 @@ class DaftarProdukPenjualAdapter (private var list: ArrayList<Products>, val met
                                 }
                             }
                         } else {
-                            val productUpdate = Products(produk.idProduct, produk.namaProduct, hargaInput.toLong(), produk.stockProduct, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct)
+                            val productUpdate = Products(produk.idProduct, produk.namaProduct, hargaInput.toLong(), produk.stockProduct, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct,  produk.jumlahPembelianProduct, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
@@ -236,6 +249,10 @@ class DaftarProdukPenjualAdapter (private var list: ArrayList<Products>, val met
     fun filterList(filteredNames: ArrayList<Products>) {
         this.list = filteredNames
         notifyDataSetChanged()
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked()
     }
 
 }

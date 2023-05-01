@@ -10,8 +10,9 @@ data class CustomizeProducts(
     val kategoriProduct : String,
     val deskripsiProduct : String,
     val photoProduct1 : String,
+    val statusProduct : String
 ): java.io.Serializable{
-    constructor(): this("","", 0, 0, 0,  "", "", ""){
+    constructor(): this("","", 0, 0, 0,  "", "", "", ""){
 
     }
 }

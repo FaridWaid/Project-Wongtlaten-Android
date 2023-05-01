@@ -1,7 +1,9 @@
 package com.wongtlaten.application.modules.penjual.home
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +22,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.makeramen.roundedimageview.RoundedImageView
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.CustomizeProducts
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Products
@@ -53,6 +56,11 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ubah_produk_kustomisasi_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         idProduk = intent.getStringExtra(EXTRA_ID_PRODUCT)!!
         // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
@@ -129,6 +137,11 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
         }
 
         btnSimpan.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
 
             if (checkClick) {
                 checkClick = false
@@ -215,7 +228,7 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
 
     private fun addNewProduct(imageUri1: Uri, namaProduk: String, hargaProduk: String, stokInput: String, beratInput: String, deskripsiInput: String, dropDownKategoriInput: String) {
         if (!changePhoto1){
-            val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1)
+            val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1, "active")
             reference.setValue(productUpdate).addOnCompleteListener {
                 if (it.isSuccessful){
                     alertDialog("BERHASIL!", "Produk baru berhasil di ubah!", true)
@@ -230,7 +243,7 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
             ref.putFile(imageUri1).addOnSuccessListener {
                 FirebaseStorage.getInstance().reference.child("imgProductCustomize/${idProduk}").downloadUrl.addOnSuccessListener {
                     image1 = it.toString()
-                    val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1)
+                    val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1, "active")
                     reference.setValue(productUpdate).addOnCompleteListener {
                         if (it.isSuccessful){
                             alertDialog("BERHASIL!", "Produk baru berhasil di ubah!", true)
@@ -355,6 +368,37 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
             }
 
         }, time)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@UbahProdukKustomisasiPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: UbahProdukKustomisasiPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

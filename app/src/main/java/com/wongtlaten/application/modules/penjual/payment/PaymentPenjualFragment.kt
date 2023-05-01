@@ -16,6 +16,7 @@ import com.wongtlaten.application.api.RetrofitClient
 import com.wongtlaten.application.core.CustomizeProducts
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.Transaction
+import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.modules.pembeli.wishlist.DetailPesananPembeliActivity
 import com.wongtlaten.application.modules.pembeli.wishlist.PembayaranPembeliAdapter
 import com.wongtlaten.application.modules.penjual.payment.DetailPaymentPenjualActivity.Companion.EXTRA_TRANSACTION
@@ -44,7 +45,7 @@ class PaymentPenjualFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        updateTransaction()
+        updateTransaction()
 //        if (daftarTransaksi.size != daftarPayment.size){
 //            updateTransaction()
 //        } else{
@@ -64,7 +65,7 @@ class PaymentPenjualFragment : Fragment() {
         daftarTransaksi = arrayListOf()
         newUpdateTransaction = ""
 
-//        updateTransaction()
+        updateTransaction()
 //        if (daftarTransaksi.size != daftarPayment.size){
 //            updateTransaction()
 //        } else{
@@ -144,7 +145,7 @@ class PaymentPenjualFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
-                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1)
+                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                                                 referenceCustom.setValue(productUpdateCustomize)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
@@ -159,7 +160,7 @@ class PaymentPenjualFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(Products::class.java)!!
-                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli)
+                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli, produk.statusProduct)
                                                 referenceNormal.setValue(productUpdateNormal)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
@@ -172,6 +173,9 @@ class PaymentPenjualFragment : Fragment() {
                                 var updateTransaction = Transaction(daftarTransaksi[i].idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
                                 reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             } else{
+                                if (newUpdateTransaction == "settlement"){
+                                    updatePembelianUser(daftarTransaksi[i].idUser)
+                                }
                                 var updateTransaction = Transaction(daftarTransaksi[i].idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
                                 reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             }
@@ -190,6 +194,22 @@ class PaymentPenjualFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun updatePembelianUser(idUser: String){
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(idUser)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                val usersUpdate = Users(users.idUsers, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi + 1, users.accessLevel, users.token, users.status, users.checkOtp)
+                referenceUser.setValue(usersUpdate)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
     }
 
 }

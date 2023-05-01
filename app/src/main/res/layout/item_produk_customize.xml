@@ -17,14 +17,16 @@
 
     <TextView
         android:id="@+id/namaProdukCustomize"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:text="Totebag"
         android:fontFamily="@font/poppins_bold"
         android:textSize="14sp"
         android:textColor="@color/yankes_blue"
+        app:layout_constraintEnd_toStartOf="@id/btnMinus"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

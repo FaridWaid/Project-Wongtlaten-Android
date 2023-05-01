@@ -1,7 +1,9 @@
 package com.wongtlaten.application
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -47,6 +49,11 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
+
         textLogin = findViewById(R.id.textLogin)
         etUsername = findViewById(R.id.etUsername)
         usernameContainer = findViewById(R.id.usernameContainer)
@@ -71,7 +78,7 @@ class RegisterActivity : AppCompatActivity() {
         // Mengisi variabel auth dengan fungsi yang ada pada FirebaseAuth
         auth = FirebaseAuth.getInstance()
         // Membuat database baru dengan reference users dan dimasukkan ke dalam variabel ref
-        ref = FirebaseDatabase.getInstance().getReference("dataAkunCustomer")
+        ref = FirebaseDatabase.getInstance().getReference("dataAkunUser")
         refAttempt = FirebaseDatabase.getInstance().getReference("attemptLogin")
 
         // Memanggil fungsi "usernameFocusListener", "emailFocusListener", "passwordFocusListener"
@@ -81,6 +88,11 @@ class RegisterActivity : AppCompatActivity() {
 
         // Ketika "btnRegistrasi" di klik maka akan mencoba mendaftarkan akun baru
         btnRegistrasi.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
 
             if (checkClick) {
                 checkClick = false
@@ -141,7 +153,13 @@ class RegisterActivity : AppCompatActivity() {
                             FirebaseMessaging.getInstance().token.addOnCompleteListener(
                                 OnCompleteListener { task ->
                                     // Mendapatkan token baru
-                                    val token = task.result
+                                    var token = ""
+                                    if (!task.isSuccessful) {
+                                        token = ""
+                                    } else{
+                                        // mendapatkan token baru
+                                        token = task.result
+                                    }
                                     // Membuat variabel "newUser" yang berisikan beberapa data dan data tersebut diinputkan ke dalam Users
                                     val newUser = Users(idCustomers!!, username, "", "", email, downloadUrl.toString(), "", 0, "customers", token!!, "active", "inactive")
                                     // Jika idUser tidak null/kosong
@@ -301,6 +319,37 @@ class RegisterActivity : AppCompatActivity() {
             }
 
         }, time)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@RegisterActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: RegisterActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

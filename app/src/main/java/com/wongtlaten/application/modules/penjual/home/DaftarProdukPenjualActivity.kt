@@ -1,9 +1,12 @@
 package com.wongtlaten.application.modules.penjual.home
 
 import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -15,11 +18,13 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.CategoryProduct
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.modules.pembeli.profile.UbahDataPribadiPembeliActivity
@@ -45,6 +50,11 @@ class DaftarProdukPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daftar_produk_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         reference = FirebaseDatabase.getInstance().getReference("dataProduk")
 
@@ -171,6 +181,13 @@ class DaftarProdukPenjualActivity : AppCompatActivity() {
             dialog.dismiss()
         }
         btnTambahProduk.setOnClickListener {
+            showListProduct()
+            fsActive.visibility = View.INVISIBLE
+            newActive.visibility = View.INVISIBLE
+            popularActive.visibility = View.INVISIBLE
+            fsInactive.visibility = View.VISIBLE
+            newInactive.visibility = View.VISIBLE
+            popularInactive.visibility = View.VISIBLE
             Intent(applicationContext, TambahProdukPenjualActivity::class.java).also {
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -192,16 +209,16 @@ class DaftarProdukPenjualActivity : AppCompatActivity() {
                     var countNew = 0
                     var countPopular = 0
                     for (i in snapshot.children){
-                        count += 1
                         val products = i.getValue(Products::class.java)
-                        if (products != null){
+                        if (products != null && products.statusProduct != "deleted"){
+                            count += 1
                             daftarProdukList.add(products)
                         }
-                        if (products?.jenisProduct == "flash sale"){
+                        if (products?.jenisProduct == "flash sale" && products.statusProduct != "deleted"){
                             countFs += 1
-                        } else if (products?.jenisProduct == "new"){
+                        } else if (products?.jenisProduct == "new" && products.statusProduct != "deleted"){
                             countNew += 1
-                        } else if (products?.jenisProduct == "popular"){
+                        } else if (products?.jenisProduct == "popular" && products.statusProduct != "deleted"){
                             countPopular += 1
                         }
                     }
@@ -250,6 +267,18 @@ class DaftarProdukPenjualActivity : AppCompatActivity() {
         }
         // maka akan memenaggil fungsi filterlist dari adapter dan hanyak menampilkan data yang cocok
         adapter!!.filterList(filteredJenis)
+        adapter.setOnItemClickCallback(object : DaftarProdukPenjualAdapter.OnItemClickCallback{
+            override fun onItemClicked() {
+                showListProduct()
+                fsActive.visibility = View.INVISIBLE
+                newActive.visibility = View.INVISIBLE
+                popularActive.visibility = View.INVISIBLE
+                fsInactive.visibility = View.VISIBLE
+                newInactive.visibility = View.VISIBLE
+                popularInactive.visibility = View.VISIBLE
+            }
+
+        })
     }
 
     // Membuat fungsi "animationToTop" yang berisi animasi ketika pinday activity
@@ -262,6 +291,37 @@ class DaftarProdukPenjualActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DaftarProdukPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DaftarProdukPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

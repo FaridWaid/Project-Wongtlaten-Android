@@ -1,6 +1,8 @@
 package com.wongtlaten.application.modules.pembeli.profile
 
+import android.content.Context
 import android.content.DialogInterface
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +16,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.LoadingDialog
 import kotlin.properties.Delegates
 
@@ -32,6 +35,11 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ubah_password_pembeli)
 
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
+
         // Mengisi variabel auth dengan fungsi yang ada pada FirebaseAuth
         auth = FirebaseAuth.getInstance()
         val userIdentity = auth.currentUser!!
@@ -49,6 +57,11 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
         // Ketika "buttonSubmit" di klik maka akan mencoba menjalankan kondisi yang ada di dalam
         val buttonSubmit: Button = findViewById(R.id.btnSimpanPerubahan)
         buttonSubmit.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
 
             if (checkClick) {
                 checkClick = false
@@ -191,6 +204,37 @@ class UbahPasswordPembeliActivity : AppCompatActivity() {
             }
 
         }, time)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@UbahPasswordPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: UbahPasswordPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

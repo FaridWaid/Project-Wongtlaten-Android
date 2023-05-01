@@ -1,7 +1,9 @@
 package com.wongtlaten.application.modules.penjual.home
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +21,7 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.makeramen.roundedimageview.RoundedImageView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.CustomizeProducts
 import com.wongtlaten.application.core.LoadingDialog
 import com.wongtlaten.application.core.Products
@@ -51,6 +54,11 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tambah_kustomisasi_produk_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
         reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize")
@@ -144,6 +152,11 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
 
         btnSimpan.setOnClickListener {
 
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
+
             if (checkClick) {
                 checkClick = false
 
@@ -235,7 +248,7 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
             FirebaseStorage.getInstance().reference.child("imgProductCustomize/${idProduk}").downloadUrl.addOnSuccessListener {
                 image1 = it.toString()
                 countUpload += 1
-                val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1)
+                val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1, "active")
                 reference.child("$idProduk").setValue(productUpdate).addOnCompleteListener {
                     if (it.isSuccessful){
                         val loading = LoadingDialog(this@TambahKustomisasiProdukPenjualActivity)
@@ -363,6 +376,37 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@TambahKustomisasiProdukPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: TambahKustomisasiProdukPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

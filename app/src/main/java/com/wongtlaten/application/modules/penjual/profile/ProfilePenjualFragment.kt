@@ -13,15 +13,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.midtrans.sdk.corekit.models.snap.TransactionStatusResponse
 import com.squareup.picasso.Picasso
 import com.wongtlaten.application.LoginActivity
 import com.wongtlaten.application.PrediksiOngkirActivity
 import com.wongtlaten.application.R
-import com.wongtlaten.application.core.Users
-import com.wongtlaten.application.core.LoadingDialog
-import com.wongtlaten.application.modules.penjual.home.DaftarProdukPenjualActivity
-import com.wongtlaten.application.modules.penjual.home.DaftarTransaksiPenjualActivity
+import com.wongtlaten.application.api.RetrofitClient
+import com.wongtlaten.application.core.*
+import com.wongtlaten.application.core.Transaction
+import com.wongtlaten.application.modules.penjual.home.*
 import de.hdodenhof.circleimageview.CircleImageView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ProfilePenjualFragment : Fragment() {
 
@@ -36,9 +40,16 @@ class ProfilePenjualFragment : Fragment() {
     private lateinit var nextDataPribadi: ConstraintLayout
     private lateinit var nextKeamanan: ConstraintLayout
     private lateinit var nextPengelolaanProduk: ConstraintLayout
+    private lateinit var nextPengelolaanAkun: ConstraintLayout
     private lateinit var nextPengelolaanTransaksi: ConstraintLayout
+    private lateinit var nextPengelolaanSaldo: ConstraintLayout
+    private lateinit var nextLaporan: ConstraintLayout
+    private lateinit var nextNotifikasi: ConstraintLayout
     private lateinit var nextPrediksiOngkir: ConstraintLayout
+    private lateinit var nextFaq: ConstraintLayout
     private lateinit var nextLogout: ConstraintLayout
+    private lateinit var daftarTransaksi: ArrayList<Transaction>
+    private lateinit var newUpdateTransaction : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +62,7 @@ class ProfilePenjualFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         keepData()
+        updateTransaction()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,18 +81,26 @@ class ProfilePenjualFragment : Fragment() {
         nextDataPribadi = view.findViewById(R.id.layoutDataPribadi)
         nextKeamanan = view.findViewById(R.id.layoutKeamanan)
         nextPengelolaanProduk = view.findViewById(R.id.layoutPengelolaanProduk)
+        nextPengelolaanAkun = view.findViewById(R.id.layoutPengelolaanAkun)
         nextPengelolaanTransaksi = view.findViewById(R.id.layoutPengelolaanTransaksi)
+        nextPengelolaanSaldo = view.findViewById(R.id.layoutPengelolaanSaldo)
+        nextLaporan = view.findViewById(R.id.layoutLaporan)
+        nextNotifikasi = view.findViewById(R.id.layoutNotifikasi)
         nextPrediksiOngkir = view.findViewById(R.id.layoutPrediksiOngkir)
+        nextFaq = view.findViewById(R.id.layoutFaq)
         nextLogout = view.findViewById(R.id.layoutLogout)
+        daftarTransaksi = arrayListOf()
+        newUpdateTransaction = ""
 
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
-        referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(userIdentity.uid)
+        referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
 
         // Memanggil fungsi loadingBar dan mengeset time = 1000
         loadingBar(1000)
 
         // Memanggil fungsi keepData
         keepData()
+        updateTransaction()
 
         // Mendefinisikan variabel nextDataPribadi
         // overridePendingTransition digunakan untuk animasi dari intent
@@ -108,6 +128,14 @@ class ProfilePenjualFragment : Fragment() {
             }
         }
 
+        nextPengelolaanAkun.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarAkunPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
         nextPengelolaanTransaksi.setOnClickListener {
             // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
             requireActivity().run{
@@ -116,10 +144,42 @@ class ProfilePenjualFragment : Fragment() {
             }
         }
 
+        nextPengelolaanSaldo.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarSaldoPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        nextLaporan.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, LaporanPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        nextNotifikasi.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, NotifikasiPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
         nextPrediksiOngkir.setOnClickListener {
             // Jika berhasil maka akan pindah ke ProfileKeamananPembeliActivity
             requireActivity().run{
                 startActivity(Intent(this, PrediksiOngkirActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        nextFaq.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPembeliActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarFaqPenjualActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
             }
         }
@@ -149,6 +209,101 @@ class ProfilePenjualFragment : Fragment() {
             }
         }
         referen.addListenerForSingleValueEvent(menuListener)
+    }
+
+    private fun updateTransaction() {
+        val reference = FirebaseDatabase.getInstance().getReference("dataTransaksi")
+        reference.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    daftarTransaksi.clear()
+                    for (i in snapshot.children){
+                        val transaction = i.getValue(Transaction::class.java)!!
+                        if (transaction.statusPembayaran == "pending"){
+                            daftarTransaksi.add(transaction)
+                        }
+                    }
+                }
+                for (i in 0..daftarTransaksi.size-1){
+                    RetrofitClient.instance.getStatusTransaction(daftarTransaksi[i].idTransaksi).enqueue(object:
+                        Callback<TransactionStatusResponse> {
+                        override fun onResponse(
+                            call: Call<TransactionStatusResponse>,
+                            response: Response<TransactionStatusResponse>
+                        ) {
+                            newUpdateTransaction = response.body()?.transactionStatus ?: "pending"
+                            if (daftarTransaksi[i].statusPembayaran != newUpdateTransaction && newUpdateTransaction == "expire"){
+                                if (daftarTransaksi[i].jenisTransaksi == "custom"){
+                                    for (j in 0..daftarTransaksi[i].produkTransaction.size - 1){
+                                        var referenceCustom = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(daftarTransaksi[i].produkTransaction[j].idProduk)
+                                        val menuListener = object : ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
+                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
+                                                referenceCustom.setValue(productUpdateCustomize)
+                                            }
+                                            override fun onCancelled(databaseError: DatabaseError) {
+                                                // handle error
+                                            }
+                                        }
+                                        referenceCustom.addListenerForSingleValueEvent(menuListener)
+                                    }
+                                } else{
+                                    for (j in 0..daftarTransaksi[i].produkTransaction.size - 1){
+                                        var referenceNormal = FirebaseDatabase.getInstance().getReference("dataProduk").child(daftarTransaksi[i].produkTransaction[j].idProduk)
+                                        val menuListener = object : ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                val produk = dataSnapshot.getValue(Products::class.java)!!
+                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli, produk.statusProduct)
+                                                referenceNormal.setValue(productUpdateNormal)
+                                            }
+                                            override fun onCancelled(databaseError: DatabaseError) {
+                                                // handle error
+                                            }
+                                        }
+                                        referenceNormal.addListenerForSingleValueEvent(menuListener)
+                                    }
+                                }
+                                var updateTransaction = Transaction(daftarTransaksi[i].idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
+                                reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
+                            } else{
+                                if (newUpdateTransaction == "settlement"){
+                                    updatePembelianUser(daftarTransaksi[i].idUser)
+                                }
+                                var updateTransaction = Transaction(daftarTransaksi[i].idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
+                                reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<TransactionStatusResponse>, t: Throwable) {
+
+                        }
+
+                    })
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
+    private fun updatePembelianUser(idUser: String){
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(idUser)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                val usersUpdate = Users(users.idUsers, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi + 1, users.accessLevel, users.token, users.status, users.checkOtp)
+                referenceUser.setValue(usersUpdate)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
     }
 
     // Membuat fungsi "alertDialog" dengan parameter title, message, dan backActivity

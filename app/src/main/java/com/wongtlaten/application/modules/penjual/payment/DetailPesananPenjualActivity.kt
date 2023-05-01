@@ -1,10 +1,14 @@
 package com.wongtlaten.application.modules.penjual.payment
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.Transaction
 import com.wongtlaten.application.modules.penjual.home.UbahStatusTransaksiActivity
@@ -49,6 +54,11 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_pesanan_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         daftarTransaction = intent.getSerializableExtra(EXTRA_TRANSACTION) as ArrayList<Transaction>
 
@@ -114,7 +124,7 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
             textStatusPesanan.text = "Transaksi Batal"
         }
         idTransaksi.text = daftarTransaction[0].idTransaksi
-        var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(daftarTransaction[0].idUser)
+        var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(daftarTransaction[0].idUser)
         val menuListener3 = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = dataSnapshot.getValue(Users::class.java)!!
@@ -155,7 +165,7 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
         val formatter: NumberFormat = DecimalFormat("#,###")
         val formattedNumberPrice: String = formatter.format(countTotalProduk)
         totalHarga.text = "Rp. $formattedNumberPrice"
-        textOngkosKirim.text = "Ongkos Kirim (${daftarTransaction[0].totalBerat} gr)"
+        textOngkosKirim.text = "Ongkos Kirim (${daftarTransaction[0].totalBerat} gram)"
         val formattedNumberPrice2: String = formatter.format(daftarTransaction[0].jumlahOngkir)
         ongkosKirim.text = "Rp. $formattedNumberPrice2"
         val formattedNumberPrice3: String = formatter.format(daftarTransaction[0].totalPembayaran)
@@ -176,6 +186,37 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
 
     companion object{
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DetailPesananPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DetailPesananPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

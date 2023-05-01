@@ -1,15 +1,21 @@
 package com.wongtlaten.application.modules.pembeli.wishlist
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.Transaction
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -37,10 +43,16 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
     private lateinit var ongkosKirim: TextView
     private lateinit var totalPembayaran: TextView
     private lateinit var btnCaraPembayaran: Button
+    private lateinit var btnCaraPembayaranInactive: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_pesanan_pembeli)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         daftarTransaction = intent.getSerializableExtra(EXTRA_TRANSACTION) as ArrayList<Transaction>
 
@@ -62,12 +74,19 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
         ongkosKirim = findViewById(R.id.totalOngkir)
         totalPembayaran = findViewById(R.id.totalPembayaran)
         btnCaraPembayaran = findViewById(R.id.btnCaraPembayaran)
+        btnCaraPembayaranInactive = findViewById(R.id.btnCaraPembayaranInactive)
 
         getData()
 
-        btnCaraPembayaran.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(daftarTransaction[0].pdfUrl))
-            startActivity(browserIntent)
+        if (daftarTransaction[0].statusPembayaran != "settlement"){
+            btnCaraPembayaran.visibility = View.VISIBLE
+            btnCaraPembayaran.setOnClickListener {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(daftarTransaction[0].pdfUrl))
+                startActivity(browserIntent)
+            }
+        } else if (daftarTransaction[0].statusPembayaran == "settlement"){
+            btnCaraPembayaran.visibility = View.INVISIBLE
+            btnCaraPembayaranInactive.visibility = View.VISIBLE
         }
 
         // Ketika "backButton" di klik
@@ -119,7 +138,7 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
         val formatter: NumberFormat = DecimalFormat("#,###")
         val formattedNumberPrice: String = formatter.format(countTotalProduk)
         totalHarga.text = "Rp. $formattedNumberPrice"
-        textOngkosKirim.text = "Ongkos Kirim (${daftarTransaction[0].totalBerat} gr)"
+        textOngkosKirim.text = "Ongkos Kirim (${daftarTransaction[0].totalBerat} gram)"
         val formattedNumberPrice2: String = formatter.format(daftarTransaction[0].jumlahOngkir)
         ongkosKirim.text = "Rp. $formattedNumberPrice2"
         val formattedNumberPrice3: String = formatter.format(daftarTransaction[0].totalPembayaran)
@@ -141,6 +160,37 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
 
     companion object{
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DetailPesananPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DetailPesananPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

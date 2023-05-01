@@ -48,6 +48,7 @@ class ProfilePembeliFragment : Fragment() {
     private lateinit var nextRiwayatTransaksi: ConstraintLayout
     private lateinit var nextKonfirmasiPembayaran: ConstraintLayout
     private lateinit var nextPrediksiOngkir: ConstraintLayout
+    private lateinit var nextFaq: ConstraintLayout
     private lateinit var nextLogout: ConstraintLayout
     private lateinit var idUser: String
     private lateinit var newUpdateTransaction : String
@@ -89,11 +90,12 @@ class ProfilePembeliFragment : Fragment() {
         nextRiwayatTransaksi = view.findViewById(R.id.layoutRiwayatTransaksi)
         nextKonfirmasiPembayaran = view.findViewById(R.id.layoutKonfirmasiPembayaran)
         nextPrediksiOngkir = view.findViewById(R.id.layoutPrediksiOngkir)
+        nextFaq = view.findViewById(R.id.layoutFaq)
         nextLogout = view.findViewById(R.id.layoutLogout)
         daftarTransaksi = arrayListOf()
 
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
-        referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(userIdentity.uid)
+        referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
 
         // Memanggil fungsi loadingBar dan mengeset time = 1000
         loadingBar(1000)
@@ -166,6 +168,14 @@ class ProfilePembeliFragment : Fragment() {
             }
         }
 
+        nextFaq.setOnClickListener {
+            // Jika berhasil maka akan pindah ke ProfileKeamananPembeliActivity
+            requireActivity().run{
+                startActivity(Intent(this, FaqPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
         nextLogout.setOnClickListener {
             auth.signOut()
             requireActivity().run{
@@ -221,7 +231,7 @@ class ProfilePembeliFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
-                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1)
+                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                                                 referenceCustom.setValue(productUpdateCustomize)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
@@ -236,7 +246,7 @@ class ProfilePembeliFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(Products::class.java)!!
-                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli)
+                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli, produk.statusProduct)
                                                 referenceNormal.setValue(productUpdateNormal)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
@@ -249,6 +259,9 @@ class ProfilePembeliFragment : Fragment() {
                                 var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
                                 reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             } else{
+                                if (newUpdateTransaction == "settlement"){
+                                    updatePembelianUser(idUser)
+                                }
                                 var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
                                 reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             }
@@ -267,6 +280,22 @@ class ProfilePembeliFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun updatePembelianUser(idUser: String){
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(idUser)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                val usersUpdate = Users(users.idUsers, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi + 1, users.accessLevel, users.token, users.status, users.checkOtp)
+                referenceUser.setValue(usersUpdate)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
     }
 
     // Membuat fungsi "loadingBar" dengan parameter time,

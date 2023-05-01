@@ -16,10 +16,9 @@ import com.google.firebase.database.*
 import com.midtrans.sdk.corekit.models.snap.TransactionStatusResponse
 import com.wongtlaten.application.R
 import com.wongtlaten.application.api.RetrofitClient
-import com.wongtlaten.application.core.CustomizeProducts
-import com.wongtlaten.application.core.Products
+import com.wongtlaten.application.core.*
 import com.wongtlaten.application.core.Transaction
-import com.wongtlaten.application.core.WishlistProducts
+import com.wongtlaten.application.modules.pembeli.home.ChatPembeliActivity
 import com.wongtlaten.application.modules.pembeli.home.FlashSaleActivity
 import com.wongtlaten.application.modules.pembeli.home.FsAdapter
 import retrofit2.Call
@@ -35,13 +34,16 @@ class WishlistPembeliFragment : Fragment() {
     private lateinit var daftarProduct: ArrayList<Products>
     private lateinit var daftarTransaksi: ArrayList<Transaction>
     private lateinit var adapterFs: DaftarWishlistProdukAdapter
+    private lateinit var itemFiturChat: CardView
     private lateinit var itemFiturCart: CardView
     private lateinit var itemFiturPayment: CardView
+    private lateinit var textChat : TextView
     private lateinit var textKeranjang : TextView
     private lateinit var textPayment : TextView
     private lateinit var idUser: String
     private lateinit var newUpdateTransaction : String
     private var countPayment by Delegates.notNull<Int>()
+    private lateinit var daftarCartList: ArrayList<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +57,11 @@ class WishlistPembeliFragment : Fragment() {
         super.onResume()
         showListProduct()
         updateTransaction()
+        val auth = FirebaseAuth.getInstance()
+        val userIdentity = auth.currentUser!!
+        idUser = userIdentity.uid
+        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
+        updateNewChat(idPenjual, idUser)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,17 +70,29 @@ class WishlistPembeliFragment : Fragment() {
         val auth = FirebaseAuth.getInstance()
         val userIdentity = auth.currentUser!!
         idUser = userIdentity.uid
+        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
         newUpdateTransaction = ""
 
         // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
         referenceCart = FirebaseDatabase.getInstance().getReference("dataCartProduk").child(userIdentity.uid)
 
+        itemFiturChat = view.findViewById(R.id.itemFiturChat)
         itemFiturCart = view.findViewById(R.id.itemFiturCart)
         itemFiturPayment = view.findViewById(R.id.itemFiturPayment)
+        textChat = view.findViewById(R.id.textChat)
         textKeranjang = view.findViewById(R.id.textKeranjang)
         textPayment = view.findViewById(R.id.textPayment)
         daftarTransaksi = arrayListOf()
+        daftarCartList = arrayListOf()
         countPayment = 0
+
+        itemFiturChat.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, ChatPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
 
         itemFiturCart.setOnClickListener {
             // Jika berhasil maka akan pindah ke FlashSaleActivity
@@ -104,6 +123,7 @@ class WishlistPembeliFragment : Fragment() {
         // pada list
         showListProduct()
         checkIsProductOnDatabase()
+        updateNewChat(idPenjual, idUser)
 
     }
 
@@ -137,7 +157,7 @@ class WishlistPembeliFragment : Fragment() {
                     daftarProduct.clear()
                     for (i in snapshot.children){
                         val products = i.getValue(Products::class.java)!!
-                        if (products.idProduct in daftarWishlist){
+                        if (products.idProduct in daftarWishlist && products.statusProduct != "deleted"){
                             daftarProduct.add(products)
                         }
                     }
@@ -159,16 +179,36 @@ class WishlistPembeliFragment : Fragment() {
     private fun checkIsProductOnDatabase(){
         referenceCart.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                daftarCartList.clear()
                 if (snapshot.exists()){
-                    var countCart = 0
                     for (i in snapshot.children){
-                        countCart += 1
-                    }
-                    if (countCart > 0){
-                        textKeranjang.visibility = View.VISIBLE
-                        textKeranjang.text = " $countCart "
+                        val carts = i.getValue(CartProducts::class.java)!!
+                        daftarCartList.add(carts.idProduct)
                     }
                 }
+                val ref = FirebaseDatabase.getInstance().getReference("dataProduk")
+                ref.addValueEventListener(object: ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()){
+                            var countCart = 0
+                            for (i in snapshot.children){
+                                val products = i.getValue(Products::class.java)!!
+                                if (products.idProduct in daftarCartList && products.statusProduct != "deleted"){
+                                    countCart += 1
+                                }
+                            }
+                            if (countCart > 0){
+                                textKeranjang.visibility = View.VISIBLE
+                                textKeranjang.text = " $countCart "
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -212,7 +252,7 @@ class WishlistPembeliFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
-                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1)
+                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                                                 referenceCustom.setValue(productUpdateCustomize)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
@@ -227,7 +267,7 @@ class WishlistPembeliFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(Products::class.java)!!
-                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli)
+                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli, produk.statusProduct)
                                                 referenceNormal.setValue(productUpdateNormal)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
@@ -240,6 +280,9 @@ class WishlistPembeliFragment : Fragment() {
                                 var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
                                 reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             } else{
+                                if (newUpdateTransaction == "settlement"){
+                                    updatePembelianUser(idUser)
+                                }
                                 var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
                                 reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             }
@@ -258,6 +301,50 @@ class WishlistPembeliFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun updateNewChat(senderId: String, receiverId: String){
+        val databaseReferenceChat: DatabaseReference =
+            FirebaseDatabase.getInstance().getReference("dataChatting").child(idUser)
+
+        databaseReferenceChat.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var countNewChat = 0
+                for (i in snapshot.children) {
+                    val chat = i.getValue(Chat::class.java)!!
+                    if (chat.senderId.equals(senderId) && chat.receiverId.equals(receiverId)
+                    ) {
+                        if (chat.statusMessage == "0"){
+                            countNewChat += 1
+                        }
+                    }
+                }
+                if (countNewChat > 0){
+                    textChat.visibility = View.VISIBLE
+                    textChat.text = " $countNewChat "
+                }
+            }
+        })
+    }
+
+    private fun updatePembelianUser(idUser: String){
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(idUser)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                val usersUpdate = Users(users.idUsers, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi + 1, users.accessLevel, users.token, users.status, users.checkOtp)
+                referenceUser.setValue(usersUpdate)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
     }
 
 }

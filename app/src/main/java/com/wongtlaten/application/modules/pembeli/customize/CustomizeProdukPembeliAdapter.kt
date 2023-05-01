@@ -212,7 +212,7 @@ class CustomizeProdukPembeliAdapter(private var items: ArrayList<CustomizeProduc
                     Picasso.get().load(product.photoProduct1).into(imageKustomisasi)
                     namaProdukk.text = product.namaProduct
                     deskripsiProduk.text = product.deskripsiProduct
-                    beratProduk.text = product.beratProduct.toString()
+                    beratProduk.text = "${product.beratProduct} gram"
                     stokProduk.text = product.stockProduct.toString()
                     kategoriProduk.text = product.kategoriProduct
                     val formatter: NumberFormat = DecimalFormat("#,###")

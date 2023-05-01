@@ -1,10 +1,12 @@
 package com.wongtlaten.application.modules.pembeli.customize
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.CustomizeProducts
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.SectionCustomize
@@ -66,6 +69,11 @@ class CustomizeProdukPembeliActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_customize_produk_pembeli)
 
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
+
         reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize")
 
         totalCustomize = findViewById(R.id.totalCustomize)
@@ -92,6 +100,12 @@ class CustomizeProdukPembeliActivity : AppCompatActivity() {
         namesProduct = ""
 
         nextBottom.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
+
             if (checkGiftbox == 0){
                 alertDialog("GAGAL!", "Tambah produk terlebih dahulu!", false)
             }
@@ -126,11 +140,11 @@ class CustomizeProdukPembeliActivity : AppCompatActivity() {
                     daftarProdukListKecil.clear()
                     for (i in snapshot.children){
                         val products = i.getValue(CustomizeProducts::class.java)!!
-                        if (products.kategoriProduct == "kecil"){
+                        if (products.kategoriProduct == "kecil" && products.statusProduct != "deleted"){
                             daftarProdukListKecil.add(products)
-                        } else if (products.kategoriProduct == "sedang"){
+                        } else if (products.kategoriProduct == "sedang" && products.statusProduct != "deleted"){
                             daftarProdukListSedang.add(products)
-                        } else if (products.kategoriProduct == "besar"){
+                        } else if (products.kategoriProduct == "besar" && products.statusProduct != "deleted"){
                             daftarProdukListBesar.add(products)
                         }
                     }
@@ -485,6 +499,37 @@ class CustomizeProdukPembeliActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@CustomizeProdukPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: CustomizeProdukPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

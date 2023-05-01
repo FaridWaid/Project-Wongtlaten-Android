@@ -391,7 +391,7 @@
                 android:textSize="14sp"
                 android:textAlignment="center"
                 android:textColor="@color/yankes_blue"
-                android:text="Berat (kg) "
+                android:text="Berat (gram) "
                 android:fontFamily="@font/poppins_regular"
                 android:layout_gravity="center_horizontal"
                 app:layout_constraintStart_toStartOf="parent"

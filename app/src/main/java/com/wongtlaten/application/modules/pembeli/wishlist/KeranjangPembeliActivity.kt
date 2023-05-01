@@ -1,7 +1,9 @@
 package com.wongtlaten.application.modules.pembeli.wishlist
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.CartProducts
 import com.wongtlaten.application.core.OnCartClicked
 import com.wongtlaten.application.core.Products
@@ -49,6 +52,11 @@ class KeranjangPembeliActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keranjang_pembeli)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         btnBeliInactivated = findViewById(R.id.btnBeliInactivated)
         btnBeliActivated = findViewById(R.id.btnBeliActivated)
@@ -134,7 +142,7 @@ class KeranjangPembeliActivity : AppCompatActivity() {
                 if (snapshot.exists()){
                     daftarProdukList.clear()
                     for (i in snapshot.children){
-                        val products = i.getValue(CartProducts::class.java)
+                        val products = i.getValue(CartProducts::class.java)!!
                         if (products != null){
                             daftarProdukList.add(products.idProduct)
                         }
@@ -157,7 +165,7 @@ class KeranjangPembeliActivity : AppCompatActivity() {
                     daftarCartProdukList.clear()
                     for (i in snapshot.children){
                         val products = i.getValue(Products::class.java)!!
-                        if (products.idProduct in daftarProdukList){
+                        if (products.idProduct in daftarProdukList && products.statusProduct != "deleted"){
                             daftarCartProdukList.add(products)
                         }
                     }
@@ -303,5 +311,35 @@ class KeranjangPembeliActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@KeranjangPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: KeranjangPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
+    }
 
 }

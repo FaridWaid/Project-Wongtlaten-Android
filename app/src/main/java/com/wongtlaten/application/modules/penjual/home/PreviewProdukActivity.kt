@@ -1,12 +1,16 @@
 package com.wongtlaten.application.modules.penjual.home
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Paint
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.denzcoskun.imageslider.ImageSlider
@@ -14,7 +18,9 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.Products
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -38,6 +44,11 @@ class PreviewProdukActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preview_produk)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         typeProduk = findViewById(R.id.typeProduk)
         namaProduk = findViewById(R.id.nameProduk)
@@ -66,7 +77,9 @@ class PreviewProdukActivity : AppCompatActivity() {
                 typeProduk.text = produk.kategoriProduct
                 namaProduk.text = produk.namaProduct
                 ratingBar.rating = produk.ratingProduct
-                textRate.setText("(${produk.ratingProduct})")
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.setText("(${df.format(produk.ratingProduct).toDouble()})")
                 deskripsiProduk.text = produk.deskripsiProduct
                 val formatter: NumberFormat = DecimalFormat("#,###")
                 val price = produk.hargaProduct
@@ -155,6 +168,37 @@ class PreviewProdukActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@PreviewProdukActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: PreviewProdukActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

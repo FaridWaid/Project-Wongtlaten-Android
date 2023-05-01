@@ -1,8 +1,12 @@
 package com.wongtlaten.application.modules.penjual.payment
 
+import android.content.Context
+import android.content.DialogInterface
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,8 +15,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.core.Users
 import com.wongtlaten.application.core.Transaction
+import com.wongtlaten.application.modules.penjual.home.DetailAkunPenjualActivity
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -43,6 +49,11 @@ class DetailPaymentPenjualActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_payment_penjual)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         daftarTransaction = intent.getSerializableExtra(DetailPesananPenjualActivity.EXTRA_TRANSACTION) as ArrayList<Transaction>
 
@@ -84,7 +95,7 @@ class DetailPaymentPenjualActivity : AppCompatActivity() {
             textStatusPesanan.text = "Belum dibayar"
         }
         idTransaksi.text = daftarTransaction[0].idTransaksi
-        var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(daftarTransaction[0].idUser)
+        var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(daftarTransaction[0].idUser)
         val menuListener3 = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = dataSnapshot.getValue(Users::class.java)!!
@@ -146,6 +157,37 @@ class DetailPaymentPenjualActivity : AppCompatActivity() {
 
     companion object{
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DetailPaymentPenjualActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DetailPaymentPenjualActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

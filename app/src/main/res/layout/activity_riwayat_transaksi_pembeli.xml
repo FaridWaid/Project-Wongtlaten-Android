@@ -103,6 +103,57 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/cardReview"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/background_riwayat_transaksi"
+                app:layout_constraintTop_toBottomOf="@id/cardInformation">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iconReview"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="12dp"
+                        android:src="@drawable/review"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/textReview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Belum Direview"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="14sp"
+                        android:textColor="@color/yankes_blue"
+                        app:layout_constraintStart_toEndOf="@id/iconReview"
+                        app:layout_constraintTop_toTopOf="@id/iconReview"
+                        app:layout_constraintBottom_toBottomOf="@id/iconReview"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/nextButton2"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/chevron_right"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/iconReview"
+                        app:layout_constraintBottom_toBottomOf="@id/iconReview"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </RelativeLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDaftarProduk"
                 android:layout_width="match_parent"
@@ -111,7 +162,7 @@
                 android:layout_marginBottom="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardInformation"
+                app:layout_constraintTop_toBottomOf="@id/cardReview"
                 tools:listitem="@layout/item_riwayat_transaksi"
                 tools:itemCount="7"/>
 

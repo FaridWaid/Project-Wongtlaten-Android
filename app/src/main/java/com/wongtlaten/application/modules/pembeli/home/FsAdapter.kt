@@ -20,6 +20,7 @@ import com.wongtlaten.application.R
 import com.wongtlaten.application.core.CartProducts
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.WishlistProducts
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -53,7 +54,10 @@ class FsAdapter (val list: ArrayList<Products>): RecyclerView.Adapter<FsAdapter.
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 textFs.text = " ${products.hargaPromoProduct}% "
                 ratingBar.rating = products.ratingProduct
-                textRate.text = "(${products.ratingProduct})"
+                ratingBar.isEnabled = false
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.setText("(${df.format(products.ratingProduct).toDouble()})")
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
 

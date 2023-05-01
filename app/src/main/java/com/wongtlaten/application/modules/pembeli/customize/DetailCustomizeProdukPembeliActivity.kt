@@ -1,6 +1,9 @@
 package com.wongtlaten.application.modules.pembeli.customize
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +31,7 @@ import com.midtrans.sdk.corekit.models.ShippingAddress
 import com.midtrans.sdk.corekit.models.snap.TransactionResult
 import com.midtrans.sdk.uikit.SdkUIFlowBuilder
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.api.RetrofitClient
 import com.wongtlaten.application.core.*
 import com.wongtlaten.application.core.Transaction
@@ -40,6 +45,7 @@ import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.HashMap
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
@@ -94,6 +100,11 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_customize_produk_pembeli)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         referenceTransaksi = FirebaseDatabase.getInstance().getReference("dataTransaksi")
 
@@ -168,6 +179,22 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
 
         showDataCity()
 
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                if (users.noTelp.isEmpty() || users.alamat.isEmpty()){
+                    Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Silakan lengkapi data pribadi anda terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                    onBackPressed()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
+
         btnUbahJasaPengiriman.setOnClickListener {
             val i = Intent(this, UbahJasaPengirimanPembeliActivity::class.java)
             startActivityForResult(i, 1)
@@ -195,6 +222,7 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
                             val newTransaction = Transaction(userIdentity.uid, idTransaksi, "custom", textNamaPenerima, textKotaPenerima, textPosPenerima, textAlamatPenerima, textTeleponPenerima, countWeight, costCourier, result.response.grossAmount.toDouble(), result.response.paymentType, result.response.transactionTime, "", result.response.transactionStatus, "Belum Diproses", textJasaPengiriman, "", pesanGiftcardInput, pdfUrl, tempProductTransaction)
                             referenceTransaksi.child(idTransaksi).setValue(newTransaction).addOnCompleteListener {
                                 if (it.isSuccessful){
+                                    updatePembelianUser()
                                     updateStockProduct(daftarIdProduk, daftarProduk)
                                     Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi berhasil", Toast.LENGTH_SHORT).show()
                                     Intent(applicationContext, PembelianBerhasilActivity::class.java).also {
@@ -249,6 +277,12 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
             .buildSDK()
 
         btnBayarSekarang.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
+
             pesanGiftcardInput = etPesanGiftcard.text.toString().trim()
             pesanContainer.helperText = validPesan()
 
@@ -269,7 +303,7 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
 
                 for (i in 0..daftarIdProduk.size-1){
                     hargaSatuanProduk = daftarProduk[i].hargaProduct
-                    val newTempTransaction = ProductTransaction(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarProduk[i].beratProduct, daftarIdProduk.getValue(daftarProduk[i].idProduct))
+                    val newTempTransaction = ProductTransaction(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarProduk[i].beratProduct, daftarIdProduk.getValue(daftarProduk[i].idProduct), "none")
                     tempProductTransaction.add(newTempTransaction)
                     val detail = com.midtrans.sdk.corekit.models.ItemDetails(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].namaProduct)
                     itemDetails.add(detail)
@@ -283,6 +317,7 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
                 MidtransSDK.getInstance().transactionRequest = transactionRequest
                 MidtransSDK.getInstance().startPaymentUiFlow(this)
             }
+
         }
 
         // Ketika "backButton" di klik
@@ -296,16 +331,32 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
 
     }
 
+    private fun updatePembelianUser(){
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                val usersUpdate = Users(users.idUsers, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi + 1, users.accessLevel, users.token, users.status, users.checkOtp)
+                referenceUser.setValue(usersUpdate)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
+    }
+
     private fun updateStockProduct(daftarIdProduk: HashMap<String, Int>, daftarProduk: kotlin.collections.ArrayList<CustomizeProducts>){
         for (i in 0..daftarIdProduk.size-1){
-            var updateProduct = CustomizeProducts(daftarProduk[i].idProduct, daftarProduk[i].namaProduct, daftarProduk[i].hargaProduct, daftarProduk[i].stockProduct - daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].beratProduct, daftarProduk[i].kategoriProduct, daftarProduk[i].deskripsiProduct, daftarProduk[i].photoProduct1)
+            var updateProduct = CustomizeProducts(daftarProduk[i].idProduct, daftarProduk[i].namaProduct, daftarProduk[i].hargaProduct, daftarProduk[i].stockProduct - daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].beratProduct, daftarProduk[i].kategoriProduct, daftarProduk[i].deskripsiProduct, daftarProduk[i].photoProduct1, daftarProduk[i].statusProduct)
             val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(daftarProduk[i].idProduct)
             reference.setValue(updateProduct)
         }
     }
 
     fun uiKitDetails(transactionRequest: TransactionRequest, idUser: String){
-        val referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(idUser)
+        val referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(idUser)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = dataSnapshot.getValue(Users::class.java)!!
@@ -356,7 +407,11 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
     }
 
     private fun showCost(origin: String, destination: String, weight: Int, courier: String){
-        RetrofitClient.instance.getCost(origin, destination, weight, courier).enqueue(object:
+        var count: Float = weight.toFloat() / 1000
+        if (count < 1){
+            count = 1F
+        }
+        RetrofitClient.instance.getCost(origin, destination, count.roundToInt(), courier).enqueue(object:
             Callback<Cost> {
             override fun onResponse(call: Call<Cost>, response: Response<Cost>) {
                 costCourier = response.body()!!.rajaongkir.results[0].costs[0].cost[0].value.toLong()
@@ -450,6 +505,37 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
         const val EXTRA_POS_PENERIMA = "EXTRA_POS_PENERIMA"
         const val EXTRA_ALAMAT_PENERIMA = "EXTRA_ALAMAT_PENERIMA"
         const val EXTRA_TELEPON_PENERIMA = "EXTRA_TELEPON_PENERIMA"
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DetailCustomizeProdukPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DetailCustomizeProdukPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

@@ -49,7 +49,7 @@ class DetailCustomizePembeliAdapter(val list: ArrayList<CustomizeProducts>, val 
                 countTotal += price
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 namaProduk.text = products.namaProduct
-                countProduk.text = "${totalProduk} produk (${products.beratProduct * totalProduk} kg)"
+                countProduk.text = "${totalProduk} produk (${products.beratProduct * totalProduk} gram)"
                 totalWeight += products.beratProduct
                 countTotalProduct += totalProduk
             }

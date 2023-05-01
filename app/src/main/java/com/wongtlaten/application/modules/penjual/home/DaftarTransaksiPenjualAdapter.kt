@@ -44,7 +44,6 @@ class DaftarTransaksiPenjualAdapter (private var list: ArrayList<Transaction>): 
         val namaPemesan: TextView = itemView.findViewById(R.id.namaPemesan)
         fun bind(transaction: Transaction){
             with(itemView){
-
                 idProduk = transaction.produkTransaction[0].idProduk
                 if (transaction.jenisTransaksi == "custom"){
                     typeProduk.text = "Customize"
@@ -98,7 +97,7 @@ class DaftarTransaksiPenjualAdapter (private var list: ArrayList<Transaction>): 
                 }
                 countProduk.text = "${transaction.produkTransaction[0].totalBeli} produk"
                 idTransaksi.text = list[0].idTransaksi
-                var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(list[0].idUser)
+                var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(list[0].idUser)
                 val menuListener3 = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val users = dataSnapshot.getValue(Users::class.java)!!

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/textTanggal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:maxLines="2"
+        android:text="tanggal transaksi"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/textfield"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textNamaProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:maxLines="2"
+        android:text="nama produk"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/yankes_blue"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/textTanggal"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:maxLines="2"
+        android:text="+ Rp. xxx.xxx"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/succes"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/textTanggal"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/line_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toBottomOf="@id/textTotal"
+        android:background="@color/textfield" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

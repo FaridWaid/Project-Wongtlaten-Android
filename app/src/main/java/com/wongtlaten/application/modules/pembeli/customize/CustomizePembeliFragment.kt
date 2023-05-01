@@ -1,16 +1,21 @@
 package com.wongtlaten.application.modules.pembeli.customize
 
 import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.modules.penjual.home.DaftarProdukPenjualActivity
 import com.wongtlaten.application.modules.penjual.home.TambahKustomisasiProdukPenjualActivity
 
@@ -148,5 +153,4 @@ class CustomizePembeliFragment : Fragment() {
 
         dialog.show()
     }
-
 }

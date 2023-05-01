@@ -17,9 +17,10 @@ data class Products(
     val photoProduct3 : String,
     val photoProduct4 : String,
     val ratingProduct : Float,
-    val jumlahPembelianProduct : Int
+    val jumlahPembelianProduct : Int,
+    val statusProduct: String
 ): java.io.Serializable{
-    constructor(): this("","", 0, 0, 0, 0, "", "", "", 0, "", "", "", "", 0F, 0){
+    constructor(): this("","", 0, 0, 0, 0, "", "", "", 0, "", "", "", "", 0F, 0, ""){
 
     }
 }

@@ -1,8 +1,11 @@
 package com.wongtlaten.application.modules.pembeli.wishlist
 
 import android.Manifest
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -35,7 +38,9 @@ import com.midtrans.sdk.corekit.models.CustomerDetails
 import com.midtrans.sdk.corekit.models.ShippingAddress
 import com.midtrans.sdk.corekit.models.snap.TransactionResult
 import com.midtrans.sdk.uikit.SdkUIFlowBuilder
+import com.squareup.picasso.Picasso
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.api.RetrofitClient
 import com.wongtlaten.application.core.*
 import com.wongtlaten.application.model.City
@@ -52,6 +57,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 
@@ -96,6 +102,7 @@ class PengirimanPembeliActivity : AppCompatActivity() {
     private var totalHargaProduk by Delegates.notNull<Long>()
     private var totalPembayaran by Delegates.notNull<Long>()
     private var hargaSatuanProduk by Delegates.notNull<Long>()
+    private var checkDataPribadi by Delegates.notNull<Boolean>()
     private lateinit var itemDetails: ArrayList<com.midtrans.sdk.corekit.models.ItemDetails>
     private lateinit var namaUser: String
     private lateinit var alamatUser: String
@@ -109,6 +116,11 @@ class PengirimanPembeliActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pengiriman_pembeli)
+
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
 
         referenceTransaksi = FirebaseDatabase.getInstance().getReference("dataTransaksi")
 
@@ -146,6 +158,7 @@ class PengirimanPembeliActivity : AppCompatActivity() {
         totalHargaProduk = 0
         totalPembayaran = 0
         hargaSatuanProduk = 0
+        checkDataPribadi = true
         itemDetails = arrayListOf()
         namaUser = ""
         alamatUser = ""
@@ -200,56 +213,83 @@ class PengirimanPembeliActivity : AppCompatActivity() {
         checkPhoneStatePermission()
 
         btnBayarSekarang.setOnClickListener {
-            pesanGiftcardInput = etPesanGiftcard.text.toString().trim()
-            pesanContainer.helperText = validPesan()
 
-            val validPesanGiftcard = pesanContainer.helperText == null
-
-            if (validPesanGiftcard){
-                if (textNamaPenerima == ""){
-                    Toast.makeText(this, "Tambah alamat terlebih dahulu", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                //TransactionRequest on revamp is included in the startPayment Constructor
-                itemDetails.clear()
-                tempProductTransaction.clear()
-                val formatter = DateTimeFormatter.ofPattern("yyMMddHHmm")
-                val current = LocalDateTime.now().format(formatter)
-                idTransaksi = "${userIdentity.uid}-"+current.toString()
-                val transactionRequest = TransactionRequest(idTransaksi, totalPembayaran.toDouble())
-                if (daftarIdProduk.isEmpty()){
-                    if (daftarProduk[0].jenisProduct == "flash sale"){
-                        hargaSatuanProduk = (((100 - daftarProduk[0].hargaPromoProduct.toFloat())/100) * daftarProduk[0].hargaProduct).toLong()
-                        Log.d("cuyy", "${daftarProduk[0].hargaPromoProduct}")
-                    } else{
-                        hargaSatuanProduk = daftarProduk[0].hargaProduct
-                    }
-                    val detail = com.midtrans.sdk.corekit.models.ItemDetails(daftarProduk[0].idProduct, hargaSatuanProduk.toDouble(), totalProduk, daftarProduk[0].namaProduct)
-                    itemDetails.add(detail)
-                    val newTempTransaction = ProductTransaction(daftarProduk[0].idProduct, hargaSatuanProduk.toDouble(), daftarProduk[0].beratProduct, totalProduk)
-                    tempProductTransaction.add(newTempTransaction)
-                    val detailOngkir = com.midtrans.sdk.corekit.models.ItemDetails("ongkir-"+userIdentity.uid+System.currentTimeMillis().toString(), costCourier.toDouble(), 1, "Ongkir "+textJasaPengiriman)
-                    itemDetails.add(detailOngkir)
-                } else{
-                    for (i in 0..daftarIdProduk.size-1){
-                        if (daftarProduk[i].jenisProduct == "flash sale"){
-                            hargaSatuanProduk = (((100-daftarProduk[i].hargaPromoProduct.toFloat())/100) * daftarProduk[i].hargaProduct).toLong()
-                        } else{
-                            hargaSatuanProduk = daftarProduk[i].hargaProduct
-                        }
-                        val newTempTransaction = ProductTransaction(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarProduk[i].beratProduct, daftarIdProduk.getValue(daftarProduk[i].idProduct))
-                        tempProductTransaction.add(newTempTransaction)
-                        val detail = com.midtrans.sdk.corekit.models.ItemDetails(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].namaProduct)
-                        itemDetails.add(detail)
-                    }
-                    val detailOngkir = com.midtrans.sdk.corekit.models.ItemDetails("ongkir-"+userIdentity.uid+System.currentTimeMillis().toString(), costCourier.toDouble(), 1, "Ongkir "+textJasaPengiriman)
-                    itemDetails.add(detailOngkir)
-                }
-                uiKitDetails(transactionRequest, userIdentity.uid)
-                transactionRequest.itemDetails = itemDetails
-                MidtransSDK.getInstance().transactionRequest = transactionRequest
-                MidtransSDK.getInstance().startPaymentUiFlow(this)
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
             }
+
+            val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
+            // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+            val menuListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val users = dataSnapshot.getValue(Users::class.java)!!
+                    if (users.noTelp.isEmpty() || users.alamat.isEmpty()){
+                        Toast.makeText(this@PengirimanPembeliActivity, "Silakan lengkapi data pribadi anda terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                        checkDataPribadi = false
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+
+                }
+            }
+            referenceUser.addListenerForSingleValueEvent(menuListener)
+
+            if (checkDataPribadi){
+                pesanGiftcardInput = etPesanGiftcard.text.toString().trim()
+                pesanContainer.helperText = validPesan()
+
+                val validPesanGiftcard = pesanContainer.helperText == null
+
+                if (validPesanGiftcard){
+                    if (textNamaPenerima == ""){
+                        Toast.makeText(this, "Tambah alamat terlebih dahulu", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                    //TransactionRequest on revamp is included in the startPayment Constructor
+                    itemDetails.clear()
+                    tempProductTransaction.clear()
+                    val formatter = DateTimeFormatter.ofPattern("yyMMddHHmm")
+                    val current = LocalDateTime.now().format(formatter)
+                    idTransaksi = "${userIdentity.uid}-"+current.toString()
+                    val transactionRequest = TransactionRequest(idTransaksi, totalPembayaran.toDouble())
+                    if (daftarIdProduk.isEmpty()){
+                        if (daftarProduk[0].jenisProduct == "flash sale"){
+                            hargaSatuanProduk = (((100 - daftarProduk[0].hargaPromoProduct.toFloat())/100) * daftarProduk[0].hargaProduct).toLong()
+                        } else{
+                            hargaSatuanProduk = daftarProduk[0].hargaProduct
+                        }
+                        val detail = com.midtrans.sdk.corekit.models.ItemDetails(daftarProduk[0].idProduct, hargaSatuanProduk.toDouble(), totalProduk, daftarProduk[0].namaProduct)
+                        itemDetails.add(detail)
+                        val newTempTransaction = ProductTransaction(daftarProduk[0].idProduct, hargaSatuanProduk.toDouble(), daftarProduk[0].beratProduct, totalProduk, "none")
+                        tempProductTransaction.add(newTempTransaction)
+                        val detailOngkir = com.midtrans.sdk.corekit.models.ItemDetails("ongkir-"+userIdentity.uid+System.currentTimeMillis().toString(), costCourier.toDouble(), 1, "Ongkir "+textJasaPengiriman)
+                        itemDetails.add(detailOngkir)
+                    } else{
+                        for (i in 0..daftarIdProduk.size-1){
+                            if (daftarProduk[i].jenisProduct == "flash sale"){
+                                hargaSatuanProduk = (((100-daftarProduk[i].hargaPromoProduct.toFloat())/100) * daftarProduk[i].hargaProduct).toLong()
+                            } else{
+                                hargaSatuanProduk = daftarProduk[i].hargaProduct
+                            }
+                            val newTempTransaction = ProductTransaction(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarProduk[i].beratProduct, daftarIdProduk.getValue(daftarProduk[i].idProduct), "none")
+                            tempProductTransaction.add(newTempTransaction)
+                            val detail = com.midtrans.sdk.corekit.models.ItemDetails(daftarProduk[i].idProduct, hargaSatuanProduk.toDouble(), daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].namaProduct)
+                            itemDetails.add(detail)
+                        }
+                        val detailOngkir = com.midtrans.sdk.corekit.models.ItemDetails("ongkir-"+userIdentity.uid+System.currentTimeMillis().toString(), costCourier.toDouble(), 1, "Ongkir "+textJasaPengiriman)
+                        itemDetails.add(detailOngkir)
+                    }
+                    uiKitDetails(transactionRequest, userIdentity.uid)
+                    transactionRequest.itemDetails = itemDetails
+                    MidtransSDK.getInstance().transactionRequest = transactionRequest
+                    MidtransSDK.getInstance().startPaymentUiFlow(this)
+                }
+            } else {
+                checkDataPribadi = true
+                return@setOnClickListener
+            }
+
         }
 
         // Ketika "backButton" di klik
@@ -263,14 +303,30 @@ class PengirimanPembeliActivity : AppCompatActivity() {
 
     }
 
+    private fun updatePembelianUser(){
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                val usersUpdate = Users(users.idUsers, users.username, users.kelamin, users.alamat, users.email, users.photoProfil, users.noTelp, users.jumlahTransaksi + 1, users.accessLevel, users.token, users.status, users.checkOtp)
+                referenceUser.setValue(usersUpdate)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
+    }
+
     private fun updateStockProduct(daftarIdProduk: HashMap<String, Int>, daftarProduk: kotlin.collections.ArrayList<Products>, totalProduk: Int){
         if (daftarIdProduk.isEmpty()){
-            val updateProduct = Products(daftarProduk[0].idProduct, daftarProduk[0].namaProduct, daftarProduk[0].hargaProduct, daftarProduk[0].stockProduct - totalProduk, daftarProduk[0].minimumPemesananProduct, daftarProduk[0].beratProduct, daftarProduk[0].kategoriProduct, daftarProduk[0].deskripsiProduct, daftarProduk[0].jenisProduct, daftarProduk[0].hargaPromoProduct, daftarProduk[0].photoProduct1, daftarProduk[0].photoProduct2, daftarProduk[0].photoProduct3, daftarProduk[0].photoProduct4, daftarProduk[0].ratingProduct, daftarProduk[0].jumlahPembelianProduct + totalProduk)
+            val updateProduct = Products(daftarProduk[0].idProduct, daftarProduk[0].namaProduct, daftarProduk[0].hargaProduct, daftarProduk[0].stockProduct - totalProduk, daftarProduk[0].minimumPemesananProduct, daftarProduk[0].beratProduct, daftarProduk[0].kategoriProduct, daftarProduk[0].deskripsiProduct, daftarProduk[0].jenisProduct, daftarProduk[0].hargaPromoProduct, daftarProduk[0].photoProduct1, daftarProduk[0].photoProduct2, daftarProduk[0].photoProduct3, daftarProduk[0].photoProduct4, daftarProduk[0].ratingProduct, daftarProduk[0].jumlahPembelianProduct + totalProduk, daftarProduk[0].statusProduct)
             val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(daftarProduk[0].idProduct)
             reference.setValue(updateProduct)
         } else{
             for (i in 0..daftarIdProduk.size-1){
-                var updateProduct = Products(daftarProduk[i].idProduct, daftarProduk[i].namaProduct, daftarProduk[i].hargaProduct, daftarProduk[i].stockProduct - daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].minimumPemesananProduct, daftarProduk[i].beratProduct, daftarProduk[i].kategoriProduct, daftarProduk[i].deskripsiProduct, daftarProduk[i].jenisProduct, daftarProduk[i].hargaPromoProduct, daftarProduk[i].photoProduct1, daftarProduk[i].photoProduct2, daftarProduk[i].photoProduct3, daftarProduk[i].photoProduct4, daftarProduk[i].ratingProduct, daftarProduk[i].jumlahPembelianProduct + daftarIdProduk.getValue(daftarProduk[i].idProduct))
+                var updateProduct = Products(daftarProduk[i].idProduct, daftarProduk[i].namaProduct, daftarProduk[i].hargaProduct, daftarProduk[i].stockProduct - daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].minimumPemesananProduct, daftarProduk[i].beratProduct, daftarProduk[i].kategoriProduct, daftarProduk[i].deskripsiProduct, daftarProduk[i].jenisProduct, daftarProduk[i].hargaPromoProduct, daftarProduk[i].photoProduct1, daftarProduk[i].photoProduct2, daftarProduk[i].photoProduct3, daftarProduk[i].photoProduct4, daftarProduk[i].ratingProduct, daftarProduk[i].jumlahPembelianProduct + daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].statusProduct)
                 val reference = FirebaseDatabase.getInstance().getReference("dataProduk").child(daftarProduk[i].idProduct)
                 reference.setValue(updateProduct)
             }
@@ -278,7 +334,7 @@ class PengirimanPembeliActivity : AppCompatActivity() {
     }
 
     fun uiKitDetails(transactionRequest: TransactionRequest, idUser: String){
-        val referen = FirebaseDatabase.getInstance().getReference("dataAkunCustomer").child(idUser)
+        val referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(idUser)
         val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = dataSnapshot.getValue(Users::class.java)!!
@@ -310,7 +366,11 @@ class PengirimanPembeliActivity : AppCompatActivity() {
     }
 
     private fun showCost(origin: String, destination: String, weight: Int, courier: String){
-        RetrofitClient.instance.getCost(origin, destination, weight, courier).enqueue(object:
+        var count: Float = weight.toFloat() / 1000
+        if (count < 1){
+            count = 1F
+        }
+        RetrofitClient.instance.getCost(origin, destination, count.roundToInt(), courier).enqueue(object:
             Callback<Cost> {
             override fun onResponse(call: Call<Cost>, response: Response<Cost>) {
                 costCourier = response.body()!!.rajaongkir.results[0].costs[0].cost[0].value.toLong()
@@ -323,7 +383,7 @@ class PengirimanPembeliActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Cost>, t: Throwable) {
-                Log.d("cost", "${t.message}")
+
             }
 
         })
@@ -463,6 +523,7 @@ class PengirimanPembeliActivity : AppCompatActivity() {
                             val newTransaction = Transaction(userIdentity.uid, idTransaksi, "normal", textNamaPenerima, textKotaPenerima, textPosPenerima, textAlamatPenerima, textTeleponPenerima, countWeight, costCourier, result.response.grossAmount.toDouble(), result.response.paymentType, result.response.transactionTime, "", result.response.transactionStatus, "Belum Diproses", textJasaPengiriman, "", pesanGiftcardInput, pdfUrl, tempProductTransaction)
                             referenceTransaksi.child(idTransaksi).setValue(newTransaction).addOnCompleteListener {
                                 if (it.isSuccessful){
+                                    updatePembelianUser()
                                     updateStockProduct(daftarIdProduk, daftarProduk, totalProduk)
                                     Toast.makeText(this@PengirimanPembeliActivity, "Transaksi berhasil", Toast.LENGTH_SHORT).show()
                                     Intent(applicationContext, PembelianBerhasilActivity::class.java).also {
@@ -558,6 +619,37 @@ class PengirimanPembeliActivity : AppCompatActivity() {
         const val EXTRA_POS_PENERIMA = "EXTRA_POS_PENERIMA"
         const val EXTRA_ALAMAT_PENERIMA = "EXTRA_ALAMAT_PENERIMA"
         const val EXTRA_TELEPON_PENERIMA = "EXTRA_TELEPON_PENERIMA"
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@PengirimanPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: PengirimanPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }

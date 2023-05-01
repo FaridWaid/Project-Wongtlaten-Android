@@ -1,8 +1,10 @@
 package com.wongtlaten.application.modules.pembeli.home
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Paint
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.midtrans.sdk.corekit.models.snap.TransactionStatusResponse
 import com.wongtlaten.application.R
+import com.wongtlaten.application.ResetPasswordActivity
 import com.wongtlaten.application.api.RetrofitClient
 import com.wongtlaten.application.core.*
 import com.wongtlaten.application.core.Transaction
@@ -38,6 +41,7 @@ import com.wongtlaten.application.modules.penjual.home.RecomViewPagerAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.properties.Delegates
@@ -51,6 +55,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     private lateinit var namaProduk : TextView
     private lateinit var ratingBar: RatingBar
     private lateinit var textRate : TextView
+    private lateinit var komentar : TextView
     private lateinit var deskripsiProduk : TextView
     private lateinit var totalPrice : TextView
     private lateinit var totalPriceSlash : TextView
@@ -62,6 +67,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     private lateinit var loveInactive: ImageView
     private lateinit var loveActive: ImageView
     private lateinit var itemFiturPayment: CardView
+    private lateinit var itemFiturChat: CardView
     private lateinit var itemFiturCart: CardView
     private lateinit var itemFiturPlus : CardView
     private lateinit var itemFiturMinus : CardView
@@ -71,6 +77,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     private var countTotalProduk by Delegates.notNull<Int>()
     private lateinit var textDetail : TextView
     private var isProductOnCart by Delegates.notNull<Boolean>()
+    private lateinit var textChat : TextView
     private lateinit var textKeranjang : TextView
     private lateinit var textPayment : TextView
     private var stokProduk by Delegates.notNull<Int>()
@@ -78,15 +85,22 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     private lateinit var tempProduk: ArrayList<Products>
     private var countPayment by Delegates.notNull<Int>()
     private lateinit var idUser: String
+    private lateinit var daftarCartList: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_produk_pembeli)
 
+        // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+        if (!isConnected(this)){
+            showInternetDialog()
+        }
+
         typeProduk = findViewById(R.id.typeProduk)
         namaProduk = findViewById(R.id.nameProduk)
         ratingBar = findViewById(R.id.ratingBar)
         textRate = findViewById(R.id.textRate)
+        komentar = findViewById(R.id.komentar)
         deskripsiProduk = findViewById(R.id.deskripsiProduk)
         totalPrice = findViewById(R.id.totalPrice)
         totalPriceSlash = findViewById(R.id.totalPriceSlash)
@@ -100,6 +114,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
         recomViewPager.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
         loveInactive = findViewById(R.id.loveInactivated)
         loveActive = findViewById(R.id.loveActivated)
+        itemFiturChat = findViewById(R.id.itemFiturChat)
         itemFiturPayment = findViewById(R.id.itemFiturPayment)
         itemFiturCart = findViewById(R.id.itemFiturCart)
         itemFiturPlus = findViewById(R.id.itemFiturPlus)
@@ -108,16 +123,19 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
         btnKeranjang = findViewById(R.id.btnKeranjang)
         btnBeli = findViewById(R.id.btnBeli)
         textDetail = findViewById(R.id.textDetailProduk)
+        textChat = findViewById(R.id.textChat)
         textKeranjang = findViewById(R.id.textKeranjang)
         textPayment = findViewById(R.id.textPayment)
         isProductOnCart = false
         stokProduk = 0
         minimumPemesanan = 0
         tempProduk = arrayListOf<Products>()
+        daftarCartList = arrayListOf()
         countPayment = 0
 
         val auth = FirebaseAuth.getInstance()
         val userIdentity = auth.currentUser!!
+        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
 
         idUser = userIdentity.uid
 
@@ -196,6 +214,13 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
             }
         }
 
+        itemFiturChat.setOnClickListener {
+            Intent(applicationContext, ChatPembeliActivity::class.java).also {
+                startActivity(it)
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
         itemFiturCart.setOnClickListener {
             Intent(applicationContext, KeranjangPembeliActivity::class.java).also {
                 startActivity(it)
@@ -212,8 +237,45 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
 
         checkIsProductOnDatabase(idProduct)
         updateTransaction()
+        updateNewChat(idPenjual, idUser)
+
+        // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
+        val referenceReview = FirebaseDatabase.getInstance().getReference("dataReviewProduk").child(idProduct)
+        referenceReview.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    var countReview = 0
+                    for (i in snapshot.children){
+                        val review = i.getValue(ReviewProduct::class.java)!!
+                        if (review.review != ""){
+                            countReview += 1
+                        }
+                    }
+                    komentar.text = "Komentar ($countReview)"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+        komentar.setOnClickListener {
+            Intent(applicationContext, KomentarProdukPembeliActivity::class.java).also {
+                it.putExtra("EXTRA_ID_PRODUCT", idProduct)
+                startActivity(it)
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
 
         btnBeli.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
+
             if (countTotalProduk == 0){
                 alertDialog("GAGAL!", "Produk ini gagal di beli karena stok habis", false)
             } else if (countTotalProduk < minimumPemesanan){
@@ -230,6 +292,12 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
         }
 
         btnKeranjang.setOnClickListener {
+
+            // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
+            if (!isConnected(this)){
+                showInternetDialog()
+            }
+
             if (isProductOnCart){
                 Toast.makeText(this, "Produk tersebut sudah ada di keranjang", Toast.LENGTH_SHORT).show()
             } else {
@@ -279,22 +347,42 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     }
 
     private fun checkIsProductOnDatabase(idProduct: String) : Boolean{
+
         referenceCart.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                daftarCartList.clear()
                 if (snapshot.exists()){
-                    var countCart = 0
                     for (i in snapshot.children){
-                        val products = i.getValue(CartProducts::class.java)!!
-                        if (products.idProduct == idProduct){
+                        val carts = i.getValue(CartProducts::class.java)!!
+                        daftarCartList.add(carts.idProduct)
+                        if (carts.idProduct == idProduct){
                             isProductOnCart = true
                         }
-                        countCart += 1
-                    }
-                    if (countCart > 0){
-                        textKeranjang.visibility = View.VISIBLE
-                        textKeranjang.text = " $countCart "
                     }
                 }
+                val ref = FirebaseDatabase.getInstance().getReference("dataProduk")
+                ref.addValueEventListener(object: ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()){
+                            var countCart = 0
+                            for (i in snapshot.children){
+                                val products = i.getValue(Products::class.java)!!
+                                if (products.idProduct in daftarCartList && products.statusProduct != "deleted"){
+                                    countCart += 1
+                                }
+                            }
+                            if (countCart > 0){
+                                textKeranjang.visibility = View.VISIBLE
+                                textKeranjang.text = " $countCart "
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -323,7 +411,10 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
                 totalProduk.text = "$countTotalProduk"
                 namaProduk.text = produk.namaProduct
                 ratingBar.rating = produk.ratingProduct
-                textRate.setText("(${produk.ratingProduct})")
+                ratingBar.isEnabled = false
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.setText("(${df.format(produk.ratingProduct).toDouble()})")
                 deskripsiProduk.text = produk.deskripsiProduct
                 val formatter: NumberFormat = DecimalFormat("#,###")
                 val price = produk.hargaProduct
@@ -417,6 +508,34 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
         })
     }
 
+    private fun updateNewChat(senderId: String, receiverId: String){
+        val databaseReferenceChat: DatabaseReference =
+            FirebaseDatabase.getInstance().getReference("dataChatting").child(idUser)
+
+        databaseReferenceChat.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var countNewChat = 0
+                for (i in snapshot.children) {
+                    val chat = i.getValue(Chat::class.java)!!
+                    if (chat.senderId.equals(senderId) && chat.receiverId.equals(receiverId)
+                    ) {
+                        if (chat.statusMessage == "0"){
+                            countNewChat += 1
+                        }
+                    }
+                }
+                if (countNewChat > 0){
+                    textChat.visibility = View.VISIBLE
+                    textChat.text = " $countNewChat "
+                }
+            }
+        })
+    }
+
     companion object{
         const val EXTRA_ID_PRODUCT = "EXTRA_ID_PRODUCT"
     }
@@ -425,6 +544,37 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
+    // jika tetep tidak connect ke internet maka tetap looping dialog tersebut
+    private fun showInternetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            // Menambahkan title dan pesan ke dalam alert dialog
+            setTitle("PERINGATAN!")
+            setMessage("Tidak ada koneksi internet, mohon nyalakan mobile data/wifi anda terlebih dahulu")
+            setIcon(R.drawable.ic_alert)
+            setCancelable(false)
+            setPositiveButton(
+                "Coba lagi",
+                DialogInterface.OnClickListener { dialogInterface, i ->
+                    dialogInterface.dismiss()
+                    if (!isConnected(this@DetailProdukPembeliActivity)){
+                        showInternetDialog()
+                    }
+                })
+        }
+        alertDialog.show()
+    }
+
+    // Fungsi untuk melakukan pengecekan apakah ada internet atau tidak
+    private fun isConnected(contextActivity: DetailProdukPembeliActivity): Boolean {
+        val connectivityManager = contextActivity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        val mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+
+        return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
 }
