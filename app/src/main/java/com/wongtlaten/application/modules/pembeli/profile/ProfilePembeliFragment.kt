@@ -27,6 +27,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import kotlin.properties.Delegates
 
 class ProfilePembeliFragment : Fragment() {
 
@@ -52,6 +55,7 @@ class ProfilePembeliFragment : Fragment() {
     private lateinit var nextLogout: ConstraintLayout
     private lateinit var idUser: String
     private lateinit var newUpdateTransaction : String
+    private var totalPembelianUser by Delegates.notNull<Long>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,6 +97,7 @@ class ProfilePembeliFragment : Fragment() {
         nextFaq = view.findViewById(R.id.layoutFaq)
         nextLogout = view.findViewById(R.id.layoutLogout)
         daftarTransaksi = arrayListOf()
+        totalPembelianUser = 0
 
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
         referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
@@ -201,6 +206,28 @@ class ProfilePembeliFragment : Fragment() {
             }
         }
         referen.addListenerForSingleValueEvent(menuListener)
+        val referen2 = FirebaseDatabase.getInstance().getReference("dataTransaksi")
+        referen2.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    totalPembelianUser = 0
+                    for (i in snapshot.children){
+                        val transaction = i.getValue(Transaction::class.java)!!
+                        if (transaction.idUser == idUser && transaction.statusPembayaran == "settlement"){
+                            totalPembelianUser += transaction.totalPembayaran.toLong()
+                        }
+                    }
+                    val formatter: NumberFormat = DecimalFormat("#,###")
+                    val formattedNumberPrice: String = formatter.format(totalPembelianUser)
+                    textTotal.text = "Rp. ${formattedNumberPrice}"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
     private fun updateTransaction() {

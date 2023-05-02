@@ -129,7 +129,7 @@ class KomentarProdukPembeliActivity : AppCompatActivity() {
                 val produk = dataSnapshot.getValue(Products::class.java)!!
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.CEILING
-                allRate.setText("${df.format(produk.ratingProduct).toDouble()}")
+                allRate.setText("${df.format(produk.ratingProduct)}")
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 // handle error

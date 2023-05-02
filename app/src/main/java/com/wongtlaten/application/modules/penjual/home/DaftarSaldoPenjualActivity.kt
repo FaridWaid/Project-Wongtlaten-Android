@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
@@ -54,6 +56,25 @@ class DaftarSaldoPenjualActivity : AppCompatActivity() {
         // Memanggil fungsi "showListProduct" yang digunakan untuk menampilkan recyclerview dari data yang sudah ada,
         // pada list
         showListSaldo()
+
+        // Mendefinisikan variabel "etSearch", ketika memasukkan query ke etSearch maka akan memanggil fungsi filter
+        // terdapat closeSearch digunakan untuk menghapus query/inputan
+        // overridePendingTransition digunakan untuk animasi dari intent
+        etSearch = findViewById(R.id.et_search)
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                filter(editable.toString())
+            }
+
+        })
 
         // Ketika "backButton" di klik
         // overridePendingTransition digunakan untuk animasi dari intent
@@ -107,6 +128,19 @@ class DaftarSaldoPenjualActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+    }
+
+    // Membuat fungsi "filter" yang digunakan untuk memfilter recyclerView,
+    private fun filter(text: String) {
+        // mendefiniskan variabel "filteredNames" yang berisi arraylist dari data users
+        val filteredNames = ArrayList<com.wongtlaten.application.core.Transaction>()
+        // setiap data yang ada pada daftarProdukList disamakan dengan filteredNames
+        daftarSaldoList.filterTo(filteredNames) {
+            // jika namaProduk sama dengan text input yang dimasukkan oleh user
+            it.waktuTransaksi.toLowerCase().contains(text.toLowerCase())
+        }
+        // maka akan memenaggil fungsi filterlist dari adapter dan hanyak menampilkan data yang cocok
+        adapter!!.filterList(filteredNames)
     }
 
     // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,

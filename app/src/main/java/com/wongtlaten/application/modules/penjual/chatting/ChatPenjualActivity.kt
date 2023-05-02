@@ -179,7 +179,9 @@ class ChatPenjualActivity : AppCompatActivity() {
 
                 val chatAdapter = ChatPenjualAdapter(this@ChatPenjualActivity, chatList)
                 chatRecyclerView.adapter = chatAdapter
-                chatRecyclerView.smoothScrollToPosition(chatList.size - 1)
+                if (chatList.isNotEmpty()){
+                    chatRecyclerView.smoothScrollToPosition(chatList.size - 1)
+                }
             }
         })
     }

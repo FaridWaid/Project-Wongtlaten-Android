@@ -57,6 +57,10 @@ class HomePembeliFragment : Fragment() {
     private lateinit var itemFiturChat: CardView
     private lateinit var itemFiturCart: CardView
     private lateinit var itemFiturPayment: CardView
+    private lateinit var itemFiturGiftbox: CardView
+    private lateinit var itemFiturBouquet: CardView
+    private lateinit var itemFiturAcrylic: CardView
+    private lateinit var itemFiturPigura: CardView
     private lateinit var btnCustom: Button
     private lateinit var textChat : TextView
     private lateinit var textKeranjang : TextView
@@ -101,6 +105,10 @@ class HomePembeliFragment : Fragment() {
         itemFiturChat = view.findViewById(R.id.itemFiturChat)
         itemFiturCart = view.findViewById(R.id.itemFiturCart)
         itemFiturPayment = view.findViewById(R.id.itemFiturPayment)
+        itemFiturGiftbox = view.findViewById(R.id.itemFiturGiftbox)
+        itemFiturAcrylic = view.findViewById(R.id.itemFiturAcrylic)
+        itemFiturBouquet = view.findViewById(R.id.itemFiturBouquet)
+        itemFiturPigura = view.findViewById(R.id.itemFiturPigura)
         textChat = view.findViewById(R.id.textChat)
         textKeranjang = view.findViewById(R.id.textKeranjang)
         btnCustom = view.findViewById(R.id.btnCustom)
@@ -162,6 +170,38 @@ class HomePembeliFragment : Fragment() {
             // Jika berhasil maka akan pindah ke FlashSaleActivity
             requireActivity().run{
                 startActivity(Intent(this, PembayaranPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        itemFiturGiftbox.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, GiftboxPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        itemFiturPigura.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, PiguraPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        itemFiturBouquet.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, BouquetPembeliActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        itemFiturAcrylic.setOnClickListener {
+            // Jika berhasil maka akan pindah ke FlashSaleActivity
+            requireActivity().run{
+                startActivity(Intent(this, AcrylicPembeliActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
             }
         }

@@ -155,7 +155,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="top"
-                    android:maxLines="10"
+                    android:maxLines="23"
+                    android:scrollbars="vertical"
                     android:backgroundTint="@color/primary"
                     android:inputType="textMultiLine"
                     android:hint="Deskripsi penjelasan" />

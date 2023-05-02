@@ -47,7 +47,7 @@ class PopularAdapter(val list: ArrayList<Products>, val method: Activity): Recyc
                 ratingBar.isEnabled = false
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.CEILING
-                textRate.setText("(${df.format(products.ratingProduct).toDouble()})")
+                textRate.setText("(${df.format(products.ratingProduct)})")
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
                 priceProduk.text = "Rp. $formattedNumber"

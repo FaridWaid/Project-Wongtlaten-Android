@@ -2,6 +2,7 @@ package com.wongtlaten.application.modules.pembeli.home
 
 import android.content.Intent
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,10 +57,9 @@ class FsViewPagerAdapter(val list: ArrayList<Products>, val method: SearchPembel
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 textFs.text = " ${products.hargaPromoProduct}% "
                 ratingBar.rating = products.ratingProduct
-//                ratingBar.isEnabled = false
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.CEILING
-                textRate.setText("(${df.format(products.ratingProduct).toDouble()})")
+                textRate.text = "(${df.format(products.ratingProduct)})"
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
 

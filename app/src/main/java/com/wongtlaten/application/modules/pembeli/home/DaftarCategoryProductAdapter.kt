@@ -1,0 +1,137 @@
+package com.wongtlaten.application.modules.pembeli.home
+
+import android.content.Intent
+import android.graphics.Paint
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
+import com.wongtlaten.application.R
+import com.wongtlaten.application.core.CartProducts
+import com.wongtlaten.application.core.Products
+import com.wongtlaten.application.core.WishlistProducts
+import com.wongtlaten.application.modules.pembeli.wishlist.DaftarWishlistProdukAdapter
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.NumberFormat
+
+class DaftarCategoryProductAdapter(val list: ArrayList<Products>): RecyclerView.Adapter<DaftarCategoryProductAdapter.DaftarViewHolder>() {
+
+    // Membuat class DaftarViewHolder yang digunakan untuk set view yang akan ditampilkan,
+    // Menggunakan picasso untuk loading image
+    inner class DaftarViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+        val imageProduk: ImageView = itemView.findViewById(R.id.imageProduk)
+        val ratingBar: RatingBar = itemView.findViewById(R.id.ratingBar)
+        val textRate: TextView = itemView.findViewById(R.id.textRate)
+        val typeProduk: TextView = itemView.findViewById(R.id.typeProduk)
+        val namaProduk: TextView = itemView.findViewById(R.id.nameProduk)
+        val priceProduk: TextView = itemView.findViewById(R.id.price)
+        val pricePromo: TextView = itemView.findViewById(R.id.pricePromo)
+        val textFs: TextView = itemView.findViewById(R.id.textFs)
+        val textNew: TextView = itemView.findViewById(R.id.textNew)
+        val textPopular: TextView = itemView.findViewById(R.id.textPopular)
+        val loveInactive: ImageView = itemView.findViewById(R.id.loveInactivated)
+        val loveActive: ImageView = itemView.findViewById(R.id.loveActivated)
+        fun bind(products: Products){
+            with(itemView){
+
+                val formatter: NumberFormat = DecimalFormat("#,###")
+                val price = products.hargaProduct
+                val promo = 100 - products.hargaPromoProduct
+                val totalPromo = ((promo.toFloat()/100) * products.hargaProduct)
+                val formattedNumberPrice: String = formatter.format(price)
+                val formattedNumberPrice2: String = formatter.format(totalPromo.toLong())
+                if (products.jenisProduct == "flash sale"){
+                    priceProduk.paintFlags = priceProduk.getPaintFlags() or Paint.STRIKE_THRU_TEXT_FLAG
+                    priceProduk.visibility = View.VISIBLE
+                    priceProduk.text = "Rp. ${formattedNumberPrice}"
+                    pricePromo.visibility = View.VISIBLE
+                    pricePromo.text = "Rp. ${formattedNumberPrice2}"
+                    textFs.visibility = View.VISIBLE
+                    textFs.text = " -${products.hargaPromoProduct}% "
+                } else if (products.jenisProduct == "new") {
+                    priceProduk.visibility = View.VISIBLE
+                    priceProduk.text = "Rp. ${formattedNumberPrice}"
+                    textNew.visibility = View.VISIBLE
+                } else {
+                    priceProduk.visibility = View.VISIBLE
+                    priceProduk.text = "Rp. ${formattedNumberPrice}"
+                    textPopular.visibility = View.VISIBLE
+                }
+                Picasso.get().load(products.photoProduct1).into(imageProduk)
+                ratingBar.rating = products.ratingProduct
+                ratingBar.isEnabled = false
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.text = "(${df.format(products.ratingProduct)})"
+                typeProduk.text = products.kategoriProduct
+                namaProduk.text = products.namaProduct
+
+                val auth = FirebaseAuth.getInstance()
+                val userIdentity = auth.currentUser!!
+
+                // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
+                val referenceWishlist = FirebaseDatabase.getInstance().getReference("dataWishlistProduk").child(userIdentity.uid)
+                referenceWishlist.addValueEventListener(object: ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()){
+                            for (i in snapshot.children){
+                                val productWishlist = i.getValue(WishlistProducts::class.java)!!
+                                if (productWishlist.idProduct == products.idProduct){
+                                    loveActive.visibility = View.VISIBLE
+                                } else {
+                                    loveInactive.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
+
+                loveInactive.setOnClickListener {
+                    loveActive.visibility = View.VISIBLE
+                    loveInactive.visibility = View.INVISIBLE
+                    val cartUpdate = CartProducts(userIdentity.uid, products.idProduct)
+                    referenceWishlist.child(products.idProduct).setValue(cartUpdate)
+                }
+                loveActive.setOnClickListener {
+                    loveInactive.visibility = View.VISIBLE
+                    loveActive.visibility = View.INVISIBLE
+                    referenceWishlist.child(products.idProduct).removeValue()
+                }
+
+                itemView.setOnClickListener {
+                    val moveIntent = Intent(itemView.context, DetailProdukPembeliActivity::class.java)
+                    moveIntent.putExtra(DetailProdukPembeliActivity.EXTRA_ID_PRODUCT, products.idProduct)
+                    itemView.context.startActivity(moveIntent)
+                }
+
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DaftarViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_wishlist, parent, false)
+        return DaftarViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: DaftarViewHolder, position: Int) {
+        holder.bind(list[position])
+    }
+
+    // Mendapatkan jumlah data dari list
+    override fun getItemCount(): Int = list.size
+}

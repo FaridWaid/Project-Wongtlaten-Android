@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,11 +22,16 @@ import com.wongtlaten.application.R
 import com.wongtlaten.application.api.RetrofitClient
 import com.wongtlaten.application.core.*
 import com.wongtlaten.application.core.Transaction
+import com.wongtlaten.application.modules.pembeli.wishlist.DetailPesananPembeliActivity
 import com.wongtlaten.application.modules.penjual.home.*
+import com.wongtlaten.application.modules.penjual.payment.DetailPesananPenjualActivity
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import kotlin.properties.Delegates
 
 class ProfilePenjualFragment : Fragment() {
 
@@ -50,6 +56,8 @@ class ProfilePenjualFragment : Fragment() {
     private lateinit var nextLogout: ConstraintLayout
     private lateinit var daftarTransaksi: ArrayList<Transaction>
     private lateinit var newUpdateTransaction : String
+    private var countProdukTerjual by Delegates.notNull<Int>()
+    private var countSaldoTerjual by Delegates.notNull<Long>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,6 +99,8 @@ class ProfilePenjualFragment : Fragment() {
         nextLogout = view.findViewById(R.id.layoutLogout)
         daftarTransaksi = arrayListOf()
         newUpdateTransaction = ""
+        countProdukTerjual = 0
+        countSaldoTerjual = 0
 
         // Membuat referen memiliki child userId, yang nantinya akan diisi oleh data user
         referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
@@ -201,7 +211,6 @@ class ProfilePenjualFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users = dataSnapshot.getValue(Users::class.java)!!
                 textName.text = users.username
-                textTransaksi.text = users.jumlahTransaksi.toString()
                 Picasso.get().load(users.photoProfil).into(photoProfil)
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -209,6 +218,48 @@ class ProfilePenjualFragment : Fragment() {
             }
         }
         referen.addListenerForSingleValueEvent(menuListener)
+        val referen2 = FirebaseDatabase.getInstance().getReference("dataProduk")
+        referen2.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    countProdukTerjual = 0
+                    for (i in snapshot.children){
+                        val product = i.getValue(Products::class.java)!!
+                        if (product != null){
+                            countProdukTerjual += product.jumlahPembelianProduct
+                        }
+                    }
+                    textTransaksi.text = "${countProdukTerjual}"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+        val referen3 = FirebaseDatabase.getInstance().getReference("dataTransaksi")
+        referen3.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    countSaldoTerjual = 0
+                    for (i in snapshot.children){
+                        val transaction = i.getValue(com.wongtlaten.application.core.Transaction::class.java)
+                        if (transaction != null && transaction.statusPembayaran == "settlement"){
+                            countSaldoTerjual += transaction.totalPembayaran.toLong()
+                        }
+                    }
+                    val formatter: NumberFormat = DecimalFormat("#,###")
+                    val formattedNumberPrice: String = formatter.format(countSaldoTerjual)
+                    textTotal.text = "Rp. ${formattedNumberPrice}"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
     private fun updateTransaction() {

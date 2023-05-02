@@ -414,7 +414,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
                 ratingBar.isEnabled = false
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.CEILING
-                textRate.setText("(${df.format(produk.ratingProduct).toDouble()})")
+                textRate.setText("(${df.format(produk.ratingProduct)})")
                 deskripsiProduk.text = produk.deskripsiProduct
                 val formatter: NumberFormat = DecimalFormat("#,###")
                 val price = produk.hargaProduct

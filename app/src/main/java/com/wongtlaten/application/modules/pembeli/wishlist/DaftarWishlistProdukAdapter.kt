@@ -22,6 +22,7 @@ import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.core.WishlistProducts
 import com.wongtlaten.application.modules.pembeli.home.DetailProdukPembeliActivity
 import com.wongtlaten.application.modules.pembeli.home.PopularAdapter
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -70,7 +71,10 @@ class DaftarWishlistProdukAdapter (val list: ArrayList<Products>): RecyclerView.
                 }
                 Picasso.get().load(products.photoProduct1).into(imageProduk)
                 ratingBar.rating = products.ratingProduct
-                textRate.text = "(${products.ratingProduct})"
+                ratingBar.isEnabled = false
+                val df = DecimalFormat("#.#")
+                df.roundingMode = RoundingMode.CEILING
+                textRate.text = "(${df.format(products.ratingProduct)})"
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
 

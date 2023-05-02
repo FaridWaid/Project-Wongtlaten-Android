@@ -7,13 +7,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.midtrans.sdk.corekit.models.snap.TransactionStatusResponse
+import com.squareup.picasso.Picasso
 import com.wongtlaten.application.PrediksiOngkirActivity
 import com.wongtlaten.application.R
 import com.wongtlaten.application.api.RetrofitClient
@@ -25,17 +30,29 @@ import com.wongtlaten.application.modules.pembeli.profile.ProfileDataPribadiPemb
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import kotlin.properties.Delegates
 
 class HomePenjualFragment : Fragment() {
 
     // Mendefinisikan variabel global dari view
     private lateinit var daftarTransaksi: ArrayList<Transaction>
     private lateinit var fiturPengelolaanProduk: CardView
+    private lateinit var fiturPengelolaanAkun: CardView
     private lateinit var fiturPengelolaanTransaksi: CardView
+    private lateinit var fiturPengelolaanSaldo: CardView
     private lateinit var fiturKustomisasiProduk: CardView
     private lateinit var fiturReviewProduk: CardView
+    private lateinit var fiturLaporan: CardView
+    private lateinit var fiturNotifikasi: CardView
+    private lateinit var fiturFaq: CardView
     private lateinit var fiturPrediksiOngkir: CardView
+    private lateinit var profilePicture : ImageView
+    private lateinit var btnCekSekarang : Button
+    private lateinit var totalProductTerjual : TextView
     private lateinit var newUpdateTransaction : String
+    private var countProdukTerjual by Delegates.notNull<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +64,7 @@ class HomePenjualFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        keepData()
         updateTransaction()
     }
 
@@ -54,12 +72,24 @@ class HomePenjualFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         fiturPengelolaanProduk = view.findViewById(R.id.itemFitur1)
+        fiturPengelolaanAkun = view.findViewById(R.id.itemFitur2)
         fiturPengelolaanTransaksi = view.findViewById(R.id.itemFitur3)
+        fiturPengelolaanSaldo = view.findViewById(R.id.itemFitur4)
         fiturKustomisasiProduk = view.findViewById(R.id.itemFitur5)
         fiturReviewProduk = view.findViewById(R.id.itemFitur6)
+        fiturLaporan = view.findViewById(R.id.itemFitur7)
+        fiturNotifikasi = view.findViewById(R.id.itemFitur8)
+        fiturFaq = view.findViewById(R.id.itemFitur9)
         fiturPrediksiOngkir = view.findViewById(R.id.itemFitur10)
+        profilePicture = view.findViewById(R.id.profilePicture)
+        totalProductTerjual = view.findViewById(R.id.countProdukTerjual)
+        btnCekSekarang = view.findViewById(R.id.btnCekSekarang)
         daftarTransaksi = arrayListOf()
         newUpdateTransaction = ""
+        countProdukTerjual = 0
+
+        // Memanggil fungsi keepData
+        keepData()
 
         fiturPengelolaanProduk.setOnClickListener {
             // Jika berhasil maka akan pindah ke DaftarProdukPenjualActivity
@@ -69,10 +99,26 @@ class HomePenjualFragment : Fragment() {
             }
         }
 
+        fiturPengelolaanAkun.setOnClickListener {
+            // Jika berhasil maka akan pindah ke DaftarProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarAkunPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
         fiturPengelolaanTransaksi.setOnClickListener {
             // Jika berhasil maka akan pindah ke DaftarProdukPenjualActivity
             requireActivity().run{
                 startActivity(Intent(this, DaftarTransaksiPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        fiturPengelolaanSaldo.setOnClickListener {
+            // Jika berhasil maka akan pindah ke DaftarProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarSaldoPenjualActivity::class.java))
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
             }
         }
@@ -93,6 +139,30 @@ class HomePenjualFragment : Fragment() {
             }
         }
 
+        fiturLaporan.setOnClickListener {
+            // Jika berhasil maka akan pindah ke KustomisasiProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, LaporanPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        fiturNotifikasi.setOnClickListener {
+            // Jika berhasil maka akan pindah ke KustomisasiProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, NotifikasiPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+        fiturFaq.setOnClickListener {
+            // Jika berhasil maka akan pindah ke KustomisasiProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarFaqPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
         fiturPrediksiOngkir.setOnClickListener {
             // Jika berhasil maka akan pindah ke KustomisasiProdukPenjualActivity
             requireActivity().run{
@@ -101,6 +171,50 @@ class HomePenjualFragment : Fragment() {
             }
         }
 
+        btnCekSekarang.setOnClickListener {
+            // Jika berhasil maka akan pindah ke KustomisasiProdukPenjualActivity
+            requireActivity().run{
+                startActivity(Intent(this, DaftarTransaksiPenjualActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
+        }
+
+    }
+
+    private fun keepData() {
+        val userIdentiy = FirebaseAuth.getInstance().currentUser!!
+        val referen = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentiy.uid)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                Picasso.get().load(users.photoProfil).into(profilePicture)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referen.addListenerForSingleValueEvent(menuListener)
+        val referen2 = FirebaseDatabase.getInstance().getReference("dataProduk")
+        referen2.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    countProdukTerjual = 0
+                    for (i in snapshot.children){
+                        val product = i.getValue(Products::class.java)!!
+                        if (product != null){
+                            countProdukTerjual += product.jumlahPembelianProduct
+                        }
+                    }
+                    totalProductTerjual.text = "${countProdukTerjual}"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
     private fun updateTransaction() {

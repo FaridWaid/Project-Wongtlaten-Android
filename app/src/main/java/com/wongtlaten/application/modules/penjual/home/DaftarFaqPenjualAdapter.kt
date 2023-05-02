@@ -19,6 +19,7 @@ import com.wongtlaten.application.R
 import com.wongtlaten.application.core.Faq
 import com.wongtlaten.application.core.Products
 import com.wongtlaten.application.modules.penjual.home.PreviewBantuanPenjualActivity.Companion.EXTRA_ID_BANTUAN
+import com.wongtlaten.application.modules.penjual.home.UbahFaqPenjualActivity.Companion.EXTRA_ID_FAQ
 
 class DaftarFaqPenjualAdapter(private var list: ArrayList<Faq>): RecyclerView.Adapter<DaftarFaqPenjualAdapter.DaftarFaqViewHolder>() {
 
@@ -62,8 +63,6 @@ class DaftarFaqPenjualAdapter(private var list: ArrayList<Faq>): RecyclerView.Ad
                     }
 
                     textDeleteBantuan.setOnClickListener {
-//                        dialog.dismiss()
-
                         val alertDialog = AlertDialog.Builder(context)
                         alertDialog.apply {
                             setTitle("Konfirmasi")
@@ -95,6 +94,13 @@ class DaftarFaqPenjualAdapter(private var list: ArrayList<Faq>): RecyclerView.Ad
                     }
                     dialog.show()
                 }
+
+                itemView.setOnClickListener {
+                    val moveIntent = Intent(itemView.context, UbahFaqPenjualActivity::class.java)
+                    moveIntent.putExtra(EXTRA_ID_FAQ, faq.idFaq)
+                    itemView.context.startActivity(moveIntent)
+                }
+
             }
         }
     }

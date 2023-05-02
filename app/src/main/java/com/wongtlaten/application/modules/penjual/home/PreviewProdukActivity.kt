@@ -79,7 +79,7 @@ class PreviewProdukActivity : AppCompatActivity() {
                 ratingBar.rating = produk.ratingProduct
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.CEILING
-                textRate.setText("(${df.format(produk.ratingProduct).toDouble()})")
+                textRate.setText("(${df.format(produk.ratingProduct)})")
                 deskripsiProduk.text = produk.deskripsiProduct
                 val formatter: NumberFormat = DecimalFormat("#,###")
                 val price = produk.hargaProduct

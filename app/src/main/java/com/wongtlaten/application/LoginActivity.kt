@@ -493,4 +493,37 @@ class LoginActivity : AppCompatActivity() {
         return wifiConn != null && wifiConn.isConnected || mobileConn != null && mobileConn.isConnected
     }
 
+    // Membuat fungsi "onStart"
+    override fun onStart() {
+        super.onStart()
+        loadingBar(2000)
+        // Jika user sudah ada user yang login maka akan langsung diarahkan ke HomeActivity
+        if (auth.currentUser != null){
+            val userIdentity = auth.currentUser!!
+            // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+            val menuListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val users = dataSnapshot.getValue(Users::class.java)!!
+                    if (users.accessLevel == "penjual"){
+                        Intent(this@LoginActivity, HomePenjualActivity::class.java).also { intent ->
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                            startActivity(intent)
+                        }
+                    } else {
+                        Intent(this@LoginActivity, HomePembeliActivity::class.java).also { intent ->
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                            startActivity(intent)
+                        }
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+
+                }
+            }
+            ref.child(userIdentity.uid).addListenerForSingleValueEvent(menuListener)
+        }
+    }
+
 }

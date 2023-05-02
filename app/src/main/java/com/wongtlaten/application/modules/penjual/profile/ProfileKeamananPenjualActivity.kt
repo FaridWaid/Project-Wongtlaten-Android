@@ -10,6 +10,7 @@ import android.widget.CompoundButton
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.SwitchCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.wongtlaten.application.R
@@ -21,7 +22,7 @@ class ProfileKeamananPenjualActivity : AppCompatActivity() {
     // Mendefinisikan variabel global untuk connect ke Firebase
     private lateinit var auth: FirebaseAuth
     private lateinit var ref : DatabaseReference
-    private lateinit var nextUbahPassword : AppCompatImageView
+    private lateinit var nextUbahPassword : ConstraintLayout
     private lateinit var switchCheck : SwitchCompat
     private lateinit var check : String
 
@@ -40,7 +41,7 @@ class ProfileKeamananPenjualActivity : AppCompatActivity() {
         // Membuat database baru dengan reference users dan dimasukkan ke dalam variabel ref
         ref = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
 
-        nextUbahPassword = findViewById(R.id.iconNextUbahPassword)
+        nextUbahPassword = findViewById(R.id.layoutUbahPassword)
         switchCheck = findViewById(R.id.switchCheck)
         check = ""
 
