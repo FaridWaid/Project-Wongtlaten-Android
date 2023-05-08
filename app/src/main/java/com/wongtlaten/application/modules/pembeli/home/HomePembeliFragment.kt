@@ -86,7 +86,7 @@ class HomePembeliFragment : Fragment() {
         val auth = FirebaseAuth.getInstance()
         val userIdentity = auth.currentUser!!
         idUser = userIdentity.uid
-        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
+        val idPenjual = "kJKchPfDIjVh0xhh9mEyixSFoso1"
         updateNewChat(idPenjual, idUser)
     }
 
@@ -97,7 +97,7 @@ class HomePembeliFragment : Fragment() {
         val userIdentity = auth.currentUser!!
         idUser = userIdentity.uid
         newUpdateTransaction = ""
-        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
+        val idPenjual = "kJKchPfDIjVh0xhh9mEyixSFoso1"
 
         // Membuat reference yang nantinya akan digunakan untuk melakukan aksi ke database
         referenceCart = FirebaseDatabase.getInstance().getReference("dataCartProduk").child(userIdentity.uid)
@@ -390,7 +390,7 @@ class HomePembeliFragment : Fragment() {
                                         val menuListener = object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
-                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
+                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.panjangProduct, produk.lebarProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                                                 referenceCustom.setValue(productUpdateCustomize)
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {

@@ -41,7 +41,7 @@ class RecomViewPagerAdapter(val list: ArrayList<Products>): RecyclerView.Adapter
                 ratingBar.rating = products.ratingProduct
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.CEILING
-                textRate.setText("(${df.format(products.ratingProduct).toDouble()})")
+                textRate.setText("(${df.format(products.ratingProduct)})")
                 typeProduk.text = products.kategoriProduct
                 namaProduk.text = products.namaProduct
                 priceProduk.text = "Rp. $formattedNumber"

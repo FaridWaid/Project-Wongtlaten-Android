@@ -90,6 +90,8 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                         val deskripsiProduk = dialog.findViewById(R.id.textDeskripsiProduk) as TextView
                         val hargaProduk = dialog.findViewById(R.id.textHargaProduk) as TextView
                         val beratProduk = dialog.findViewById(R.id.beratProduk) as TextView
+                        val panjangProduk = dialog.findViewById(R.id.panjangProduk) as TextView
+                        val lebarProduk = dialog.findViewById(R.id.lebarProduk) as TextView
                         val stokProduk = dialog.findViewById(R.id.stokProduk) as TextView
                         val kategoriProduk = dialog.findViewById(R.id.textKategori) as TextView
 
@@ -97,6 +99,8 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                         namaProdukk.text = produk.namaProduct
                         deskripsiProduk.text = produk.deskripsiProduct
                         beratProduk.text = "${produk.beratProduct} gram"
+                        panjangProduk.text = "${produk.panjangProduct} cm"
+                        lebarProduk.text = "${produk.lebarProduct} cm"
                         stokProduk.text = produk.stockProduct.toString()
                         kategoriProduk.text = produk.kategoriProduct
                         val formatter: NumberFormat = DecimalFormat("#,###")
@@ -122,7 +126,7 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                             setPositiveButton("Hapus", DialogInterface.OnClickListener { dialogInterface, i ->
                                 dialogInterface.dismiss()
                                 val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child("${produk.idProduct}")
-                                val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, "deleted")
+                                val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct, produk.beratProduct, produk.panjangProduct, produk.lebarProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, "deleted")
                                 reference.setValue(productUpdate).addOnCompleteListener {
                                     if (it.isSuccessful){
                                         dialog.dismiss()
@@ -168,7 +172,7 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                             etStok.requestFocus()
                             return@setOnClickListener
                         } else {
-                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, stokInput.toInt(), produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
+                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, stokInput.toInt(), produk.beratProduct, produk.panjangProduct, produk.lebarProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){
@@ -212,7 +216,7 @@ class KustomisasiProdukPenjualAdapter (private var list: ArrayList<CustomizeProd
                             etHarga.requestFocus()
                             return@setOnClickListener
                         } else {
-                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, hargaInput.toLong(), produk.stockProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
+                            val productUpdate = CustomizeProducts(produk.idProduct, produk.namaProduct, hargaInput.toLong(), produk.stockProduct, produk.beratProduct, produk.panjangProduct, produk.lebarProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
                             val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(produk.idProduct)
                             reference.setValue(productUpdate).addOnCompleteListener {
                                 if (it.isSuccessful){

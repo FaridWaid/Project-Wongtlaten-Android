@@ -131,6 +131,14 @@ class RiwayatTransaksiPembeliActivity : AppCompatActivity() {
                         }
                     }
 
+                    override fun btnReviewClicked() {
+                        Intent(applicationContext, ReviewProdukPembeliActivity::class.java).also {
+                            startActivity(it)
+                            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                            finish()
+                        }
+                    }
+
                 })
                 rvDaftarProduk.adapter = adapter
             }

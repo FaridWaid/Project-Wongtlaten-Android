@@ -196,6 +196,23 @@ class PengirimanPembeliActivity : AppCompatActivity() {
 
         showDataCity()
 
+
+        val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
+        // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users = dataSnapshot.getValue(Users::class.java)!!
+                if (users.noTelp.isEmpty() || users.alamat.isEmpty()){
+                    Toast.makeText(this@PengirimanPembeliActivity, "Silakan lengkapi data pribadi anda terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                    onBackPressed()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+        referenceUser.addListenerForSingleValueEvent(menuListener)
+
         btnUbahJasaPengiriman.setOnClickListener {
             val i = Intent(this, UbahJasaPengirimanPembeliActivity::class.java)
             startActivityForResult(i, 1)
@@ -218,22 +235,6 @@ class PengirimanPembeliActivity : AppCompatActivity() {
             if (!isConnected(this)){
                 showInternetDialog()
             }
-
-            val referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(userIdentity.uid)
-            // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
-            val menuListener = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val users = dataSnapshot.getValue(Users::class.java)!!
-                    if (users.noTelp.isEmpty() || users.alamat.isEmpty()){
-                        Toast.makeText(this@PengirimanPembeliActivity, "Silakan lengkapi data pribadi anda terlebih dahulu!", Toast.LENGTH_SHORT).show()
-                        checkDataPribadi = false
-                    }
-                }
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
-            }
-            referenceUser.addListenerForSingleValueEvent(menuListener)
 
             if (checkDataPribadi){
                 pesanGiftcardInput = etPesanGiftcard.text.toString().trim()

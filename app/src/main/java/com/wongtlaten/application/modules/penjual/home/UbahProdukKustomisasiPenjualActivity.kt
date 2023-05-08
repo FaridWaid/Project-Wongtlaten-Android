@@ -42,9 +42,9 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
     private lateinit var hargaProdukContainer: TextInputLayout
     private lateinit var etStok: EditText
     private lateinit var etBerat: EditText
+    private lateinit var etPanjang: EditText
+    private lateinit var etLebar: EditText
     private lateinit var etDeskripsi: EditText
-    private lateinit var daftarKategoriList: ArrayList<String>
-    private lateinit var autoCompleteKategori: AutoCompleteTextView
     private lateinit var btnSimpan : Button
     private lateinit var image1 : String
     private lateinit var idProduk : String
@@ -75,6 +75,8 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
         hargaProdukContainer = findViewById(R.id.HargaProdukContainer)
         etStok = findViewById(R.id.etStok)
         etBerat = findViewById(R.id.etBeratProduk)
+        etPanjang = findViewById(R.id.etPanjangProduk)
+        etLebar = findViewById(R.id.etLebarProduk)
         etDeskripsi = findViewById(R.id.etDeskripsiProduk)
         btnSimpan = findViewById(R.id.btnSimpan)
         countPhoto = 1
@@ -85,9 +87,6 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
         checkClick = true
 
         hapusFoto.visibility = View.VISIBLE
-
-        // Mendifinisikan autoCompleteJenis
-        autoCompleteKategori = findViewById(R.id.autoCompleteTextViewKategori)
 
         // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
         val menuListener = object : ValueEventListener {
@@ -101,6 +100,8 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
                 etHargaProduk.setText(produk.hargaProduct.toString())
                 etStok.setText(produk.stockProduct.toString())
                 etBerat.setText(produk.beratProduct.toString())
+                etPanjang.setText(produk.panjangProduct.toString())
+                etLebar.setText(produk.lebarProduct.toString())
                 etDeskripsi.setText(produk.deskripsiProduct)
 
             }
@@ -122,11 +123,6 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
                 hapusFoto.visibility = View.INVISIBLE
             }
         }
-
-        // Mendifinisika "arrayAdapterJenis" sebagai Array Adapter
-        daftarKategoriList = arrayListOf<String>("KECIL", "SEDANG", "BESAR")
-        val arrayAdapterKategori = android.widget.ArrayAdapter(this, R.layout.dropdown_item, daftarKategoriList)
-        autoCompleteKategori.setAdapter(arrayAdapterKategori)
 
         tambahFoto.setOnClickListener {
             if (countPhoto >= 1){
@@ -156,8 +152,9 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
                     val hargaProduk = etHargaProduk.text.toString().trim()
                     val stokInput = etStok.text.toString().trim()
                     val beratInput = etBerat.text.toString().trim()
+                    val panjangInput = etPanjang.text.toString().trim()
+                    val lebarInput = etLebar.text.toString().trim()
                     val deskripsiInput = etDeskripsi.text.toString().trim()
-                    val dropDownKategoriInput = autoCompleteKategori.text.toString().trim().toLowerCase()
 
                     // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
                     namaProdukContainer.helperText = validNamaProduk()
@@ -185,6 +182,38 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
                             return@setOnClickListener
                         }
 
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (panjangInput.isEmpty()){
+                            etPanjang.error = "Masukkan panjang produk terlebih dahulu!"
+                            etPanjang.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (panjangInput.toFloat() > 25.0F){
+                            etPanjang.error = "Panjang produk tidak boleh lebih dari 25cm!"
+                            etPanjang.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (lebarInput.isEmpty()){
+                            etLebar.error = "Masukkan lebar produk terlebih dahulu!"
+                            etLebar.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (lebarInput.toFloat() > 10.0F){
+                            etLebar.error = "Lebar produk tidak boleh lebih dari 10cm!"
+                            etLebar.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
                         // Jika deskripsiInput kosong maka akan muncul error harus isi terlebih dahulu
                         if (deskripsiInput.isEmpty()){
                             etDeskripsi.error = "Masukkan deskripsi produk terlebih dahulu!"
@@ -193,14 +222,16 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
                             return@setOnClickListener
                         }
 
-                        // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
-                        if (dropDownKategoriInput == "pilih kategori produk"){
-                            autoCompleteKategori.error = "Silakan pilih kategori produk terlebih dahulu!"
-                            autoCompleteKategori.requestFocus()
-                            checkClick = true
-                            return@setOnClickListener
+                        var kategoriProduk = ""
+                        if (panjangInput.toFloat() <= 10.0F && lebarInput.toFloat() <= 7.0F){
+                            kategoriProduk = "kecil"
+                        } else if (panjangInput.toFloat() <= 20.0F && lebarInput.toFloat() <= 10.0F){
+                            kategoriProduk = "sedang"
+                        } else if (panjangInput.toFloat() <= 25.0F && lebarInput.toFloat() <= 10.0F){
+                            kategoriProduk = "besar"
                         }
-                        addNewProduct(imageUri1, namaProduk, hargaProduk, stokInput, beratInput, deskripsiInput, dropDownKategoriInput)
+
+                        addNewProduct(imageUri1, namaProduk, hargaProduk, stokInput, beratInput, panjangInput, lebarInput, deskripsiInput, kategoriProduk)
                         loadingBar(12000)
                     }else {
                         loadingBar(1000)
@@ -226,9 +257,9 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
 
     }
 
-    private fun addNewProduct(imageUri1: Uri, namaProduk: String, hargaProduk: String, stokInput: String, beratInput: String, deskripsiInput: String, dropDownKategoriInput: String) {
+    private fun addNewProduct(imageUri1: Uri, namaProduk: String, hargaProduk: String, stokInput: String, beratInput: String, panjangInput: String, lebarInput: String, deskripsiInput: String, dropDownKategoriInput: String) {
         if (!changePhoto1){
-            val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1, "active")
+            val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), panjangInput.toFloat(), lebarInput.toFloat(), dropDownKategoriInput, deskripsiInput, image1, "active")
             reference.setValue(productUpdate).addOnCompleteListener {
                 if (it.isSuccessful){
                     alertDialog("BERHASIL!", "Produk baru berhasil di ubah!", true)
@@ -243,7 +274,7 @@ class UbahProdukKustomisasiPenjualActivity : AppCompatActivity() {
             ref.putFile(imageUri1).addOnSuccessListener {
                 FirebaseStorage.getInstance().reference.child("imgProductCustomize/${idProduk}").downloadUrl.addOnSuccessListener {
                     image1 = it.toString()
-                    val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1, "active")
+                    val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), panjangInput.toFloat(), lebarInput.toFloat(), dropDownKategoriInput, deskripsiInput, image1, "active")
                     reference.setValue(productUpdate).addOnCompleteListener {
                         if (it.isSuccessful){
                             alertDialog("BERHASIL!", "Produk baru berhasil di ubah!", true)

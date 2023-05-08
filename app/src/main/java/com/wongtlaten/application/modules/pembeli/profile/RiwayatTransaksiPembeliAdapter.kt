@@ -54,6 +54,7 @@ class RiwayatTransaksiPembeliAdapter(val list: ArrayList<Transaction>): Recycler
         val textProdukLainnya: TextView = itemView.findViewById(R.id.textProdukLainnya)
         val totalPembayaran: TextView = itemView.findViewById(R.id.totalPembayaran)
         val btnBeli: Button = itemView.findViewById(R.id.btnBeli)
+        val btnReview: Button = itemView.findViewById(R.id.btnReview)
         fun bind(transaction: Transaction){
             with(itemView){
 
@@ -113,6 +114,9 @@ class RiwayatTransaksiPembeliAdapter(val list: ArrayList<Transaction>): Recycler
                     tempTransaction.add(transaction)
                     onItemClickCallback?.btnBeliClicked(tempTransaction)
                 }
+                btnReview.setOnClickListener {
+                    onItemClickCallback?.btnReviewClicked()
+                }
             }
         }
     }
@@ -132,5 +136,6 @@ class RiwayatTransaksiPembeliAdapter(val list: ArrayList<Transaction>): Recycler
     interface OnItemClickCallback {
         fun onItemClicked(data: ArrayList<Transaction>)
         fun btnBeliClicked(data: ArrayList<Transaction>)
+        fun btnReviewClicked()
     }
 }

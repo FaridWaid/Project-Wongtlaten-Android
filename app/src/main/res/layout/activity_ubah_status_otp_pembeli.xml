@@ -173,7 +173,7 @@
                     android:lines="1"
                     android:backgroundTint="@color/primary"
                     android:inputType="text"
-                    android:hint="Active/Unactive" />
+                    android:hint="Active/Inactive" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

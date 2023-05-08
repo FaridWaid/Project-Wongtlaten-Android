@@ -135,7 +135,7 @@ class DetailProdukPembeliActivity : AppCompatActivity() {
 
         val auth = FirebaseAuth.getInstance()
         val userIdentity = auth.currentUser!!
-        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
+        val idPenjual = "kJKchPfDIjVh0xhh9mEyixSFoso1"
 
         idUser = userIdentity.uid
 

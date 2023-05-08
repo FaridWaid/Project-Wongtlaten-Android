@@ -37,6 +37,7 @@ class PopularViewPagerAdapter(val list: ArrayList<Products>, val method: SearchP
         val loveInactive: ImageView = itemView.findViewById(R.id.loveInactivated)
         val loveActive: ImageView = itemView.findViewById(R.id.loveActivated)
         fun bind(products: Products){
+            loveInactive.visibility = View.VISIBLE
             with(itemView){
                 val formatter: NumberFormat = DecimalFormat("#,###")
                 val myNumber = products.hargaProduct

@@ -53,7 +53,7 @@ class ChatPembeliActivity : AppCompatActivity() {
         chatRecyclerView.setHasFixedSize(true)
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        val idPenjual = "UHS1kbdOPMeg0sug6zt0Xt8LUy33"
+        val idPenjual = "kJKchPfDIjVh0xhh9mEyixSFoso1"
 
         auth = FirebaseAuth.getInstance()
         idUsers = auth.currentUser!!
@@ -178,7 +178,9 @@ class ChatPembeliActivity : AppCompatActivity() {
 
                 val chatAdapter = ChatPenjualAdapter(this@ChatPembeliActivity, chatList)
                 chatRecyclerView.adapter = chatAdapter
-                chatRecyclerView.smoothScrollToPosition(chatList.size - 1)
+                if (chatList.isNotEmpty()){
+                    chatRecyclerView.smoothScrollToPosition(chatList.size - 1)
+                }
             }
         })
     }

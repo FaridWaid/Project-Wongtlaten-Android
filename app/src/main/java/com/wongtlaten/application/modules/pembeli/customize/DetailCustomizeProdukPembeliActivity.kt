@@ -349,7 +349,7 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
 
     private fun updateStockProduct(daftarIdProduk: HashMap<String, Int>, daftarProduk: kotlin.collections.ArrayList<CustomizeProducts>){
         for (i in 0..daftarIdProduk.size-1){
-            var updateProduct = CustomizeProducts(daftarProduk[i].idProduct, daftarProduk[i].namaProduct, daftarProduk[i].hargaProduct, daftarProduk[i].stockProduct - daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].beratProduct, daftarProduk[i].kategoriProduct, daftarProduk[i].deskripsiProduct, daftarProduk[i].photoProduct1, daftarProduk[i].statusProduct)
+            var updateProduct = CustomizeProducts(daftarProduk[i].idProduct, daftarProduk[i].namaProduct, daftarProduk[i].hargaProduct, daftarProduk[i].stockProduct - daftarIdProduk.getValue(daftarProduk[i].idProduct), daftarProduk[i].beratProduct, daftarProduk[i].panjangProduct, daftarProduk[i].lebarProduct, daftarProduk[i].kategoriProduct, daftarProduk[i].deskripsiProduct, daftarProduk[i].photoProduct1, daftarProduk[i].statusProduct)
             val reference = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(daftarProduk[i].idProduct)
             reference.setValue(updateProduct)
         }

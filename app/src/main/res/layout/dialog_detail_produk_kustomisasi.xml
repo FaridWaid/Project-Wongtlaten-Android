@@ -119,6 +119,64 @@
                 app:layout_constraintStart_toEndOf="@id/textBeratProduk" />
 
             <TextView
+                android:id="@+id/textPanjangProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"
+                android:textAlignment="textStart"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/textfield"
+                android:text="Panjang: "
+                app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/panjangProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"
+                android:textAlignment="textStart"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/yankes_blue"
+                android:text="1 cm"
+                app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+                app:layout_constraintStart_toEndOf="@id/textPanjangProduk" />
+
+            <TextView
+                android:id="@+id/textLebarProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"
+                android:textAlignment="textStart"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/textfield"
+                android:text="Lebar: "
+                app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+                app:layout_constraintStart_toEndOf="@id/panjangProduk" />
+
+            <TextView
+                android:id="@+id/lebarProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="12sp"
+                android:textAlignment="textStart"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/yankes_blue"
+                android:text="1 cm"
+                app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+                app:layout_constraintStart_toEndOf="@id/textLebarProduk" />
+
+            <TextView
                 android:id="@+id/textStokProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -130,7 +188,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="@color/textfield"
                 android:text="Stok: "
-                app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+                app:layout_constraintTop_toBottomOf="@id/textPanjangProduk"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
@@ -145,7 +203,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="@color/yankes_blue"
                 android:text="20"
-                app:layout_constraintTop_toBottomOf="@id/textBeratProduk"
+                app:layout_constraintTop_toBottomOf="@id/textPanjangProduk"
                 app:layout_constraintStart_toEndOf="@id/textStokProduk" />
 
             <TextView

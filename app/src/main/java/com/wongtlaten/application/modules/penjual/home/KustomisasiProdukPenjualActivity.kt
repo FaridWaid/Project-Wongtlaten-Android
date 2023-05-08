@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -133,6 +135,25 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
             showDialogDetailProduk()
         }
 
+        // Mendefinisikan variabel "etSearch", ketika memasukkan query ke etSearch maka akan memanggil fungsi filter
+        // terdapat closeSearch digunakan untuk menghapus query/inputan
+        // overridePendingTransition digunakan untuk animasi dari intent
+        etSearch = findViewById(R.id.et_search)
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                filter(editable.toString())
+            }
+
+        })
+
         // Ketika "backButton" di klik
         // overridePendingTransition digunakan untuk animasi dari intent
         val backButton: AppCompatImageView = findViewById(R.id.prevButton)
@@ -187,6 +208,19 @@ class KustomisasiProdukPenjualActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    // Membuat fungsi "filter" yang digunakan untuk memfilter recyclerView,
+    private fun filter(text: String) {
+        // mendefiniskan variabel "filteredNames" yang berisi arraylist dari data users
+        val filteredNames = ArrayList<CustomizeProducts>()
+        // setiap data yang ada pada daftarProdukList disamakan dengan filteredNames
+        daftarProdukList.filterTo(filteredNames) {
+            // jika namaProduk sama dengan text input yang dimasukkan oleh user
+            it.namaProduct.toLowerCase().contains(text.toLowerCase())
+        }
+        // maka akan memenaggil fungsi filterlist dari adapter dan hanyak menampilkan data yang cocok
+        adapter!!.filterList(filteredNames)
     }
 
     // Membuat fungsi "filterJenis" yang digunakan untuk memfilter recyclerView,

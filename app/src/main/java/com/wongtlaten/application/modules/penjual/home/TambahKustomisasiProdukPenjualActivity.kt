@@ -41,9 +41,9 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
     private lateinit var hargaProdukContainer: TextInputLayout
     private lateinit var etStok: EditText
     private lateinit var etBerat: EditText
+    private lateinit var etPanjang: EditText
+    private lateinit var etLebar: EditText
     private lateinit var etDeskripsi: EditText
-    private lateinit var daftarKategoriList: ArrayList<String>
-    private lateinit var autoCompleteKategori: AutoCompleteTextView
     private lateinit var btnSimpan : Button
     private lateinit var idProduk : String
     private lateinit var image1 : String
@@ -113,6 +113,8 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
         hargaProdukContainer = findViewById(R.id.HargaProdukContainer)
         etStok = findViewById(R.id.etStok)
         etBerat = findViewById(R.id.etBeratProduk)
+        etPanjang = findViewById(R.id.etPanjangProduk)
+        etLebar = findViewById(R.id.etLebarProduk)
         etDeskripsi = findViewById(R.id.etDeskripsiProduk)
         btnSimpan = findViewById(R.id.btnSimpan)
         countPhoto = 0
@@ -143,13 +145,6 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
         namaProdukFocusListener()
         hargaProdukFocusListener()
 
-        // Mendifinisika "arrayAdapterJenis" sebagai Array Adapter
-        daftarKategoriList = arrayListOf<String>("KECIL", "SEDANG", "BESAR")
-        val arrayAdapterKategori = android.widget.ArrayAdapter(this, R.layout.dropdown_item, daftarKategoriList)
-        // Mendifinisikan autoCompleteJenis dan menggunakan "arrayAdapterJenis" sebagai adapter
-        autoCompleteKategori = findViewById(R.id.autoCompleteTextViewKategori)
-        autoCompleteKategori.setAdapter(arrayAdapterKategori)
-
         btnSimpan.setOnClickListener {
 
             // Jika tidak ada koneksi internet maka akan memanggil fungsi "showInternetDialog"
@@ -170,8 +165,9 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
                     val hargaProduk = etHargaProduk.text.toString().trim()
                     val stokInput = etStok.text.toString().trim()
                     val beratInput = etBerat.text.toString().trim()
+                    val panjangInput = etPanjang.text.toString().trim()
+                    val lebarInput = etLebar.text.toString().trim()
                     val deskripsiInput = etDeskripsi.text.toString().trim()
-                    val dropDownKategoriInput = autoCompleteKategori.text.toString().trim().toLowerCase()
 
                     // Memastikan lagi apakah format yang diinputkan oleh user sudah benar
                     namaProdukContainer.helperText = validNamaProduk()
@@ -199,6 +195,38 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
                             return@setOnClickListener
                         }
 
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (panjangInput.isEmpty()){
+                            etPanjang.error = "Masukkan panjang produk terlebih dahulu!"
+                            etPanjang.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (panjangInput.toFloat() > 25.0F){
+                            etPanjang.error = "Panjang produk tidak boleh lebih dari 25cm!"
+                            etPanjang.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (lebarInput.isEmpty()){
+                            etLebar.error = "Masukkan lebar produk terlebih dahulu!"
+                            etLebar.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
+                        // Jika beratInput kosong maka akan muncul error harus isi terlebih dahulu
+                        if (lebarInput.toFloat() > 10.0F){
+                            etLebar.error = "Lebar produk tidak boleh lebih dari 10cm!"
+                            etLebar.requestFocus()
+                            checkClick = true
+                            return@setOnClickListener
+                        }
+
                         // Jika deskripsiInput kosong maka akan muncul error harus isi terlebih dahulu
                         if (deskripsiInput.isEmpty()){
                             etDeskripsi.error = "Masukkan deskripsi produk terlebih dahulu!"
@@ -207,17 +235,18 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
                             return@setOnClickListener
                         }
 
-                        // Jika dropDownJenisInput kosong maka akan muncul error harus isi terlebih dahulu
-                        if (dropDownKategoriInput == "pilih kategori produk"){
-                            autoCompleteKategori.error = "Silakan pilih jenis produk terlebih dahulu!"
-                            autoCompleteKategori.requestFocus()
-                            checkClick = true
-                            return@setOnClickListener
+                        var kategoriProduk = ""
+                        if (panjangInput.toFloat() <= 10.0F && lebarInput.toFloat() <= 7.0F){
+                            kategoriProduk = "kecil"
+                        } else if (panjangInput.toFloat() <= 20.0F && lebarInput.toFloat() <= 10.0F){
+                            kategoriProduk = "sedang"
+                        } else if (panjangInput.toFloat() <= 25.0F && lebarInput.toFloat() <= 10.0F){
+                            kategoriProduk = "besar"
                         }
 
                         // Memanggil fungsi "addNewProduct" dengan membawa berbagai variabel,
                         // Fungsi ini digunakan untuk nemabahkan produk baru
-                        addNewProduct(imageUri1, namaProduk, hargaProduk, stokInput, beratInput, deskripsiInput, dropDownKategoriInput)
+                        addNewProduct(imageUri1, namaProduk, hargaProduk, stokInput, beratInput, panjangInput, lebarInput, deskripsiInput, kategoriProduk)
                         loadingBar(12000)
                     }else {
                         loadingBar(1000)
@@ -242,13 +271,13 @@ class TambahKustomisasiProdukPenjualActivity : AppCompatActivity() {
 
     }
 
-    private fun addNewProduct(imageUri1: Uri, namaProduk: String, hargaProduk: String, stokInput: String, beratInput: String, deskripsiInput: String, dropDownKategoriInput: String) {
+    private fun addNewProduct(imageUri1: Uri, namaProduk: String, hargaProduk: String, stokInput: String, beratInput: String, panjangInput: String, lebarInput: String, deskripsiInput: String, dropDownKategoriInput: String) {
         var ref = FirebaseStorage.getInstance().reference.child("imgProductCustomize/${idProduk}")
         ref.putFile(imageUri1).addOnSuccessListener {
             FirebaseStorage.getInstance().reference.child("imgProductCustomize/${idProduk}").downloadUrl.addOnSuccessListener {
                 image1 = it.toString()
                 countUpload += 1
-                val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), dropDownKategoriInput, deskripsiInput, image1, "active")
+                val productUpdate = CustomizeProducts(idProduk, namaProduk, hargaProduk.toLong(), stokInput.toInt(), beratInput.toInt(), panjangInput.toFloat(), lebarInput.toFloat(), dropDownKategoriInput, deskripsiInput, image1, "active")
                 reference.child("$idProduk").setValue(productUpdate).addOnCompleteListener {
                     if (it.isSuccessful){
                         val loading = LoadingDialog(this@TambahKustomisasiProdukPenjualActivity)
