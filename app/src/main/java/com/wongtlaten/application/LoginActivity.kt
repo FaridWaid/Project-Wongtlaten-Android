@@ -52,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
     private var cekAttempt by Delegates.notNull<Int>()
     private var checkEmail by Delegates.notNull<Boolean>()
     private var checkClick by Delegates.notNull<Boolean>()
+    private lateinit var loading: LoadingDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,7 @@ class LoginActivity : AppCompatActivity() {
         cekAttempt = 0
         checkEmail = false
         checkClick = true
+        loading = LoadingDialog(this)
 
         try {
             changeEmail = intent.getStringExtra(CHANGE_EMAIL)!!
@@ -208,7 +210,7 @@ class LoginActivity : AppCompatActivity() {
                                                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                         startActivity(intent)
                                                         overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
-                                                        val loading = LoadingDialog(this@LoginActivity)
+                                                        loading = LoadingDialog(this@LoginActivity)
                                                         loading.isDissmis()
                                                         finish()
                                                     }
@@ -223,7 +225,7 @@ class LoginActivity : AppCompatActivity() {
                                                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                         startActivity(intent)
                                                         overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
-                                                        val loading = LoadingDialog(this@LoginActivity)
+                                                        loading = LoadingDialog(this@LoginActivity)
                                                         loading.isDissmis()
                                                         finish()
                                                     }
@@ -349,7 +351,7 @@ class LoginActivity : AppCompatActivity() {
                             intent.putExtra("USER", identifyUser)
                             startActivity(intent)
                             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-                            val loading = LoadingDialog(this@LoginActivity)
+                            loading = LoadingDialog(this@LoginActivity)
                             loading.isDissmis()
                             finish()
                         }
@@ -447,15 +449,20 @@ class LoginActivity : AppCompatActivity() {
     // Membuat fungsi "loadingBar" dengan parameter time,
     // Fungsi ini digunakan untuk menampilkan loading dialog
     private fun loadingBar(time: Long) {
-        val loading = LoadingDialog(this)
+//        val loadings = LoadingDialog(this@LoginActivity)
+//        loadings.startDialog()
+        loading = LoadingDialog(this@LoginActivity)
         loading.startDialog()
         val handler = Handler()
         handler.postDelayed(object: Runnable{
             override fun run() {
+//                loading.isDissmis()
+                loading = LoadingDialog(this@LoginActivity)
                 loading.isDissmis()
             }
 
         }, time)
+        loading.isDissmis()
     }
 
     companion object{

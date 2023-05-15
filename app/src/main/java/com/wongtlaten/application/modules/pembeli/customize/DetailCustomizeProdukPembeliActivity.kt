@@ -1,8 +1,10 @@
 package com.wongtlaten.application.modules.pembeli.customize
 
+import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -95,6 +99,8 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
     private var totalPembayaran by Delegates.notNull<Long>()
     private var hargaSatuanProduk by Delegates.notNull<Long>()
     private lateinit var tempProductTransaction: ArrayList<ProductTransaction>
+    private val REQUEST_PHONE_STATE_PERMISSION = 1
+    private var permission by Delegates.notNull<Boolean>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -153,6 +159,7 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
         totalPembayaran = 0
         hargaSatuanProduk = 0
         pdfUrl = ""
+        permission = false
 
         val formatter: NumberFormat = DecimalFormat("#,###")
         val formattedNumberPrice: String = formatter.format(totalHargaGiftbox)
@@ -209,72 +216,78 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
 
         pesanGiftcardFocusListener()
 
-        SdkUIFlowBuilder.init()
-            .setClientKey("SB-Mid-client-W_fr1Eg_qXdR7Ssz") // client_key is mandatory
-            .setContext(applicationContext) // context is mandatory
-            .setTransactionFinishedCallback(object : TransactionFinishedCallback {
-                override fun onTransactionFinished(result: TransactionResult) {
-                    if (result.response != null){
-                        if (result.response.pdfUrl != null){
-                            pdfUrl = result.response.pdfUrl
-                        }
-                        if (result.status == TransactionResult.STATUS_SUCCESS){
-                            val newTransaction = Transaction(userIdentity.uid, idTransaksi, "custom", textNamaPenerima, textKotaPenerima, textPosPenerima, textAlamatPenerima, textTeleponPenerima, countWeight, costCourier, result.response.grossAmount.toDouble(), result.response.paymentType, result.response.transactionTime, "", result.response.transactionStatus, "Belum Diproses", textJasaPengiriman, "", pesanGiftcardInput, pdfUrl, tempProductTransaction)
-                            referenceTransaksi.child(idTransaksi).setValue(newTransaction).addOnCompleteListener {
-                                if (it.isSuccessful){
-                                    updatePembelianUser()
-                                    updateStockProduct(daftarIdProduk, daftarProduk)
-                                    Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi berhasil", Toast.LENGTH_SHORT).show()
-                                    Intent(applicationContext, PembelianBerhasilActivity::class.java).also {
-                                        startActivity(it)
-                                        overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
-                                        finish()
-                                    }
-                                } else{
-                                    Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi gagal ditambahkan di database", Toast.LENGTH_SHORT).show()
-                                }
+        checkPhoneStatePermission()
+
+        if (permission){
+            SdkUIFlowBuilder.init()
+                .setClientKey("SB-Mid-client-W_fr1Eg_qXdR7Ssz") // client_key is mandatory
+                .setContext(applicationContext) // context is mandatory
+                .setTransactionFinishedCallback(object : TransactionFinishedCallback {
+                    override fun onTransactionFinished(result: TransactionResult) {
+                        if (result.response != null){
+                            if (result.response.pdfUrl != null){
+                                pdfUrl = result.response.pdfUrl
                             }
-                        } else if (result.status == TransactionResult.STATUS_PENDING){
-                            val newTransaction = Transaction(userIdentity.uid, idTransaksi, "custom", textNamaPenerima, textKotaPenerima, textPosPenerima, textAlamatPenerima, textTeleponPenerima, countWeight, costCourier, result.response.grossAmount.toDouble(), result.response.paymentType, result.response.transactionTime, "", result.response.transactionStatus, "Belum Diproses", textJasaPengiriman, "", pesanGiftcardInput, pdfUrl, tempProductTransaction)
-                            referenceTransaksi.child(idTransaksi).setValue(newTransaction).addOnCompleteListener {
-                                if (it.isSuccessful){
-                                    updateStockProduct(daftarIdProduk, daftarProduk)
-                                    Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi pending", Toast.LENGTH_SHORT).show()
-                                    Intent(applicationContext, PembelianBerhasilActivity::class.java).also {
-                                        startActivity(it)
-                                        overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
-                                        finish()
+                            if (result.status == TransactionResult.STATUS_SUCCESS){
+                                val newTransaction = Transaction(userIdentity.uid, idTransaksi, "custom", textNamaPenerima, textKotaPenerima, textPosPenerima, textAlamatPenerima, textTeleponPenerima, countWeight, costCourier, result.response.grossAmount.toDouble(), result.response.paymentType, result.response.transactionTime, "", result.response.transactionStatus, "Belum Diproses", textJasaPengiriman, "", pesanGiftcardInput, pdfUrl, tempProductTransaction)
+                                referenceTransaksi.child(idTransaksi).setValue(newTransaction).addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        updatePembelianUser()
+                                        updateStockProduct(daftarIdProduk, daftarProduk)
+                                        Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi berhasil", Toast.LENGTH_SHORT).show()
+                                        Intent(applicationContext, PembelianBerhasilActivity::class.java).also {
+                                            startActivity(it)
+                                            overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+                                            finish()
+                                        }
+                                    } else{
+                                        Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi gagal ditambahkan di database", Toast.LENGTH_SHORT).show()
                                     }
-                                } else{
-                                    Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi gagal ditambahkan di database", Toast.LENGTH_SHORT).show()
                                 }
+                            } else if (result.status == TransactionResult.STATUS_PENDING){
+                                val newTransaction = Transaction(userIdentity.uid, idTransaksi, "custom", textNamaPenerima, textKotaPenerima, textPosPenerima, textAlamatPenerima, textTeleponPenerima, countWeight, costCourier, result.response.grossAmount.toDouble(), result.response.paymentType, result.response.transactionTime, "", result.response.transactionStatus, "Belum Diproses", textJasaPengiriman, "", pesanGiftcardInput, pdfUrl, tempProductTransaction)
+                                referenceTransaksi.child(idTransaksi).setValue(newTransaction).addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        updateStockProduct(daftarIdProduk, daftarProduk)
+                                        Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi pending", Toast.LENGTH_SHORT).show()
+                                        Intent(applicationContext, PembelianBerhasilActivity::class.java).also {
+                                            startActivity(it)
+                                            overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+                                            finish()
+                                        }
+                                    } else{
+                                        Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi gagal ditambahkan di database", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            } else if (result.status == TransactionResult.STATUS_FAILED){
+                                Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi gagal", Toast.LENGTH_SHORT).show()
                             }
-                        } else if (result.status == TransactionResult.STATUS_FAILED){
-                            Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi gagal", Toast.LENGTH_SHORT).show()
-                        }
-                    } else if (result.isTransactionCanceled){
-                        Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi canceled", Toast.LENGTH_SHORT).show()
-                    } else{
-                        if (result.status == TransactionResult.STATUS_INVALID){
-                            Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi invalid", Toast.LENGTH_SHORT).show()
+                        } else if (result.isTransactionCanceled){
+                            Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi canceled", Toast.LENGTH_SHORT).show()
                         } else{
-                            Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi finished with failure", Toast.LENGTH_SHORT).show()
+                            if (result.status == TransactionResult.STATUS_INVALID){
+                                Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi invalid", Toast.LENGTH_SHORT).show()
+                            } else{
+                                Toast.makeText(this@DetailCustomizeProdukPembeliActivity, "Transaksi finished with failure", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
-                }
 
-            }) // set transaction finish callback (sdk callback)
-            .setMerchantBaseUrl("https://wongtlaten-midtrans.000webhostapp.com/index.php/") //set merchant url (required)
-            .enableLog(true) // enable sdk log (optional)
-            .setColorTheme(
-                CustomColorTheme(
-                    "#FFE51255",
-                    "#B61548",
-                    "#FFE51255"
-                )
-            ) // set theme. it will replace theme on snap theme on MAP ( optional)
-            .setLanguage("id") //`en` for English and `id` for Bahasa
-            .buildSDK()
+                }) // set transaction finish callback (sdk callback)
+                .setMerchantBaseUrl("https://wongtlaten-midtrans.000webhostapp.com/index.php/") //set merchant url (required)
+                .enableLog(true) // enable sdk log (optional)
+                .setColorTheme(
+                    CustomColorTheme(
+                        "#FFE51255",
+                        "#B61548",
+                        "#FFE51255"
+                    )
+                ) // set theme. it will replace theme on snap theme on MAP ( optional)
+                .setLanguage("id") //`en` for English and `id` for Bahasa
+                .buildSDK()
+        } else {
+            checkPhoneStatePermission()
+        }
 
         btnBayarSekarang.setOnClickListener {
 
@@ -487,6 +500,72 @@ class DetailCustomizeProdukPembeliActivity : AppCompatActivity() {
             return "Pesan pada giftcard terlalu panjang (maksimal 100 karakter)!"
         }
         return null
+    }
+
+    private fun checkPhoneStatePermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.READ_PHONE_STATE
+                )
+            ) {
+                // Show an explanation to the user asynchronously
+                AlertDialog.Builder(this)
+                    .setTitle("Phone state permission needed")
+                    .setMessage("This permission is needed to capture network type of the device.")
+                    .setPositiveButton("OK") { _, _ ->
+                        // Request the permission
+                        ActivityCompat.requestPermissions(
+                            this,
+                            arrayOf(Manifest.permission.READ_PHONE_STATE),
+                            REQUEST_PHONE_STATE_PERMISSION
+                        )
+                    }
+                    .create()
+                    .show()
+            } else {
+                // No explanation needed, request the permission
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_PHONE_STATE),
+                    REQUEST_PHONE_STATE_PERMISSION
+                )
+            }
+        } else {
+            // Permission has already been granted
+            // Launch the UI kit here
+            permission = true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_PHONE_STATE_PERMISSION -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permission granted, launch the UI kit here
+                    permission = true
+                } else {
+                    // Permission denied, keep asking user
+                    checkPhoneStatePermission()
+                }
+                return
+            }
+            else -> {
+                // Ignore all other requests
+            }
+        }
     }
 
     //back button

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -48,6 +49,8 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
     private lateinit var totalHarga: TextView
     private lateinit var textOngkosKirim: TextView
     private lateinit var ongkosKirim: TextView
+    private lateinit var textKotakGiftbox: TextView
+    private lateinit var kotakGiftbox: TextView
     private lateinit var totalPembayaran: TextView
     private lateinit var btnUbahStatus: Button
 
@@ -81,6 +84,8 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
         totalHarga = findViewById(R.id.totalHarga)
         textOngkosKirim = findViewById(R.id.textOngkosKirim)
         ongkosKirim = findViewById(R.id.totalOngkir)
+        textKotakGiftbox = findViewById(R.id.textKotakGiftbox)
+        kotakGiftbox = findViewById(R.id.kotakGiftbox)
         totalPembayaran = findViewById(R.id.totalPembayaran)
         btnUbahStatus = findViewById(R.id.btnUbahStatus)
 
@@ -168,6 +173,13 @@ class DetailPesananPenjualActivity : AppCompatActivity() {
         textOngkosKirim.text = "Ongkos Kirim (${daftarTransaction[0].totalBerat} gram)"
         val formattedNumberPrice2: String = formatter.format(daftarTransaction[0].jumlahOngkir)
         ongkosKirim.text = "Rp. $formattedNumberPrice2"
+        if (daftarTransaction[0].jenisTransaksi == "custom"){
+            textKotakGiftbox.visibility = View.VISIBLE
+            kotakGiftbox.visibility = View.VISIBLE
+            var totalKotalGiftbox = daftarTransaction[0].totalPembayaran - daftarTransaction[0].jumlahOngkir - countTotalProduk
+            val formattedNumberPrice4: String = formatter.format(totalKotalGiftbox)
+            kotakGiftbox.text = "Rp. $formattedNumberPrice4"
+        }
         val formattedNumberPrice3: String = formatter.format(daftarTransaction[0].totalPembayaran)
         totalPembayaran.text = "Rp. $formattedNumberPrice3"
 

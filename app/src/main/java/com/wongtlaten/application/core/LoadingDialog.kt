@@ -20,13 +20,20 @@ class LoadingDialog(val mActivity: Activity) {
         builder.setCancelable(false)
         isDialog = builder.create()
         isDialog.show()
+        if (mActivity.isDestroyed){
+            isDissmis()
+        }
     }
 
     // Membuat fungsi isDissmis(), diguakan untuk dismiss dari alert dialog
     fun isDissmis(){
         val builder = AlertDialog.Builder(mActivity)
-        isDialog.show()
-        isDialog.dismiss()
+        if (this::isDialog.isInitialized){
+            isDialog.show()
+            if(isDialog != null && isDialog.isShowing()){
+                isDialog.dismiss()
+            }
+        }
     }
 
 }

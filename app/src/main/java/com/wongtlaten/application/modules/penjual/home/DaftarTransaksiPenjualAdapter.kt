@@ -96,8 +96,8 @@ class DaftarTransaksiPenjualAdapter (private var list: ArrayList<Transaction>): 
                     textProdukLainnya.text = "+${transaction.produkTransaction.size - 1} produk lainnya"
                 }
                 countProduk.text = "${transaction.produkTransaction[0].totalBeli} produk"
-                idTransaksi.text = list[0].idTransaksi
-                var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(list[0].idUser)
+                idTransaksi.text = transaction.idTransaksi
+                var referenceUser = FirebaseDatabase.getInstance().getReference("dataAkunUser").child(transaction.idUser)
                 val menuListener3 = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val users = dataSnapshot.getValue(Users::class.java)!!

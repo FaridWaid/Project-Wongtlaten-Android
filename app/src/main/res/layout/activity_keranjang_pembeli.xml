@@ -66,16 +66,30 @@
         app:layout_constraintTop_toBottomOf="@id/checkbox1"
         android:background="@color/textfield" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvDaftarProduk"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line_1"
-        app:layout_constraintBottom_toTopOf="@id/bottom"
-        tools:listitem="@layout/item_produk_keranjang"
-        tools:itemCount="5"/>
+        app:layout_constraintBottom_toTopOf="@id/bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDaftarProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_produk_keranjang"
+                tools:itemCount="5"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <View
         android:id="@+id/bottom"

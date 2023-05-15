@@ -383,46 +383,48 @@ class HomePembeliFragment : Fragment() {
                             response: Response<TransactionStatusResponse>
                         ) {
                             newUpdateTransaction = response.body()?.transactionStatus ?: "pending"
-                            if (daftarTransaksi[i].statusPembayaran != newUpdateTransaction && newUpdateTransaction == "expire"){
-                                if (daftarTransaksi[i].jenisTransaksi == "custom"){
-                                    for (j in 0..daftarTransaksi[i].produkTransaction.size - 1){
-                                        var referenceCustom = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(daftarTransaksi[i].produkTransaction[j].idProduk)
-                                        val menuListener = object : ValueEventListener {
-                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
-                                                var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.panjangProduct, produk.lebarProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
-                                                referenceCustom.setValue(productUpdateCustomize)
+                            if (daftarTransaksi.isNotEmpty()){
+                                if (daftarTransaksi[i].statusPembayaran != newUpdateTransaction && newUpdateTransaction == "expire"){
+                                    if (daftarTransaksi[i].jenisTransaksi == "custom"){
+                                        for (j in 0..daftarTransaksi[i].produkTransaction.size - 1){
+                                            var referenceCustom = FirebaseDatabase.getInstance().getReference("dataProdukCustomize").child(daftarTransaksi[i].produkTransaction[j].idProduk)
+                                            val menuListener = object : ValueEventListener {
+                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                    val produk = dataSnapshot.getValue(CustomizeProducts::class.java)!!
+                                                    var productUpdateCustomize = CustomizeProducts(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.beratProduct, produk.panjangProduct, produk.lebarProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.photoProduct1, produk.statusProduct)
+                                                    referenceCustom.setValue(productUpdateCustomize)
+                                                }
+                                                override fun onCancelled(databaseError: DatabaseError) {
+                                                    // handle error
+                                                }
                                             }
-                                            override fun onCancelled(databaseError: DatabaseError) {
-                                                // handle error
-                                            }
+                                            referenceCustom.addListenerForSingleValueEvent(menuListener)
                                         }
-                                        referenceCustom.addListenerForSingleValueEvent(menuListener)
+                                    } else{
+                                        for (j in 0..daftarTransaksi[i].produkTransaction.size - 1){
+                                            var referenceNormal = FirebaseDatabase.getInstance().getReference("dataProduk").child(daftarTransaksi[i].produkTransaction[j].idProduk)
+                                            val menuListener = object : ValueEventListener {
+                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                    val produk = dataSnapshot.getValue(Products::class.java)!!
+                                                    var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli, produk.statusProduct)
+                                                    referenceNormal.setValue(productUpdateNormal)
+                                                }
+                                                override fun onCancelled(databaseError: DatabaseError) {
+                                                    // handle error
+                                                }
+                                            }
+                                            referenceNormal.addListenerForSingleValueEvent(menuListener)
+                                        }
                                     }
+                                    var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
+                                    reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                                 } else{
-                                    for (j in 0..daftarTransaksi[i].produkTransaction.size - 1){
-                                        var referenceNormal = FirebaseDatabase.getInstance().getReference("dataProduk").child(daftarTransaksi[i].produkTransaction[j].idProduk)
-                                        val menuListener = object : ValueEventListener {
-                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                val produk = dataSnapshot.getValue(Products::class.java)!!
-                                                var productUpdateNormal = Products(produk.idProduct, produk.namaProduct, produk.hargaProduct, produk.stockProduct + daftarTransaksi[i].produkTransaction[j].totalBeli, produk.minimumPemesananProduct, produk.beratProduct, produk.kategoriProduct, produk.deskripsiProduct, produk.jenisProduct, produk.hargaPromoProduct, produk.photoProduct1, produk.photoProduct2, produk.photoProduct3, produk.photoProduct4, produk.ratingProduct, produk.jumlahPembelianProduct - daftarTransaksi[i].produkTransaction[j].totalBeli, produk.statusProduct)
-                                                referenceNormal.setValue(productUpdateNormal)
-                                            }
-                                            override fun onCancelled(databaseError: DatabaseError) {
-                                                // handle error
-                                            }
-                                        }
-                                        referenceNormal.addListenerForSingleValueEvent(menuListener)
+                                    if (newUpdateTransaction == "settlement"){
+                                        updatePembelianUser(idUser)
                                     }
+                                    var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
+                                    reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                                 }
-                                var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
-                                reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
-                            } else{
-                                if (newUpdateTransaction == "settlement"){
-                                    updatePembelianUser(idUser)
-                                }
-                                var updateTransaction = Transaction(idUser, daftarTransaksi[i].idTransaksi, daftarTransaksi[i].jenisTransaksi, daftarTransaksi[i].namePenerima, daftarTransaksi[i].kotaTujuan, daftarTransaksi[i].kodePos, daftarTransaksi[i].alamatLengkap, daftarTransaksi[i].teleponPenerima, daftarTransaksi[i].totalBerat, daftarTransaksi[i].jumlahOngkir, daftarTransaksi[i].totalPembayaran, daftarTransaksi[i].typePembayaran, daftarTransaksi[i].waktuTransaksi, daftarTransaksi[i].waktuPengiriman, newUpdateTransaction, daftarTransaksi[i].statusProduk, daftarTransaksi[i].kurir, daftarTransaksi[i].resiPengiriman, daftarTransaksi[i].catatanGiftcard, daftarTransaksi[i].pdfUrl, daftarTransaksi[i].produkTransaction)
-                                reference.child(daftarTransaksi[i].idTransaksi).setValue(updateTransaction)
                             }
                         }
 

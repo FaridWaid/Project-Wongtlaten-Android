@@ -537,6 +537,38 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textTotalHarga" />
 
+            <TextView
+                android:id="@+id/textKotakGiftbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/yankes_blue"
+                android:text="Kotak Giftbox"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/totalOngkir" />
+
+            <TextView
+                android:id="@+id/kotakGiftbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textColor="@color/yankes_blue"
+                android:text="Rp. xx.xxx"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/totalOngkir" />
+
             <View
                 android:id="@+id/line_7"
                 android:layout_width="match_parent"
@@ -545,7 +577,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_alignParentTop="true"
-                app:layout_constraintTop_toBottomOf="@id/totalOngkir"
+                app:layout_constraintTop_toBottomOf="@id/kotakGiftbox"
                 android:background="@color/card" />
 
             <TextView

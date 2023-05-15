@@ -41,6 +41,8 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
     private lateinit var totalHarga: TextView
     private lateinit var textOngkosKirim: TextView
     private lateinit var ongkosKirim: TextView
+    private lateinit var textKotakGiftbox: TextView
+    private lateinit var kotakGiftbox: TextView
     private lateinit var totalPembayaran: TextView
     private lateinit var btnCaraPembayaran: Button
     private lateinit var btnCaraPembayaranInactive: Button
@@ -72,6 +74,8 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
         totalHarga = findViewById(R.id.totalHarga)
         textOngkosKirim = findViewById(R.id.textOngkosKirim)
         ongkosKirim = findViewById(R.id.totalOngkir)
+        textKotakGiftbox = findViewById(R.id.textKotakGiftbox)
+        kotakGiftbox = findViewById(R.id.kotakGiftbox)
         totalPembayaran = findViewById(R.id.totalPembayaran)
         btnCaraPembayaran = findViewById(R.id.btnCaraPembayaran)
         btnCaraPembayaranInactive = findViewById(R.id.btnCaraPembayaranInactive)
@@ -141,6 +145,13 @@ class DetailPesananPembeliActivity : AppCompatActivity() {
         textOngkosKirim.text = "Ongkos Kirim (${daftarTransaction[0].totalBerat} gram)"
         val formattedNumberPrice2: String = formatter.format(daftarTransaction[0].jumlahOngkir)
         ongkosKirim.text = "Rp. $formattedNumberPrice2"
+        if (daftarTransaction[0].jenisTransaksi == "custom"){
+            textKotakGiftbox.visibility = View.VISIBLE
+            kotakGiftbox.visibility = View.VISIBLE
+            var totalKotalGiftbox = daftarTransaction[0].totalPembayaran - daftarTransaction[0].jumlahOngkir - countTotalProduk
+            val formattedNumberPrice4: String = formatter.format(totalKotalGiftbox)
+            kotakGiftbox.text = "Rp. $formattedNumberPrice4"
+        }
         val formattedNumberPrice3: String = formatter.format(daftarTransaction[0].totalPembayaran)
         totalPembayaran.text = "Rp. $formattedNumberPrice3"
 
