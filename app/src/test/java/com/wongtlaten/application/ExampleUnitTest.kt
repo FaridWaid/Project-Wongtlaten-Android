@@ -17,6 +17,25 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun checkIdCity() {
+        var idOrigin = 0
+        var idDestination = 0
+        val dropDownKotaAsal = "Sidoarjo"
+        val dropDownKotaTujuan = "Mojokerto"
+        val daftarCityList: ArrayList<String> = arrayListOf("Jakarta Selatan", "Jakarta Timut", "Jakarta Barat", "Jakarta Utara", "Bandung", "Sidoarjo", "Mojokerto")
+        for (i in 0..daftarCityList.size - 1){
+            if (daftarCityList[i] == dropDownKotaAsal){
+                idOrigin = i + 1
+            }
+            if (daftarCityList[i] == dropDownKotaTujuan){
+                idDestination = i + 1
+            }
+        }
+        assertEquals(6, idOrigin)
+        assertEquals(7, idDestination)
+    }
+
+    @Test
     fun ruleBasedGiftbox() {
         var countProdukBesar = 2
         var countProdukSedang = 2
