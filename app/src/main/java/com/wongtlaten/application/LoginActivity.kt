@@ -50,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var changeEmail : String
     private var attemptLogin by Delegates.notNull<Int>()
     private var cekAttempt by Delegates.notNull<Int>()
+    private var notVerified by Delegates.notNull<Int>()
     private var checkEmail by Delegates.notNull<Boolean>()
     private var checkClick by Delegates.notNull<Boolean>()
     private lateinit var loading: LoadingDialog
@@ -80,8 +81,10 @@ class LoginActivity : AppCompatActivity() {
 
         try {
             changeEmail = intent.getStringExtra(CHANGE_EMAIL)!!
+            notVerified = intent.getIntExtra(NOT_VERIFIED, 0)!!
         } catch (e: Exception){
             changeEmail = "false"
+            notVerified = 1
         }
 
         if (changeEmail == "true"){
@@ -194,7 +197,6 @@ class LoginActivity : AppCompatActivity() {
                                                 alertDialog("Gagal Login Ke Akun!", "Status akun anda dinonaktifkan, silakan hubungi penjual untuk mengaktifkan kembali akun anda!", false)
                                             } else{
                                                 if (users.checkOtp == "active"){
-                                                    checkClick = true
                                                     identifyUser = users.idUsers
                                                     val newAttempt = AttemptLogin(email, 0)
                                                     refAttempt.child("${identifyUser}").setValue(newAttempt)
@@ -345,6 +347,7 @@ class LoginActivity : AppCompatActivity() {
                 // dan valuenya berisi data yang ada di dalam "newOtp"
                 refOtp.child("$identifyUser").setValue(newOtp).addOnCompleteListener {
                     if (it.isSuccessful){
+                        checkClick = true
                         Intent(this@LoginActivity, OtpVerificationActivity::class.java).also { intent ->
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             intent.putExtra("EMAIL", emailReceiver)
@@ -361,6 +364,7 @@ class LoginActivity : AppCompatActivity() {
         } catch (e: MessagingException) {
 //            e.printStackTrace()
             alertDialog("Kode OTP Gagal Dikirimkan!", "${e}!", false)
+            checkClick = true
         }
 
 
@@ -467,6 +471,7 @@ class LoginActivity : AppCompatActivity() {
 
     companion object{
         const val CHANGE_EMAIL = "CHANGE_EMAIL"
+        const val NOT_VERIFIED = "NOT_VERIFIED"
     }
 
     // Fungsi ini digunakan untuk menampilkan dialog peringatan tidak tersambung ke internet,
@@ -504,35 +509,38 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         loadingBar(2000)
-        // Jika user sudah ada user yang login maka akan langsung diarahkan ke HomeActivity
-        if (auth.currentUser != null){
-            val userIdentity = auth.currentUser!!
-            if (userIdentity.isEmailVerified){
-                // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
-                val menuListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val users = dataSnapshot.getValue(Users::class.java)!!
-                        if (users.accessLevel == "penjual"){
-                            Intent(this@LoginActivity, HomePenjualActivity::class.java).also { intent ->
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-                                startActivity(intent)
-                            }
-                        } else if(users.accessLevel == "customers" && users.status == "active") {
-                            Intent(this@LoginActivity, HomePembeliActivity::class.java).also { intent ->
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-                                startActivity(intent)
+        if (notVerified != 100){
+            // Jika user sudah ada user yang login maka akan langsung diarahkan ke HomeActivity
+            if (auth.currentUser != null){
+                val userIdentity = auth.currentUser!!
+                if (userIdentity.isEmailVerified){
+                    // Mengambil data user dengan referen dan dimasukkan kedalam view (text,etc)
+                    val menuListener = object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val users = dataSnapshot.getValue(Users::class.java)!!
+                            if (users.accessLevel == "penjual"){
+                                Intent(this@LoginActivity, HomePenjualActivity::class.java).also { intent ->
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                                    startActivity(intent)
+                                }
+                            } else if(users.accessLevel == "customers" && users.status == "active") {
+                                Intent(this@LoginActivity, HomePembeliActivity::class.java).also { intent ->
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                                    startActivity(intent)
+                                }
                             }
                         }
-                    }
-                    override fun onCancelled(databaseError: DatabaseError) {
+                        override fun onCancelled(databaseError: DatabaseError) {
 
+                        }
                     }
+                    ref.child(userIdentity.uid).addListenerForSingleValueEvent(menuListener)
                 }
-                ref.child(userIdentity.uid).addListenerForSingleValueEvent(menuListener)
-            } else {
-                alertDialog("Gagal Login Ke Akun!", "Verifikasi email anda terlebih dahulu, silakan cek email anda untuk memverifikasi akun!", false)
+//                else {
+//                    alertDialog("Gagal Login Ke Akun!", "Verifikasi email anda terlebih dahulu, silakan cek email anda untuk memverifikasi akun!", false)
+//                }
             }
         }
     }

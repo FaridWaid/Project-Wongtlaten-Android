@@ -177,6 +177,7 @@ class RegisterActivity : AppCompatActivity() {
                                                             // Kemudian pindah activity ke activity LoginActivity
                                                             Intent(this@RegisterActivity, LoginActivity::class.java).also { intent ->
                                                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                                intent.putExtra("NOT_VERIFIED", 100)
                                                                 startActivity(intent)
                                                                 overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
                                                                 val loading = LoadingDialog(this@RegisterActivity)
